@@ -1,0 +1,31 @@
+{
+  "extends": "airbnb-base",
+  "parserOptions": {
+    "sourceType": "script"
+  },
+  "installedESLint": true,
+  "ecmaFeatures": {
+    "impliedStrict": false
+  },
+  "plugins": [
+    "import"
+    ],
+    "rules": {
+      "consistent-return": "off",
+      "global-require": "off",
+      "import/no-extraneous-dependencies": "off",
+      "import/no-dynamic-require": "off",
+      "max-len": "off",
+      "no-console": "off",
+      "no-multi-assign": "warn",
+      "no-param-reassign": "off",
+      "no-unused-expressions": "off",
+      "no-unused-vars": "warn",
+      "no-use-before-define": "off"
+    },
+    "env": {
+      "browser": false,
+      "node": true,
+      "mocha": true
+    }
+}
