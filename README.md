@@ -73,3 +73,16 @@ LaunchIntent | AMAZON.YesIntent
 start | ohh yes
 give me something | yeah
 put some fireworks | here we go
+
+
+### Use a private repo as npm
+
+In your private npm modules add
+```
+{
+    "name": "myapp",
+    "dependencies": {
+        "voxa-cli": "git+ssh://git@github.com:myaccount/myprivate.git",
+    }
+}
+```
