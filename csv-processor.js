@@ -2,12 +2,11 @@
 
 const _ = require('lodash');
 const GoogleSpreadsheet = require('google-spreadsheet');
-const creds = require('./client_secret.json');
+//const creds = require('./client_secret.json');
 const Promise = require('bluebird');
 const AlexaSchema = require('./alexa-schema');
 
 // Create a document object using the ID of the spreadsheet - obtained from its URL.
-const doc = new GoogleSpreadsheet('1CfSegZtXK9DVhPcKiPZ9YXpG8zPHaBV7_W13AmRy0YM');
 
 const placeholders = {
   slots: 'LIST_OF_',
@@ -98,7 +97,8 @@ const processors = {
 
     _.each(rows, (row) => {
       _.each(headers, (headValue, headKey) => {
-        const value = _.replace(_.trim(row[headKey]), /{([\s\S]+?)}/g, (match) => `{${_.camelCase(match)}}`);;
+        let value = _.replace(_.trim(row[headKey]), /{([\s\S]+?)}/g, (match) => `{${_.camelCase(match)}}`);
+        value = value.split(' ').map(v => _.includes(v, '{') ? v : _.toLower(v)).join(' ');
         if (!_.isEmpty(value)) {
           utterances[headValue].push(value);
         }
@@ -115,7 +115,8 @@ const processors = {
   }),
 };
 
-function getWorksheets() {
+function getWorksheets(spreadsheetId, creds) {
+  const doc = new GoogleSpreadsheet(spreadsheetId);
   return new Promise((resolve, reject) => doc.useServiceAccountAuth(creds, (error) => {
     if (error) return reject(error);
     return doc.getInfo((err, info) => {
@@ -135,35 +136,42 @@ function getRows(worksheet, offset) {
     return resolve(rows);
   }));
 }
-console.time('worksheetDownload');
-getWorksheets()
-.then(info => info.worksheets)
-.then((worksheets) => {
-  worksheets = worksheets
-  .map((worksheet) => {
-    const type = _.map(placeholders, (value, key) => {
-      const result = worksheet.title.indexOf(value) >= 0 ? key : null;
-      return result;
-    }).find(result => !_.isEmpty(result));
-    return { type, worksheet };
-  })
-  .filter(worksheet => worksheet.type);
-  console.timeEnd('worksheetDownload');
-  // console.log('worksheets', worksheets);
-  console.time('worksheetProcess');
-  return worksheets;
-})
-.then(sheets => Promise.all(sheets.map(sheet => processors[sheet.type](sheet.worksheet))))
-.then((values) => {
-  const result = {};
 
-  _.each(values, (value) => {
-    _.merge(result, value);
+module.exports = (spreadsheetId, creds) => {
+  let locale;
+  console.time('worksheetDownload');
+  return getWorksheets(spreadsheetId, creds)
+  .then((info) => {
+    const title = info.title;
+    locale = AlexaSchema.VALID_LOCALES.find(loc => _.includes(title, loc) || _.includes(title, _.toLower(loc)));
+    locale = locale || AlexaSchema.VALID_LOCALES[0];
+    return info.worksheets;
+  })
+  .then((worksheets) => {
+    worksheets = worksheets
+    .map((worksheet) => {
+      const type = _.map(placeholders, (value, key) => {
+        const result = worksheet.title.indexOf(value) >= 0 ? key : null;
+        return result;
+      }).find(result => !_.isEmpty(result));
+      return { type, worksheet };
+    })
+    .filter(worksheet => worksheet.type);
+    console.timeEnd('worksheetDownload');
+    // console.log('worksheets', worksheets);
+    console.time('worksheetProcess');
+    return worksheets;
+  })
+  .then(sheets => Promise.all(sheets.map(sheet => processors[sheet.type](sheet.worksheet))))
+  .then((values) => {
+    const result = {};
+
+    _.each(values, (value) => {
+      _.merge(result, value);
+    });
+    console.timeEnd('worksheetProcess');
+    const alexa = new AlexaSchema(result);
+    alexa.locale = locale;
+    return alexa;
   });
-  console.timeEnd('worksheetProcess');
-  const alexa = new AlexaSchema(result);
-  console.time('validate');
-  alexa.validate();
-  console.timeEnd('validate');
-  return alexa.build().then();
-});
+}
