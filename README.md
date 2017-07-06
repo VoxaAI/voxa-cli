@@ -66,6 +66,7 @@ rainstorm | rain
 rainfall | rain
 
 * Utterances should have the following structure
+
 LaunchIntent | AMAZON.YesIntent
 --- | ---
 LaunchIntent | AMAZON.YesIntent
