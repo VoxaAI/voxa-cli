@@ -44,7 +44,7 @@ voxaCli({
 
 ### Options
 
-* **spreadsheets**: Array of spreadsheets
+* **spreadsheets**: Array of spreadsheets. Each csv should be a interaction model for a specific locale.
 * **speechPath**: Path to save the interaction model. It will generate slots, intents, sample utterances, model and skill builder model.
 * **synonymPath**: If your slots have synonyms it will save it to this path.
 * **auth**: Credentials to connect to your spreadsheet.
@@ -73,3 +73,16 @@ LaunchIntent | AMAZON.YesIntent
 start | ohh yes
 give me something | yeah
 put some fireworks | here we go
+
+
+### Use a private repo as npm
+
+In your private npm modules add
+```
+{
+    "name": "myapp",
+    "dependencies": {
+        "voxa-cli": "git+ssh://git@github.com:myaccount/myprivate.git",
+    }
+}
+```
