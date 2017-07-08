@@ -6,6 +6,7 @@ const _ = require('lodash');
 const Promise = require('bluebird');
 const fs = Promise.promisifyAll(require('fs-extra'));
 const PrettyError = require('pretty-error');
+const AlexaError = require('./error');
 
 // instantiate PrettyError, which can then be used to render error objects
 const pe = new PrettyError();
@@ -62,6 +63,7 @@ class alexaSchema {
 
   validate() {
     pe.start();
+    const aError = new AlexaError();
     _.templateSettings.interpolate = /{([\s\S]+?)}/g;
     // console.log('this', this);
     const uttr = _.get(this, 'utterances');
@@ -91,41 +93,73 @@ class alexaSchema {
     const slotsValuesBuiltIn = _.values(slots).map(slot => _.keys(slot));
     const haveSlotsOnType = !_.isEmpty(slotsBuiltIn);
 
-    assert.isNotEmpty(uttr, 'Sample Utterances Present');
-    assert.isNotEmpty(intents, 'Intent Schema Present');
+    if (_.isEmpty(uttr)) {
+      aError.add({ message: 'Sample Utterances Present', type: alexaError.ERROR_TYPE.MISSING_SAMPLE_UTTERANCES })
+    }
 
-    // you don't  have builtin intents
-    assert.isNotEmpty(intentBuiltInKeys, 'Built in intents are Present');
+    if (_.isEmpty(intents)) {
+      aError.add({ message: 'Intent Schema Present', type: alexaError.ERROR_TYPE.MISSING_INTENT_SCHEMA })
+    }
 
-    // Make sure to add this intent on the schema
-    assert.include(intentsKey, 'AMAZON.HelpIntent', 'Intent schema have HelpIntent');
-    assert.include(intentsKey, 'AMAZON.CancelIntent', 'Intent schema have CancelIntent');
-    assert.include(intentsKey, 'AMAZON.StopIntent', 'Intent schema have StopIntent');
+    if (_.isEmpty(intentBuiltInKeys)) {
+      aError.add({ message: 'Built in intents are Present', type: alexaError.ERROR_TYPE.MISSING_BUILTIN_INTENT })
+    }
+
+    if (!_.includes(intentsKey, 'AMAZON.HelpIntent')) {
+      aError.add({ message: 'Intent schema have HelpIntent', type: alexaError.ERROR_TYPE.REQUIRED_INTENT })
+    }
+
+    if (!_.includes(intentsKey, 'AMAZON.CancelIntent')) {
+      aError.add({ message: 'Intent schema have CancelIntent', type: alexaError.ERROR_TYPE.REQUIRED_INTENT })
+    }
+
+    if (!_.includes(intentsKey, 'AMAZON.StopIntent')) {
+      aError.add({ message: 'Intent schema have StopIntent', type: alexaError.ERROR_TYPE.REQUIRED_INTENT })
+    }
 
     // Make sure we have utterances for builtin intents
     intentBuiltInKeys.map((intentBuiltKey) => {
       assert.isNotEmpty(uttr[intentBuiltKey], `Intent ${intentBuiltKey} have utterances`);
-      if (!_.includes(intentBuiltKey, 'OnlyIntent')) {
-        assert.isAtLeast(uttr[intentBuiltKey].length, this.leastUtterances, `Intent ${intentBuiltKey} have at least ${this.leastUtterances}`);
+      if ((!_.includes(intentBuiltKey, 'OnlyIntent')) &&  uttr[intentBuiltKey].length >= this.leastUtterances) {
+        aError.add({ message: `Intent ${intentBuiltKey} have at least ${this.leastUtterances}`, type: alexaError.ERROR_TYPE.MINIMUM_UTERANCES_ON_INTENT })
       }
     })
 
     _.map(uttr, (uttV, uttK) => {
-      uttV.map((u) => assert.match(u, UTTERANCES_VALID_CHARACTERS, `Utterance ${uttK} ${u} has valid characters`));
+      uttV.map((u) => {
+        if (u.match(UTTERANCES_VALID_CHARACTERS)) {
+          aError.add({ message: `Utterance ${uttK} ${u} has invalid valid characters`, type: alexaError.ERROR_TYPE.UTTERANCE_HAS_INVALID_CHARACTERS })
+        }
+      }
     });
 
     _.map(slots, (slotV, slotK) => {
-      _.map(slotV, (_slot, slot) => assert.match(slot, UTTERANCES_VALID_CHARACTERS, `Slot ${slotK} ${slot} has valid characters`));
+      _.map(slotV, (_slot, slot) => {
+        if (slot.match(UTTERANCES_VALID_CHARACTERS)) {
+          aError.add({ message: `Slot ${slotK} ${slot} has valid characters`, type: alexaError.ERROR_TYPE.SLOT_HAS_INVALID_CHARACTERS })
+        }
+      }
     });
 
     // Make sure there is no difference between utterances and the intents
-    assert.isEmpty(_.difference(uttrBuiltInKeys, intentBuiltInKeys), `utterances ${_.difference(uttrBuiltInKeys, intentBuiltInKeys)} not defined in your model`);
+    if (!_.isEmpty(_.difference(uttrBuiltInKeys, intentBuiltInKeys))) {
+      aError.add({ message: `utterances ${_.difference(uttrBuiltInKeys, intentBuiltInKeys)} not defined in your model`, type: alexaError.ERROR_TYPE.UTTERANCES_NOT_DEFINED_SCHEMA })
+    }
 
-    assert.isEmpty(_.difference(intentBuiltInKeys, uttrBuiltInKeys), `intents ${_.difference(intentBuiltInKeys, uttrBuiltInKeys)} utterances`);
+    if (!_.isEmpty(_.difference(intentBuiltInKeys, uttrBuiltInKeys))) {
+      aError.add({ message: `intents ${_.difference(intentBuiltInKeys, uttrBuiltInKeys)} utterances`, type: alexaError.ERROR_TYPE.INTENTS_WITHOUT_UTTERANCES })
+    }
 
-    assert.isEmpty(_.difference(intentSlotsBuiltInWithoutAmazon, slotsBuiltIn), `slots defined in you intent schema without a list type ${_.difference(intentBuiltInKeys, uttrBuiltInKeys)}`);
 
-    assert.isEmpty(_.difference(slotsBuiltIn, intentSlotsBuiltInWithoutAmazon), `extra slots that are not included in your intent schema ${_.difference(slotsBuiltIn, intentSlotsBuiltInWithoutAmazon)}`);
+
+
+    if (!_.isEmpty(_.difference(intentSlotsBuiltInWithoutAmazon, slotsBuiltIn))) {
+      aError.add({ message: `slots defined in you intent schema without a list type ${_.difference(intentBuiltInKeys, uttrBuiltInKeys)}`, type: alexaError.ERROR_TYPE.MISSING_LIST_TYPE })
+    }
+
+    if (!_.isEmpty(_.difference(slotsBuiltIn, intentSlotsBuiltInWithoutAmazon))) {
+      aError.add({ message: `extra slots that are not included in your intent schema ${_.difference(slotsBuiltIn, intentSlotsBuiltInWithoutAmazon)}`, type: alexaError.ERROR_TYPE.SLOTS_NOT_DEFINED_SCHEMA })
+    }
 
     if (haveSlotsOnIntentSchema) {
       uttrKeys.map((uttrKey) => {
@@ -150,7 +184,9 @@ class alexaSchema {
             didCompile = false;
           }
           finally {
-            assert.isTrue(didCompile, `${uttrKey} ${u} - have same slots as defined in intent.json`);
+            if (!didCompile) {
+              aError.add({ message: `${uttrKey} ${u} - have same slots as defined in intent.json`, type: alexaError.ERROR_TYPE.UTTERANCE_USING_SLOT_NOT_SCHEMA })
+            }
           }
         });
       });
@@ -169,7 +205,9 @@ class alexaSchema {
           const slotsCount = _.countBy(wordsContainsSlot, (word) => intentSlotFound.find(slot => _.includes(slot, word)));
 
           _.map(slotsCount, (value, key) => {
-            assert.isBelow(value, 2, `Intent ${uttrKey} should not have duplicate slots ${key} in ${u} utterance`);
+            if (value >= 2) {
+              aError.add({ message: `Intent ${uttrKey} should not have duplicate slots ${key} in ${u} utterance`, type: alexaError.ERROR_TYPE.UTTERANCE_USING_DUPLICATE_SLOT })
+            }
           });
         });
       });
@@ -182,12 +220,22 @@ class alexaSchema {
         const duplicateUtterances = _.intersection(utteranceList, otherList);
         const hasDuplicateUtterances = !_.isEmpty(duplicateUtterances);
 
-        assert.isFalse(hasDuplicateUtterances, `Sample Utterance should be unique, ${duplicateUtterances} is duplicate in ${uttrKey} and ${otherKey}`);
+        if (hasDuplicateUtterances) {
+          aError.add({ message: `Sample Utterance should be unique, ${duplicateUtterances} is duplicate in ${uttrKey} and ${otherKey}`, type: alexaError.ERROR_TYPE.UTTERANCE_SHOULD_UNIQUE })
+        }
       });
     });
 
-    assert.isBelow(_.flattenDeep(uttrValues).join('\n').length, 200000, 'Sample utterances doesn\'t exceed limit of 200K characters')
-    assert.isBelow(_.flattenDeep(slotsValuesBuiltIn).length, 50000, 'Custom slot values doesn\'t exceed limit of 50K values')
+    if (_.flattenDeep(uttrValues).join('\n').length >= 200000) {
+      aError.add({ message: 'Sample utterances doesn\'t exceed limit of 200K characters', type: alexaError.ERROR_TYPE.UTTERANCE_EXCEED_LIMIT })
+    }
+
+    if (_.flattenDeep(slotsValuesBuiltIn).length >= 50000) {
+      aError.add({ message: 'Custom slot values doesn\'t exceed limit of 50K values', type: alexaError.ERROR_TYPE.SLOT_EXCEED_LIMIT })
+    }
+
+    console.log('Erros found ', aError.errors.length);
+    aError.print();
   }
 
   build(pathSpeech) {
