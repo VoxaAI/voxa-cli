@@ -24,6 +24,10 @@ class alexaSchema {
     return ['en-US','en-GB', 'de-DE'];
   }
 
+  static get CONNECTING_WORDS() {
+    return ['by ','from ', 'in ',  'using ', 'with ', 'to ', 'about ', 'for ', 'if', 'whether ', 'and ', 'that ', 'thats ', 'that\'s ' ];
+  }
+
   set locale(locale) {
     const VALID_LOCALES = this.constructor.VALID_LOCALES;
     if (!_.includes(VALID_LOCALES, locale)) return new Error(`Invalid type ${locale}. It should be one of ${VALID_LOCALES}`);
@@ -222,6 +226,17 @@ class alexaSchema {
 
         if (hasDuplicateUtterances) {
           aError.add({ message: `Sample Utterance should be unique, ${duplicateUtterances} is duplicate in ${uttrKey} and ${otherKey}`, type: alexaError.ERROR_TYPE.UTTERANCE_SHOULD_UNIQUE })
+        }
+      });
+    });
+
+    uttrKeys.map((uttrKey) => {
+      const utteranceList = uttr[uttrKey];
+      utteranceList.map(u => {
+        this.constructor.CONNECTING_WORDS.map(conWord => {
+          if (u.indexOf(conWord) === 0) {
+            aError.add({ message: `${uttrKey} ${u} contains connecting words at the begining - ${conWord}`, type: alexaError.ERROR_TYPE.UTTERANCE_CONNECTING_AT_BEGINNING })
+          }
         }
       });
     });
