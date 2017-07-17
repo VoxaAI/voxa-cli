@@ -34,7 +34,7 @@ class alexaError {
     return ERROR_TYPE;
   }
 
-  set add(e) {
+  add(e) {
     this._errors.push(e);
   }
 

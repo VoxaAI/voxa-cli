@@ -98,71 +98,71 @@ class alexaSchema {
     const haveSlotsOnType = !_.isEmpty(slotsBuiltIn);
 
     if (_.isEmpty(uttr)) {
-      aError.add({ message: 'Sample Utterances Present', type: alexaError.ERROR_TYPE.MISSING_SAMPLE_UTTERANCES })
+      aError.add({ message: 'Sample Utterances Present', type: AlexaError.ERROR_TYPE.MISSING_SAMPLE_UTTERANCES })
     }
 
     if (_.isEmpty(intents)) {
-      aError.add({ message: 'Intent Schema Present', type: alexaError.ERROR_TYPE.MISSING_INTENT_SCHEMA })
+      aError.add({ message: 'Intent Schema Present', type: AlexaError.ERROR_TYPE.MISSING_INTENT_SCHEMA })
     }
 
     if (_.isEmpty(intentBuiltInKeys)) {
-      aError.add({ message: 'Built in intents are Present', type: alexaError.ERROR_TYPE.MISSING_BUILTIN_INTENT })
+      aError.add({ message: 'Built in intents are Present', type: AlexaError.ERROR_TYPE.MISSING_BUILTIN_INTENT })
     }
 
     if (!_.includes(intentsKey, 'AMAZON.HelpIntent')) {
-      aError.add({ message: 'Intent schema have HelpIntent', type: alexaError.ERROR_TYPE.REQUIRED_INTENT })
+      aError.add({ message: 'Intent schema have HelpIntent', type: AlexaError.ERROR_TYPE.REQUIRED_INTENT })
     }
 
     if (!_.includes(intentsKey, 'AMAZON.CancelIntent')) {
-      aError.add({ message: 'Intent schema have CancelIntent', type: alexaError.ERROR_TYPE.REQUIRED_INTENT })
+      aError.add({ message: 'Intent schema have CancelIntent', type: AlexaError.ERROR_TYPE.REQUIRED_INTENT })
     }
 
     if (!_.includes(intentsKey, 'AMAZON.StopIntent')) {
-      aError.add({ message: 'Intent schema have StopIntent', type: alexaError.ERROR_TYPE.REQUIRED_INTENT })
+      aError.add({ message: 'Intent schema have StopIntent', type: AlexaError.ERROR_TYPE.REQUIRED_INTENT })
     }
 
     // Make sure we have utterances for builtin intents
     intentBuiltInKeys.map((intentBuiltKey) => {
       assert.isNotEmpty(uttr[intentBuiltKey], `Intent ${intentBuiltKey} have utterances`);
       if ((!_.includes(intentBuiltKey, 'OnlyIntent')) &&  uttr[intentBuiltKey].length >= this.leastUtterances) {
-        aError.add({ message: `Intent ${intentBuiltKey} have at least ${this.leastUtterances}`, type: alexaError.ERROR_TYPE.MINIMUM_UTERANCES_ON_INTENT })
+        aError.add({ message: `Intent ${intentBuiltKey} have at least ${this.leastUtterances}`, type: AlexaError.ERROR_TYPE.MINIMUM_UTERANCES_ON_INTENT })
       }
     })
 
     _.map(uttr, (uttV, uttK) => {
       uttV.map((u) => {
         if (u.match(UTTERANCES_VALID_CHARACTERS)) {
-          aError.add({ message: `Utterance ${uttK} ${u} has invalid valid characters`, type: alexaError.ERROR_TYPE.UTTERANCE_HAS_INVALID_CHARACTERS })
+          aError.add({ message: `Utterance ${uttK} ${u} has invalid characters`, type: AlexaError.ERROR_TYPE.UTTERANCE_HAS_INVALID_CHARACTERS })
         }
-      }
+      })
     });
 
     _.map(slots, (slotV, slotK) => {
       _.map(slotV, (_slot, slot) => {
         if (slot.match(UTTERANCES_VALID_CHARACTERS)) {
-          aError.add({ message: `Slot ${slotK} ${slot} has valid characters`, type: alexaError.ERROR_TYPE.SLOT_HAS_INVALID_CHARACTERS })
+          aError.add({ message: `Slot ${slotK} ${slot} has invalid characters`, type: AlexaError.ERROR_TYPE.SLOT_HAS_INVALID_CHARACTERS })
         }
-      }
+      })
     });
 
     // Make sure there is no difference between utterances and the intents
     if (!_.isEmpty(_.difference(uttrBuiltInKeys, intentBuiltInKeys))) {
-      aError.add({ message: `utterances ${_.difference(uttrBuiltInKeys, intentBuiltInKeys)} not defined in your model`, type: alexaError.ERROR_TYPE.UTTERANCES_NOT_DEFINED_SCHEMA })
+      aError.add({ message: `utterances ${_.difference(uttrBuiltInKeys, intentBuiltInKeys)} not defined in your model`, type: AlexaError.ERROR_TYPE.UTTERANCES_NOT_DEFINED_SCHEMA })
     }
 
     if (!_.isEmpty(_.difference(intentBuiltInKeys, uttrBuiltInKeys))) {
-      aError.add({ message: `intents ${_.difference(intentBuiltInKeys, uttrBuiltInKeys)} utterances`, type: alexaError.ERROR_TYPE.INTENTS_WITHOUT_UTTERANCES })
+      aError.add({ message: `intents ${_.difference(intentBuiltInKeys, uttrBuiltInKeys)} utterances`, type: AlexaError.ERROR_TYPE.INTENTS_WITHOUT_UTTERANCES })
     }
 
 
 
 
     if (!_.isEmpty(_.difference(intentSlotsBuiltInWithoutAmazon, slotsBuiltIn))) {
-      aError.add({ message: `slots defined in you intent schema without a list type ${_.difference(intentBuiltInKeys, uttrBuiltInKeys)}`, type: alexaError.ERROR_TYPE.MISSING_LIST_TYPE })
+      aError.add({ message: `slots defined in you intent schema without a list type ${_.difference(intentBuiltInKeys, uttrBuiltInKeys)}`, type: AlexaError.ERROR_TYPE.MISSING_LIST_TYPE })
     }
 
     if (!_.isEmpty(_.difference(slotsBuiltIn, intentSlotsBuiltInWithoutAmazon))) {
-      aError.add({ message: `extra slots that are not included in your intent schema ${_.difference(slotsBuiltIn, intentSlotsBuiltInWithoutAmazon)}`, type: alexaError.ERROR_TYPE.SLOTS_NOT_DEFINED_SCHEMA })
+      aError.add({ message: `extra slots that are not included in your intent schema ${_.difference(slotsBuiltIn, intentSlotsBuiltInWithoutAmazon)}`, type: AlexaError.ERROR_TYPE.SLOTS_NOT_DEFINED_SCHEMA })
     }
 
     if (haveSlotsOnIntentSchema) {
@@ -189,7 +189,7 @@ class alexaSchema {
           }
           finally {
             if (!didCompile) {
-              aError.add({ message: `${uttrKey} ${u} - have same slots as defined in intent.json`, type: alexaError.ERROR_TYPE.UTTERANCE_USING_SLOT_NOT_SCHEMA })
+              aError.add({ message: `${uttrKey} ${u} - have same slots as defined in intent.json`, type: AlexaError.ERROR_TYPE.UTTERANCE_USING_SLOT_NOT_SCHEMA })
             }
           }
         });
@@ -210,7 +210,7 @@ class alexaSchema {
 
           _.map(slotsCount, (value, key) => {
             if (value >= 2) {
-              aError.add({ message: `Intent ${uttrKey} should not have duplicate slots ${key} in ${u} utterance`, type: alexaError.ERROR_TYPE.UTTERANCE_USING_DUPLICATE_SLOT })
+              aError.add({ message: `Intent ${uttrKey} should not have duplicate slots ${key} in ${u} utterance`, type: AlexaError.ERROR_TYPE.UTTERANCE_USING_DUPLICATE_SLOT })
             }
           });
         });
@@ -225,7 +225,7 @@ class alexaSchema {
         const hasDuplicateUtterances = !_.isEmpty(duplicateUtterances);
 
         if (hasDuplicateUtterances) {
-          aError.add({ message: `Sample Utterance should be unique, ${duplicateUtterances} is duplicate in ${uttrKey} and ${otherKey}`, type: alexaError.ERROR_TYPE.UTTERANCE_SHOULD_UNIQUE })
+          aError.add({ message: `Sample Utterance should be unique, ${duplicateUtterances} is duplicate in ${uttrKey} and ${otherKey}`, type: AlexaError.ERROR_TYPE.UTTERANCE_SHOULD_UNIQUE })
         }
       });
     });
@@ -235,18 +235,18 @@ class alexaSchema {
       utteranceList.map(u => {
         this.constructor.CONNECTING_WORDS.map(conWord => {
           if (u.indexOf(conWord) === 0) {
-            aError.add({ message: `${uttrKey} ${u} contains connecting words at the begining - ${conWord}`, type: alexaError.ERROR_TYPE.UTTERANCE_CONNECTING_AT_BEGINNING })
+            aError.add({ message: `${uttrKey} ${u} contains connecting words at the begining - ${conWord}`, type: AlexaError.ERROR_TYPE.UTTERANCE_CONNECTING_AT_BEGINNING })
           }
-        }
+        })
       });
     });
 
     if (_.flattenDeep(uttrValues).join('\n').length >= 200000) {
-      aError.add({ message: 'Sample utterances doesn\'t exceed limit of 200K characters', type: alexaError.ERROR_TYPE.UTTERANCE_EXCEED_LIMIT })
+      aError.add({ message: 'Sample utterances doesn\'t exceed limit of 200K characters', type: AlexaError.ERROR_TYPE.UTTERANCE_EXCEED_LIMIT })
     }
 
     if (_.flattenDeep(slotsValuesBuiltIn).length >= 50000) {
-      aError.add({ message: 'Custom slot values doesn\'t exceed limit of 50K values', type: alexaError.ERROR_TYPE.SLOT_EXCEED_LIMIT })
+      aError.add({ message: 'Custom slot values doesn\'t exceed limit of 50K values', type: AlexaError.ERROR_TYPE.SLOT_EXCEED_LIMIT })
     }
 
     console.log('Erros found ', aError.errors.length);
