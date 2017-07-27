@@ -253,10 +253,10 @@ class alexaSchema {
     aError.print();
   }
 
-  build(pathSpeech) {
+  build(pathSpeech, unique) {
 
     if (!this.locale) return new Error('Please define a locale. eg. this.locale = \'en-US\'');
-    const customPathLocale = path.join(pathSpeech, this.locale);
+    const customPathLocale = unique ? pathSpeech : path.join(pathSpeech, this.locale);
     const promises = [];
 
     // slotsDraft
@@ -314,8 +314,8 @@ class alexaSchema {
     return Promise.all(promises);
   }
 
-  buildSynonym(pathSynonym) {
-    const customPathSynonym = path.join(pathSynonym, this.locale);
+  buildSynonym(pathSynonym, unique) {
+    const customPathSynonym = unique ? pathSynonym : path.join(pathSynonym, this.locale);
     if (!this.locale) return new Error('Please define a locale. eg. this.locale = \'en-US\'');
     const promises = [];
     // slotsDraft

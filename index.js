@@ -14,6 +14,7 @@ module.exports = function(options) {
 
   const spreadsheetPromises = spreadsheets.map((spreadsheet) => processor(spreadsheet, auth, others));
   let resultAlexa;
+  const unique = spreadsheets.length === 1;
 
   return Promise.all(spreadsheetPromises)
   .then(_resultAlexa => {
@@ -26,13 +27,13 @@ module.exports = function(options) {
       alexa.validate();
       console.timeEnd('validate');
     }
-    return alexa.build(speechPath);
+    return alexa.build(speechPath, unique);
   }))
   .then(() => resultAlexa.map((alexa) => {
     let placeHolderPromise = Promise.resolve();
     if (synonymPath) {
       console.time('synonym');
-      placeHolderPromise = alexa.buildSynonym(synonymPath);
+      placeHolderPromise = alexa.buildSynonym(synonymPath, unique);
       console.timeEnd('synonym');
     }
 
