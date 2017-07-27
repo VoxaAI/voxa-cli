@@ -10,8 +10,9 @@ module.exports = function(options) {
   const synonymPath = _.get(options, 'synonymPath');
   const auth = _.get(options, 'auth');
   const validate = _.get(options, 'validate');
+  const others = _.get(options, 'othersToDownload', []);
 
-  const spreadsheetPromises = spreadsheets.map((spreadsheet) => processor(spreadsheet, auth));
+  const spreadsheetPromises = spreadsheets.map((spreadsheet) => processor(spreadsheet, auth, others));
   let resultAlexa;
 
   return Promise.all(spreadsheetPromises)
@@ -38,5 +39,6 @@ module.exports = function(options) {
     return placeHolderPromise;
   }))
   .then(() => console.log('script finished'))
+  .then(() => resultAlexa);
   ;
 };

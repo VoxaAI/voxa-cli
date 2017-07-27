@@ -113,6 +113,20 @@ const processors = {
 
     return { utterances };
   }),
+  other: worksheet => getRows(worksheet).then((rows) => {
+    const otherName = worksheet.title;
+    const last = _.last(rows);
+    let justStringAttr = _.map(last, (value, key) => _.isString(value) ? key : false).filter(_.isString);
+
+    const customRows = rows
+    .map(row => _.omit(row, ['_xml', 'id', 'app:edited', '_links']))
+    .map(row => _.pick(row, justStringAttr))
+    ;
+
+    const others = {};
+    others[otherName] = customRows;
+    return { others };
+  }),
 };
 
 function getWorksheets(spreadsheetId, creds) {
@@ -137,8 +151,9 @@ function getRows(worksheet, offset) {
   }));
 }
 
-module.exports = (spreadsheetId, creds) => {
+module.exports = (spreadsheetId, creds, othersToDownload) => {
   let locale;
+  let otherCSV = {};
   console.time('worksheetDownload');
   return getWorksheets(spreadsheetId, creds)
   .then((info) => {
@@ -150,10 +165,12 @@ module.exports = (spreadsheetId, creds) => {
   .then((worksheets) => {
     worksheets = worksheets
     .map((worksheet) => {
-      const type = _.map(placeholders, (value, key) => {
+      let type = _.map(placeholders, (value, key) => {
         const result = worksheet.title.indexOf(value) >= 0 ? key : null;
         return result;
       }).find(result => !_.isEmpty(result));
+
+      type = !type &&  _.includes(othersToDownload, worksheet.title) ? 'other' : type;
       return { type, worksheet };
     })
     .filter(worksheet => worksheet.type);
