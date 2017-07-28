@@ -9,7 +9,8 @@ module.exports = function(options) {
   const speechPath = _.get(options, 'speechPath');
   const synonymPath = _.get(options, 'synonymPath');
   const auth = _.get(options, 'auth');
-  const validate = _.get(options, 'validate');
+  const validate = _.get(options, 'validate', true);
+  const build = _.get(options, 'build', true);
   const others = _.get(options, 'othersToDownload', []);
 
   const spreadsheetPromises = spreadsheets.map((spreadsheet) => processor(spreadsheet, auth, others));
@@ -22,12 +23,19 @@ module.exports = function(options) {
     return resultAlexa;
   })
   .then(() => resultAlexa.map((alexa) => {
+    let placeHolderPromise = Promise.resolve();
+
     if (validate) {
       console.time('validate');
       alexa.validate();
       console.timeEnd('validate');
     }
-    return alexa.build(speechPath, unique);
+
+    if (build) {
+      placeHolderPromise = alexa.build(speechPath, unique);
+    }
+
+    return placeHolderPromise;
   }))
   .then(() => resultAlexa.map((alexa) => {
     let placeHolderPromise = Promise.resolve();
