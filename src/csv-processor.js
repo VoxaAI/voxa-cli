@@ -114,17 +114,35 @@ const processors = {
     return { utterances };
   }),
   other: worksheet => getRows(worksheet).then((rows) => {
-    const otherName = worksheet.title;
+    const firstRow = _.head(rows);
+    const headers = _.chain(firstRow).omit(['_xml', 'id', 'app:edited', '_links']).filter(_.isString).values().value();
+
+    console.log('headers', headers);
+
+    rows = _(rows)
+    .drop()
+    .map((row) => {
+      const newRow = {};
+
+      _.each(headers, (headValue) => {
+        const headerToSearch = _.lowerCase(headValue).replace(/ /g, '');
+        newRow[_.camelCase(headValue)] = row[headerToSearch];
+      });
+      return newRow;
+    })
+    .value();
+
     const last = _.last(rows);
     let justStringAttr = _.map(last, (value, key) => _.isString(value) ? key : false).filter(_.isString);
 
-    const customRows = rows
-    .map(row => _.omit(row, ['_xml', 'id', 'app:edited', '_links']))
-    .map(row => _.pick(row, justStringAttr))
+    const otherName = worksheet.title;
+    //const customRows = rows
+    //.map(row => _.omit(row, ['_xml', 'id', 'app:edited', '_links']))
+    //.map(row => _.pick(row, justStringAttr))
     ;
 
     const others = {};
-    others[otherName] = customRows;
+    others[otherName] = rows;
     return { others };
   }),
 };
