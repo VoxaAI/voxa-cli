@@ -13,8 +13,8 @@ const pe = new PrettyError();
 
 const expect = chai.expect;
 const assert = chai.assert;
-const DEFAULT_LEAST_UTTERANCES = 3;
-const UTTERANCES_VALID_CHARACTERS = /^[a-zA-Z0-9.üß€äö€ {}'_-]*$/;
+const DEFAULT_LEAST_UTTERANCES = 5;
+const UTTERANCES_VALID_CHARACTERS = /^[a-zA-Z0-9.üß€äö€ {}'_-]+$/;
 class alexaSchema {
   constructor(options) {
   _.assign(this, options);
@@ -124,14 +124,14 @@ class alexaSchema {
     // Make sure we have utterances for builtin intents
     intentBuiltInKeys.map((intentBuiltKey) => {
       assert.isNotEmpty(uttr[intentBuiltKey], `Intent ${intentBuiltKey} have utterances`);
-      if ((!_.includes(intentBuiltKey, 'OnlyIntent')) &&  uttr[intentBuiltKey].length >= this.leastUtterances) {
-        aError.add({ message: `Intent ${intentBuiltKey} have at least ${this.leastUtterances}`, type: AlexaError.ERROR_TYPE.MINIMUM_UTERANCES_ON_INTENT })
+      if ((!_.includes(intentBuiltKey, 'OnlyIntent')) &&  uttr[intentBuiltKey].length <= this.leastUtterances) {
+        aError.add({ message: `Intent ${intentBuiltKey} have only ${uttr[intentBuiltKey].length} intents, it should have at least ${this.leastUtterances}`, type: AlexaError.ERROR_TYPE.MINIMUM_UTERANCES_ON_INTENT })
       }
     })
 
     _.map(uttr, (uttV, uttK) => {
       uttV.map((u) => {
-        if (u.match(UTTERANCES_VALID_CHARACTERS)) {
+        if (!UTTERANCES_VALID_CHARACTERS.test(u)) {
           aError.add({ message: `Utterance ${uttK} ${u} has invalid characters`, type: AlexaError.ERROR_TYPE.UTTERANCE_HAS_INVALID_CHARACTERS })
         }
       })
@@ -139,7 +139,7 @@ class alexaSchema {
 
     _.map(slots, (slotV, slotK) => {
       _.map(slotV, (_slot, slot) => {
-        if (slot.match(UTTERANCES_VALID_CHARACTERS)) {
+        if (!UTTERANCES_VALID_CHARACTERS.test(slot)) {
           aError.add({ message: `Slot ${slotK} ${slot} has invalid characters`, type: AlexaError.ERROR_TYPE.SLOT_HAS_INVALID_CHARACTERS })
         }
       })
@@ -249,7 +249,7 @@ class alexaSchema {
       aError.add({ message: 'Custom slot values doesn\'t exceed limit of 50K values', type: AlexaError.ERROR_TYPE.SLOT_EXCEED_LIMIT })
     }
 
-    console.log('Erros found ', aError.errors.length);
+    console.log('Errors found ', aError.errors.length);
     aError.print();
   }
 
