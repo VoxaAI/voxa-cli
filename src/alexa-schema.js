@@ -98,27 +98,27 @@ class alexaSchema {
     const haveSlotsOnType = !_.isEmpty(slotsBuiltIn);
 
     if (_.isEmpty(uttr)) {
-      aError.add({ message: 'Sample Utterances Present', type: AlexaError.ERROR_TYPE.MISSING_SAMPLE_UTTERANCES })
+      aError.add({ message: 'Sample Utterances are missing', type: AlexaError.ERROR_TYPE.MISSING_SAMPLE_UTTERANCES })
     }
 
     if (_.isEmpty(intents)) {
-      aError.add({ message: 'Intent Schema Present', type: AlexaError.ERROR_TYPE.MISSING_INTENT_SCHEMA })
+      aError.add({ message: 'Intent Schema is missing', type: AlexaError.ERROR_TYPE.MISSING_INTENT_SCHEMA })
     }
 
     if (_.isEmpty(intentBuiltInKeys)) {
-      aError.add({ message: 'Built in intents are Present', type: AlexaError.ERROR_TYPE.MISSING_BUILTIN_INTENT })
+      aError.add({ message: 'Built in intents are not present', type: AlexaError.ERROR_TYPE.MISSING_BUILTIN_INTENT })
     }
 
     if (!_.includes(intentsKey, 'AMAZON.HelpIntent')) {
-      aError.add({ message: 'Intent schema have HelpIntent', type: AlexaError.ERROR_TYPE.REQUIRED_INTENT })
+      aError.add({ message: 'Intent schema should have HelpIntent', type: AlexaError.ERROR_TYPE.REQUIRED_INTENT })
     }
 
     if (!_.includes(intentsKey, 'AMAZON.CancelIntent')) {
-      aError.add({ message: 'Intent schema have CancelIntent', type: AlexaError.ERROR_TYPE.REQUIRED_INTENT })
+      aError.add({ message: 'Intent schema should have CancelIntent', type: AlexaError.ERROR_TYPE.REQUIRED_INTENT })
     }
 
     if (!_.includes(intentsKey, 'AMAZON.StopIntent')) {
-      aError.add({ message: 'Intent schema have StopIntent', type: AlexaError.ERROR_TYPE.REQUIRED_INTENT })
+      aError.add({ message: 'Intent schema should have StopIntent', type: AlexaError.ERROR_TYPE.REQUIRED_INTENT })
     }
 
     // Make sure we have utterances for builtin intents
@@ -147,22 +147,22 @@ class alexaSchema {
 
     // Make sure there is no difference between utterances and the intents
     if (!_.isEmpty(_.difference(uttrBuiltInKeys, intentBuiltInKeys))) {
-      aError.add({ message: `utterances ${_.difference(uttrBuiltInKeys, intentBuiltInKeys)} not defined in your model`, type: AlexaError.ERROR_TYPE.UTTERANCES_NOT_DEFINED_SCHEMA })
+      aError.add({ message: `utterances ${_.difference(uttrBuiltInKeys, intentBuiltInKeys)} is not defined in your model`, type: AlexaError.ERROR_TYPE.UTTERANCES_NOT_DEFINED_SCHEMA })
     }
 
     if (!_.isEmpty(_.difference(intentBuiltInKeys, uttrBuiltInKeys))) {
-      aError.add({ message: `intents ${_.difference(intentBuiltInKeys, uttrBuiltInKeys)} utterances`, type: AlexaError.ERROR_TYPE.INTENTS_WITHOUT_UTTERANCES })
+      aError.add({ message: `intents ${_.difference(intentBuiltInKeys, uttrBuiltInKeys)} doesn't have any utterances`, type: AlexaError.ERROR_TYPE.INTENTS_WITHOUT_UTTERANCES })
     }
 
 
 
 
     if (!_.isEmpty(_.difference(intentSlotsBuiltInWithoutAmazon, slotsBuiltIn))) {
-      aError.add({ message: `slots defined in you intent schema without a list type ${_.difference(intentBuiltInKeys, uttrBuiltInKeys)}`, type: AlexaError.ERROR_TYPE.MISSING_LIST_TYPE })
+      aError.add({ message: `slots defined in your intent schema without a list type ${_.difference(intentBuiltInKeys, uttrBuiltInKeys)}`, type: AlexaError.ERROR_TYPE.MISSING_LIST_TYPE })
     }
 
     if (!_.isEmpty(_.difference(slotsBuiltIn, intentSlotsBuiltInWithoutAmazon))) {
-      aError.add({ message: `extra slots that are not included in your intent schema ${_.difference(slotsBuiltIn, intentSlotsBuiltInWithoutAmazon)}`, type: AlexaError.ERROR_TYPE.SLOTS_NOT_DEFINED_SCHEMA })
+      aError.add({ message: `slots that are not included in your intent schema  ${_.difference(slotsBuiltIn, intentSlotsBuiltInWithoutAmazon)}. Make sure to use this slots in your intent if not remove it!`, type: AlexaError.ERROR_TYPE.SLOTS_NOT_DEFINED_SCHEMA })
     }
 
     if (haveSlotsOnIntentSchema) {
@@ -189,7 +189,7 @@ class alexaSchema {
           }
           finally {
             if (!didCompile) {
-              aError.add({ message: `${uttrKey} ${u} - have same slots as defined in intent.json`, type: AlexaError.ERROR_TYPE.UTTERANCE_USING_SLOT_NOT_SCHEMA })
+              aError.add({ message: `${uttrKey} ${u} - is including slots that are not defined in intent.json`, type: AlexaError.ERROR_TYPE.UTTERANCE_USING_SLOT_NOT_SCHEMA })
             }
           }
         });
@@ -235,7 +235,7 @@ class alexaSchema {
       utteranceList.map(u => {
         this.constructor.CONNECTING_WORDS.map(conWord => {
           if (u.indexOf(conWord) === 0) {
-            aError.add({ message: `${uttrKey} ${u} contains connecting words at the begining - ${conWord}`, type: AlexaError.ERROR_TYPE.UTTERANCE_CONNECTING_AT_BEGINNING })
+            aError.add({ message: `'${uttrKey}' '${u}' - contains connecting words at the begining - ${conWord}`, type: AlexaError.ERROR_TYPE.UTTERANCE_CONNECTING_AT_BEGINNING })
           }
         })
       });
