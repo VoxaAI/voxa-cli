@@ -26,8 +26,10 @@ const processors = {
       previousSynonym = _.isEmpty(info.synonym) ? previousSynonym : info.synonym;
       info.synonym = _.trim(previousSynonym);
       info.value = _.trim(info[slotNameSanitize]);
+      if (_.isEmpty(info.value)) return null;
       return info;
     })
+    .compact()
     .uniq()
     .value();
 

@@ -294,6 +294,11 @@ class alexaSchema {
       const intents = this.intents.map(intent => {
         intent.name = intent.intent;
         intent.samples = this.utterances[intent.name];
+        intent.slots = intent.slots || [];
+        intent.slots = intent.slots.map(slot => {
+          slot.samples = [];
+          return slot;
+        });
         return _.pick(intent, ['name', 'samples', 'slots']);
       });
 
