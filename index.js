@@ -11,9 +11,10 @@ module.exports = function(options) {
   const auth = _.get(options, 'auth');
   const validate = _.get(options, 'validate', true);
   const build = _.get(options, 'build', true);
+  const type = _.get(options, 'type', 'dialogFlow');
   const others = _.get(options, 'othersToDownload', []);
 
-  const spreadsheetPromises = spreadsheets.map((spreadsheet) => processor(spreadsheet, auth, others));
+  const spreadsheetPromises = spreadsheets.map((spreadsheet) => processor(spreadsheet, auth, others, type));
   let resultAlexa;
   const unique = spreadsheets.length === 1;
 
@@ -22,26 +23,25 @@ module.exports = function(options) {
     resultAlexa = _resultAlexa;
     return resultAlexa;
   })
-  .then(() => resultAlexa.map((alexa) => {
+  .then(() => resultAlexa.map((schema) => {
     let placeHolderPromise = Promise.resolve();
 
     if (validate) {
       console.time('validate');
-      alexa.validate();
+      schema.validate();
       console.timeEnd('validate');
     }
-
     if (build) {
-      placeHolderPromise = alexa.build(speechPath, unique);
+      placeHolderPromise = schema.build(speechPath, unique);
     }
 
     return placeHolderPromise;
   }))
-  .then(() => resultAlexa.map((alexa) => {
+  .then(() => resultAlexa.map((schema) => {
     let placeHolderPromise = Promise.resolve();
     if (synonymPath) {
       console.time('synonym');
-      placeHolderPromise = alexa.buildSynonym(synonymPath, unique);
+      placeHolderPromise = schema.buildSynonym(synonymPath, unique);
       console.timeEnd('synonym');
     }
 

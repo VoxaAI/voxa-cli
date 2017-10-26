@@ -5,6 +5,7 @@ const GoogleSpreadsheet = require('google-spreadsheet');
 //const creds = require('./client_secret.json');
 const Promise = require('bluebird');
 const AlexaSchema = require('./alexa-schema');
+const DialogFlowSchema = require('./dialog-flow-schema');
 
 // Create a document object using the ID of the spreadsheet - obtained from its URL.
 
@@ -171,7 +172,7 @@ function getRows(worksheet, offset) {
   }));
 }
 
-module.exports = (spreadsheetId, creds, othersToDownload) => {
+module.exports = (spreadsheetId, creds, othersToDownload, type) => {
   let locale;
   let otherCSV = {};
   console.time('worksheetDownload');
@@ -207,8 +208,8 @@ module.exports = (spreadsheetId, creds, othersToDownload) => {
       _.merge(result, value);
     });
     console.timeEnd('worksheetProcess');
-    const alexa = new AlexaSchema(result);
-    alexa.locale = locale;
-    return alexa;
+    const schema = type === 'dialogFlow' ? new DialogFlowSchema(result): new AlexaSchema(result);
+    schema.locale = locale;
+    return schema;
   });
 }

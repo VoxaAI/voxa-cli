@@ -154,9 +154,6 @@ class alexaSchema {
       aError.add({ message: `intents ${_.difference(intentBuiltInKeys, uttrBuiltInKeys)} doesn't have any utterances`, type: AlexaError.ERROR_TYPE.INTENTS_WITHOUT_UTTERANCES })
     }
 
-
-
-
     if (!_.isEmpty(_.difference(intentSlotsBuiltInWithoutAmazon, slotsBuiltIn))) {
       aError.add({ message: `slots defined in your intent schema without a list type ${_.difference(intentBuiltInKeys, uttrBuiltInKeys)}`, type: AlexaError.ERROR_TYPE.MISSING_LIST_TYPE })
     }
