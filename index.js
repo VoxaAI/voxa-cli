@@ -5,13 +5,18 @@ const Promise = require('bluebird');
 const processor = require('./src/csv-processor');
 
 module.exports = function(options) {
+  let invocationName = _.get(options, 'invocationName', []);
+  if (_.isString(invocationName)) {
+    invocationName = [ invocationName ];
+  }
+
   const spreadsheets = _.get(options, 'spreadsheets');
   const speechPath = _.get(options, 'speechPath');
   const synonymPath = _.get(options, 'synonymPath');
   const auth = _.get(options, 'auth');
   const validate = _.get(options, 'validate', true);
   const build = _.get(options, 'build', true);
-  const type = _.get(options, 'type', 'dialogFlow');
+  const type = _.get(options, 'type', 'alexa');
   const others = _.get(options, 'othersToDownload', []);
 
   const spreadsheetPromises = spreadsheets.map((spreadsheet) => processor(spreadsheet, auth, others, type));
@@ -32,7 +37,7 @@ module.exports = function(options) {
       console.timeEnd('validate');
     }
     if (build) {
-      placeHolderPromise = schema.build(speechPath, unique);
+      placeHolderPromise = schema.build(speechPath, unique, invocationName);
     }
 
     return placeHolderPromise;

@@ -250,7 +250,7 @@ class alexaSchema {
     aError.print();
   }
 
-  build(pathSpeech, unique) {
+  build(pathSpeech, unique, invocationName) {
 
     if (!this.locale) return new Error('Please define a locale. eg. this.locale = \'en-US\'');
     const customPathLocale = unique ? pathSpeech : path.join(pathSpeech, this.locale);
@@ -305,11 +305,16 @@ class alexaSchema {
         return ({ values, name });
       });
 
-      const modelDefinition = { intents, types };
+      invocationName.map((name) => {
+        const interactionModel = { languageModel: { invocationName: name, intents, types }};
 
-      const promise = fs.outputFile(path.join(customPathLocale, 'model.json'),  JSON.stringify({ modelDefinition }, null, 2), { flag: 'w' });
-      const promiseSkillBuilder = fs.outputFile(path.join(customPathLocale, 'skillBuilder.json'),  JSON.stringify(modelDefinition, null, 2), { flag: 'w' });
-      promises.push(promise);
+        const promise = fs.outputFile(path.join(customPathLocale, `${_.kebabCase(name)}-model.json`),  JSON.stringify({ interactionModel }, null, 2), { flag: 'w' });
+        promises.push(promise);
+
+      })
+
+
+      const promiseSkillBuilder = fs.outputFile(path.join(customPathLocale, 'skillBuilder.json'),  JSON.stringify({ intents, types }, null, 2), { flag: 'w' });
       promises.push(promiseSkillBuilder);
     }
 
