@@ -182,16 +182,24 @@ function cartesianProductOf(utterance, intent, slots) {
       const slotEntity = _.chain(slotCartesianProduct).find({ name: variable }).get('type').value();
       const slotValue = _.chain(slotCartesianProduct).find({ name: variable }).get('value').value();
       console.log('slotValue', slotValue);
-      const startPos = acc.text.length;
-      const endPos = startPos + slotValue.length;
 
-      const entity = {
-        startPos,
-        endPos,
-        entity: slotEntity
-      };
-      acc.text += (slotValue);
-      acc.entities.push(entity);
+
+      if (slotEntity === 'AMAZON.Number') {
+        acc.text += ('4');
+      } else {
+        const startPos = acc.text.length;
+        const endPos = startPos + slotValue.length;
+
+        const entity = {
+          startPos,
+          endPos,
+          entity: slotEntity
+        };
+        acc.text += (slotValue);
+        acc.entities.push(entity);
+      }
+
+
       return acc;
     }, {
       text: '',
