@@ -184,7 +184,7 @@ function cartesianProductOf(utterance, intent, slots) {
       console.log('slotValue', slotValue);
 
 
-      if (slotEntity === 'AMAZON.Number') {
+      if (slotEntity === 'AMAZON.NUMBER') {
         acc.text += ('4');
       } else {
         const startPos = acc.text.length;
