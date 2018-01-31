@@ -251,7 +251,7 @@ class alexaSchema {
   }
 
   build(pathSpeech, unique, invocationName) {
-
+    invocationName = invocationName || [];
     if (!this.locale) return new Error('Please define a locale. eg. this.locale = \'en-US\'');
     const customPathLocale = unique ? pathSpeech : path.join(pathSpeech, this.locale);
     const promises = [];

@@ -6,6 +6,8 @@ const GoogleSpreadsheet = require('google-spreadsheet');
 const Promise = require('bluebird');
 const AlexaSchema = require('./alexa-schema');
 const DialogFlowSchema = require('./dialog-flow-schema');
+const CortanaSchema = require('./cortana-schema');
+
 
 // Create a document object using the ID of the spreadsheet - obtained from its URL.
 
@@ -208,7 +210,10 @@ module.exports = (spreadsheetId, creds, othersToDownload, type) => {
       _.merge(result, value);
     });
     console.timeEnd('worksheetProcess');
-    const schema = type === 'dialogFlow' ? new DialogFlowSchema(result): new AlexaSchema(result);
+    let schema = new AlexaSchema(result);
+    if (type === 'dialogFlow') schema = new DialogFlowSchema(result);
+    if (type === 'cortana') schema = new CortanaSchema(result);
+
     schema.locale = locale;
     return schema;
   });
