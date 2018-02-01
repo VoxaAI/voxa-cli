@@ -72,7 +72,7 @@ class cortana {
   }
 
   build(pathSpeech, unique) {
-    //console.log('this', this);
+    // console.log('this', JSON.stringify(this, null, 2));
 
     if (!this.locale) return new Error('Please define a locale. eg. this.locale = \'en-US\'');
     const customPathLocale = unique ? pathSpeech : path.join(pathSpeech, this.locale);
@@ -80,14 +80,52 @@ class cortana {
     var tokenRegx = /{([^}]+)}/g;
     let utterances = [];
 
-    _.each(this.utterances, (utterancesPerIntent, intent) => {
-      console.log('sd', intent);
-      utterances =_.concat(utterances, _.chain(utterancesPerIntent).map((utter) => cartesianProductOf(utter, _.find(this.intents, { intent }), this.slots)).flattenDeep().compact().value());
+    _.each(this.utterances, (value, key) => {
+      const intentUttr = _.find(this.intents, { intent: key });
+      const str = _.chain(value).map(text => {
+        const data = _.chain(text)
+        .replace(tokenRegx, function (match, inner) {
+          return `|{${inner}}|`;
+        })
+        .split('|')
+        .map(text => {
+          const isATemplate = (_.includes(text, '{') && _.includes(text, '}'));
+
+          const variable = text
+          .replace('{', '')
+          .replace('}', '');
+
+          const slot = _.chain(intentUttr.slots).find({ name: variable }).get('type').value()
+
+          if (isATemplate && slot) {
+
+            //console.log('s', variable, slot, intentUttr);
+            if (slot === 'NUMBER') {
+              text = '4'
+            } else {
+              text = _.chain(this.slots).get(slot).keys().sample().value();
+            }
+
+          }
+
+          return text;
+        })
+        .join('')
+        .value();
+
+        return ({ intent: intentUttr.intent, text: data, entities: [] });
+      })
+      .flatten()
+      .value();
+      utterances = _.concat(utterances, str);
     });
 
-    const intents = _.chain(this.intents).map((intent, key) => ({ name: intent.intent }));
-    const entities = _.chain(this.slots).map((value, slotName) => ({ name: slotName }));
-
+    const intents = _.chain(this.intents).map((intent, key) => ({ name: intent.intent })).value();
+    // const entities = _.chain(this.slots).map((value, slotName) => ({ name: slotName })).value();
+    const entities = [];
+    const closedLists = _.chain(this.slots).map((slotValue, name) => {
+      return ({ name, subLists: _.keys(slotValue).map(canonicalForm => ({ canonicalForm,  list: []})) })
+    }).value();
     if (this.intents) {
       const agent = {
         "luis_schema_version": "2.1.0",
@@ -95,10 +133,18 @@ class cortana {
         "name": "starbucks",
         "desc": "culture",
         "culture": "en-us",
+        composites: [],
+        model_features: [],
+        regex_features: [],
         intents,
         entities,
-        utterances
+        utterances,
+        closedLists
       };
+
+      if (_.find(this.intents, intent => _.find(intent.slots, { type: 'NUMBER' }))) {
+        agent.bing_entities = [ "number" ];
+      }
 
       const str = JSON.stringify(agent, null, 2);
 
@@ -141,19 +187,29 @@ function cartesianProductOf(utterance, intent, slots) {
       .compact()
       .value();
 
-  const slotsToPick = _.map(intent.slots, 'type');
+  const slotsToPick = _.map(intent.slots, 'name');
   const mapSlotName = _(intent.slots)
-  .map(slot => [slot.type, slot.name])
+  .map(slot => [slot.name, slot.type,])
   .fromPairs()
   .value();
 
-  const slotsToMix = _(slots).pick(slotsToPick).toPairs().map((item) => {
-    const type = item[0];
-    return _.keys(item[1]).map(key => ({ name: mapSlotName[type], type, value: key }));
+  // const slotsToMix = _(slots).pick(slotsToPick).toPairs().map((item) => {
+  //   const type = item[0];
+  //   return _.keys(item[1]).map(key => ({ name: mapSlotName[type], type, value: key }));
+  // })
+  // .value();
+  //
+
+
+  const slotsToMix = _(slotsToPick).map(slotToPick => {
+    const name = slotToPick;
+    const type = mapSlotName[name];
+    return _.keys(slots[type]).map(key => ({ name, type, value: key }));
   })
   .value();
 
-  console.log('slotsToMix', slotsToMix);
+  // console.log('slotToPick', slotsToMix);
+  // console.log('slotsToMix', slotsToMix);
   // const utterances = _.head(arguments);
   // const slots = _.tail(arguments);
 
@@ -169,7 +225,7 @@ function cartesianProductOf(utterance, intent, slots) {
   .map((slotCartesianProduct) => {
     const utteranceText = utterance.reduce((acc, text) => {
       const isATemplate = (_.includes(text, '{') && _.includes(text, '}'));
-      console.log('acc', acc, 'next', text);
+      // console.log('acc', acc, 'next', text);
 
       if (!isATemplate) {
         // console.log('text', text, 'isAtemp')
@@ -180,8 +236,9 @@ function cartesianProductOf(utterance, intent, slots) {
 
       const variable = text.replace('{', '').replace('}', '');
       const slotEntity = _.chain(slotCartesianProduct).find({ name: variable }).get('type').value();
-      const slotValue = _.chain(slotCartesianProduct).find({ name: variable }).get('value').value();
-      console.log('slotValue', slotValue);
+      // const slotValue = _.chain(slotCartesianProduct).find({ name: variable }).get('value').value();
+      //console.log(acc, 'slotValue', slotValue, variable, slotEntity);
+      console.log(JSON.stringify(slotCartesianProduct, null, 2), 'slotCartesianProduct');
 
 
       if (slotEntity === 'AMAZON.NUMBER') {
@@ -205,7 +262,7 @@ function cartesianProductOf(utterance, intent, slots) {
       text: '',
       entities: [],
     });
-    console.log('utterance', utteranceText);
+    // console.log('utterance', utteranceText);
 
 
     return (utteranceText);
