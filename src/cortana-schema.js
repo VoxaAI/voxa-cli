@@ -71,7 +71,8 @@ class cortana {
 
   }
 
-  build(pathSpeech, unique) {
+  build(pathSpeech, unique, modelName) {
+    modelName = modelName || 'cortana';
     // console.log('this', JSON.stringify(this, null, 2));
 
     if (!this.locale) return new Error('Please define a locale. eg. this.locale = \'en-US\'');
@@ -148,7 +149,7 @@ class cortana {
       const agent = {
         "luis_schema_version": "2.1.0",
         "versionId": "0.1",
-        "name": "starbucks",
+        "name": modelName,
         "desc": "culture",
         "culture": "en-us",
         bing_entities: [],
