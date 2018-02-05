@@ -80,6 +80,11 @@ class cortana {
     var tokenRegx = /{([^}]+)}/g;
     let utterances = [];
 
+    const cortanaUtilities = require('./cortana-utilities');
+    const intentsName = _.map(this.intents, 'intent');
+    const utilitiesEntitiestoAdd = _.intersection(intentsName, _.keys(cortanaUtilities))
+    _.assign(this.utterances, _.pick(cortanaUtilities, utilitiesEntitiestoAdd));
+
     _.each(this.utterances, (value, key) => {
       const intentUttr = _.find(this.intents, { intent: key });
       const str = _.chain(value).map(text => {
@@ -120,7 +125,20 @@ class cortana {
       utterances = _.concat(utterances, str);
     });
 
-    const intents = _.chain(this.intents).map((intent, key) => ({ name: intent.intent })).value();
+
+    const intents = _.chain(this.intents).map((intent, key) => {
+      const name = intent.intent;
+      const intentOuput = ({ name });
+
+      if (_.includes(name, 'Utilities.' ))  {
+        const domain_name = name.split('.')[0];
+        const model_name = name.split('.')[1];
+
+        _.set(intentOuput, 'inherits', { domain_name, model_name });
+      }
+
+      return intentOuput;
+    }).value();
     // const entities = _.chain(this.slots).map((value, slotName) => ({ name: slotName })).value();
     const entities = [];
     const closedLists = _.chain(this.slots).map((slotValue, name) => {
@@ -133,6 +151,7 @@ class cortana {
         "name": "starbucks",
         "desc": "culture",
         "culture": "en-us",
+        bing_entities: [],
         composites: [],
         model_features: [],
         regex_features: [],

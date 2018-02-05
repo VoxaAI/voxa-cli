@@ -1,0 +1,121 @@
+{
+  "Utilities.Confirm": [
+    "okay",
+    "ok thanks",
+    "okay for now",
+    "yep agreed",
+    "yes i saw",
+    "alright i am confirming",
+    "a yes from me",
+    "sure i confirm",
+    "yeah ohh i confirm",
+    "good i am confirming"
+  ],
+  "Utilities.Cancel": [
+    "cancel",
+    "cancel it",
+    "no thank you",
+    "cancel navigation",
+    "i want to cancel",
+    "not tomorrow please",
+    "cancel expanse",
+    "wait never mind i just told you never mind",
+    "cancel silent hours",
+    "cancel brawl"
+  ],
+  "Utilities.FinishTask": [
+    "i ' m done",
+    "we finished our last task",
+    "ohh finished",
+    "yeah l just finished this one",
+    "finished please",
+    "let it finished please",
+    "i think i ' m done",
+    "i ' m done with that",
+    "i ' m done y ' all",
+    "i am done ."
+  ],
+  "Utilities.GoBack": [
+    "go back",
+    "go back .",
+    "go back to the beginning",
+    "go back on music player",
+    "go back to my contacts",
+    "go back to amazon",
+    "i need to go back",
+    "go back to google please",
+    "never mind go back",
+    "\" go back , swhy are you here ? \""
+  ],
+  "Utilities.Help": [
+    "please help me",
+    "help me please",
+    "help me with this",
+    "can you help me ?",
+    "i need your help",
+    "can you help me here",
+    "help me to start",
+    "help me to understand more please",
+    "help with my device please",
+    "please help me i want to finish"
+  ],
+  "Utilities.Repeat": [
+    "repeat that please",
+    "repeat again",
+    "repeat my name three times",
+    "repeat start time",
+    "repeat last question please",
+    "repeat selection please",
+    "repeat it again",
+    "repeat again please",
+    "repeat that last joke",
+    "repeat 10 times ."
+  ],
+  "Utilities.ShowNext": [
+    "next please",
+    "show me the next",
+    "go next",
+    "show me the next please",
+    "can you click next",
+    "second one please",
+    "the next please",
+    "let me go next please",
+    "please go next",
+    "show the next please"
+  ],
+  "Utilities.ShowPrevious": [
+    "previous one please",
+    "show the previous please",
+    "i want to display the previous message",
+    "click on previous for me",
+    "let me check the previous item please",
+    "show me the previous",
+    "if you would please turn to previous",
+    "display the previous for me",
+    "please show previous .",
+    "can you show me the previous please ?"
+  ],
+  "Utilities.StartOver": [
+    "restart please",
+    "please restart the search",
+    "let me start it again from scratch",
+    "i want to do restart",
+    "delete that and start again",
+    "please do restarting",
+    "i need to begin over and restart",
+    "can you restart for me ?",
+    "let ' s restart"
+  ],
+  "Utilities.Stop": [
+    "shut up",
+    "stop listening",
+    "stop please",
+    "stop it you are really annoying",
+    "quit help",
+    "stop saying that please",
+    "can just be quiet you ' re giving me a headache",
+    "i don ' t want that . go back home",
+    "phone be quiet for 5 minutes .",
+    "shut up ."
+  ]
+}
