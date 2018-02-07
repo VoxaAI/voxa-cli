@@ -58,7 +58,7 @@ Finally execute it and voilà :flushed:
 * **validate**: Default false, if true it will run your some test around your interaction model.
 
 ### Spreadsheet structure
-
+You can take a look at `example-spreadsheet.xlsx` in the root of the repository 
 * Spreadsheet must contain a valid local on it's name eg. `MySkill - Intents & Utterances-en-US`. Valid Locales are (['en-US','en-GB', 'de-DE'])
 * Tab for intent should be named `INTENT`
 * Tab for utterances should be named `UTTERANCES` eg. `UTTERANCES_MAIN`, `UTTERANCES_HELP`
