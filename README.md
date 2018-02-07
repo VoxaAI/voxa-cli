@@ -45,7 +45,8 @@ voxaCli({
 ```
 
 
-Finally execute it and voilà :flushed: `$ node skill-directory/scripts/interaction.js`
+Finally execute it and voilà :flushed: 
+`$ node skill-directory/scripts/interaction.js`
 
 ### Options
 
