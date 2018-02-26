@@ -27,6 +27,9 @@ Find the client_email inside client_secret.json. Back in your spreadsheet, click
 ![alt text](https://www.twilio.com/blog/wp-content/uploads/2017/03/2pzVvPzuNHokBSR2KXoPB9XC15xBF-qBCRJJq0Ut987IkqDVeL3sNdqY2oQj-1V1-2X-SdU33jAuwQ88_XxH703HFpoe7slpVUIniinIqbpz2zD6U2pd77C1iXT0Kzd4qFWb9pI0.png)
 
 ### Code
+
+Create a new file on your skill project `skill-directory/scripts/interaction.js` and paste the following snippets.
+
 ```
 'use strict';
 
@@ -34,13 +37,17 @@ const voxaCli = require('voxa-cli');
 
 voxaCli({
   spreadsheets: ['A SPREADSHEET ID', 'ANOTHER SPREADSHEET ID'],
-  speechPath: '/Users/rainadmin/Documents/rain_agency/speech-assets',
-  synonymPath: '/Users/rainadmin/Documents/rain_agency/synonyms',
+  speechPath: 'skill-directory/speech-assets',
+  synonymPath: 'skill-directory/synonyms',
   auth: require('./client_secret'),
   validate: true })
 .then(() => console.log('voxa cli - finish successfully!'));
 ```
 
+
+Finally execute it and voilà :flushed: 
+
+`$ node skill-directory/scripts/interaction.js`
 
 ### Options
 
@@ -51,7 +58,7 @@ voxaCli({
 * **validate**: Default false, if true it will run your some test around your interaction model.
 
 ### Spreadsheet structure
-
+You can take a look at `example-spreadsheet.xlsx` in the root of the repository 
 * Spreadsheet must contain a valid local on it's name eg. `MySkill - Intents & Utterances-en-US`. Valid Locales are (['en-US','en-GB', 'de-DE'])
 * Tab for intent should be named `INTENT`
 * Tab for utterances should be named `UTTERANCES` eg. `UTTERANCES_MAIN`, `UTTERANCES_HELP`
