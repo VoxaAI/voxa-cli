@@ -160,7 +160,7 @@ class dialogFlow {
           }
         ],
         priority: 500000,
-        webhookUsed: false,
+        webhookUsed: true,
         webhookForSlotFilling: false,
         fallbackIntent: false,
         events: intentData.intent === 'LaunchIntent' ?
