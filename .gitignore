@@ -1,2 +1,6 @@
 node_modules/
-client-secret.json
+client-secret*
+speech-assets
+synonyms/
+log.txt
+test.js

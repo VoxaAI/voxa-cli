@@ -19,8 +19,8 @@ const placeholders = {
 
 const processors = {
   slots: worksheet => getRows(worksheet).then((rows) => {
-    const slotName = worksheet.title;
-    const slotNameSanitize = _.trim(_.lowerCase(slotName).replace(/ /g, ''));
+    const slotName = _.includes(worksheet.title, 'AMAZON.') ? worksheet.title.replace('LIST_OF_', '') : worksheet.title;
+    const slotNameSanitize = _.trim(_.toLower(slotName).replace(/_/g, '').replace(/ /g, ''));
 
     let previousSynonym = '';
     const slotValues = {};
@@ -41,8 +41,6 @@ const processors = {
       const value = slotDraft.synonym;
       slotValues[key] = value;
     });
-
-    // console.log('slotsDraft', slotValues);
 
     const slots = {};
     slots[slotName] = slotValues;

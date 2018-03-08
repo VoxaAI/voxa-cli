@@ -94,6 +94,7 @@ class alexaSchema {
     const slots = _.get(this, 'slots');
 
     const slotsBuiltIn = _.keys(slots);
+    const slotsBuiltInButAmazon = _.chain(slots).keys().filter((slot) => !_.includes(slot, 'AMAZON.')).value();
     const slotsValuesBuiltIn = _.values(slots).map(slot => _.keys(slot));
     const haveSlotsOnType = !_.isEmpty(slotsBuiltIn);
 
@@ -154,12 +155,12 @@ class alexaSchema {
       aError.add({ message: `intents ${_.difference(intentBuiltInKeys, uttrBuiltInKeys)} doesn't have any utterances`, type: AlexaError.ERROR_TYPE.INTENTS_WITHOUT_UTTERANCES })
     }
 
-    if (!_.isEmpty(_.difference(intentSlotsBuiltInWithoutAmazon, slotsBuiltIn))) {
+    if (!_.isEmpty(_.difference(intentSlotsBuiltInWithoutAmazon, slotsBuiltInButAmazon))) {
       aError.add({ message: `slots defined in your intent schema without a list type ${_.difference(intentBuiltInKeys, uttrBuiltInKeys)}`, type: AlexaError.ERROR_TYPE.MISSING_LIST_TYPE })
     }
 
-    if (!_.isEmpty(_.difference(slotsBuiltIn, intentSlotsBuiltInWithoutAmazon))) {
-      aError.add({ message: `slots that are not included in your intent schema  ${_.difference(slotsBuiltIn, intentSlotsBuiltInWithoutAmazon)}. Make sure to use this slots in your intent if not remove it!`, type: AlexaError.ERROR_TYPE.SLOTS_NOT_DEFINED_SCHEMA })
+    if (!_.isEmpty(_.difference(slotsBuiltInButAmazon, intentSlotsBuiltInWithoutAmazon))) {
+      aError.add({ message: `slots that are not included in your intent schema  ${_.difference(slotsBuiltInButAmazon, intentSlotsBuiltInWithoutAmazon)}. Make sure to use this slots in your intent if not remove it!`, type: AlexaError.ERROR_TYPE.SLOTS_NOT_DEFINED_SCHEMA })
     }
 
     if (haveSlotsOnIntentSchema) {
