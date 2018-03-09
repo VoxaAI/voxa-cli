@@ -21,7 +21,7 @@ class alexaSchema {
   }
 
   static get VALID_LOCALES() {
-    return ['en-US','en-GB', 'de-DE'];
+    return ['en-US','en-GB','en-CA','en-AU','en-IN', 'de-DE', 'jp-JP'];
   }
 
   static get CONNECTING_WORDS() {
