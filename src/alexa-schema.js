@@ -301,19 +301,28 @@ class alexaSchema {
       });
 
       const types = _.map(this.slots, (value, key) => {
-        const values = _.keys(value).map((v) => ({ name: { value: v }}));
+        const values = _.chain(value)
+        .invertBy()
+        .map((synonyms, slotKey) => {
+          if (!slotKey) {
+            return _.map(synonyms, x => ({ name: { value: x }}))
+          }
+
+          return { name: { value: slotKey, synonyms }};
+        })
+        .flattenDeep()
+        .value();
+
         const name = key;
         return ({ values, name });
       });
 
       invocationName.map((name) => {
-        const interactionModel = { languageModel: { invocationName: name, intents, types }};
+        const languageModel = { invocationName: name, intents, types };
 
-        const promise = fs.outputFile(path.join(customPathLocale, `${_.kebabCase(name)}-model.json`),  JSON.stringify({ interactionModel }, null, 2), { flag: 'w' });
+        const promise = fs.outputFile(path.join(customPathLocale, `${_.kebabCase(name)}-model.json`),  JSON.stringify({ languageModel }, null, 2), { flag: 'w' });
         promises.push(promise);
-
-      })
-
+      });
 
       const promiseSkillBuilder = fs.outputFile(path.join(customPathLocale, 'skillBuilder.json'),  JSON.stringify({ intents, types }, null, 2), { flag: 'w' });
       promises.push(promiseSkillBuilder);
