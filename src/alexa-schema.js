@@ -257,35 +257,37 @@ class alexaSchema {
     const customPathLocale = unique ? pathSpeech : path.join(pathSpeech, this.locale);
     const promises = [];
 
-    // slotsDraft
-    _.each(this.slots, (value, key) => {
-      const str = _.keys(value).join('\n');
-      const promise = fs.outputFile(path.join(customPathLocale, 'slots', `${key}.txt`), str, { flag: 'w' });
-      promises.push(promise);
-    });
-
-    if (this.intents) {
-      const schema = _.pick(this, ['intents']);
-      const str = JSON.stringify(schema, null, 2);
-
-      const promise = fs.outputFile(path.join(customPathLocale, 'intent.json'), str, { flag: 'w' });
-      promises.push(promise);
-    }
-
-    if (this.utterances) {
-      const utterances = this.utterances;
-      let str = [];
-
-      _.each(utterances, (values, key) => {
-        _.each(values, (value) => {
-          str.push(`${key} ${value}`);
-        });
+    if (!isSmapiFormat) {
+      // slotsDraft
+      _.each(this.slots, (value, key) => {
+        const str = _.keys(value).join('\n');
+        const promise = fs.outputFile(path.join(customPathLocale, 'slots', `${key}.txt`), str, { flag: 'w' });
+        promises.push(promise);
       });
 
-      str = str.join('\n');
+      if (this.intents) {
+        const schema = _.pick(this, ['intents']);
+        const str = JSON.stringify(schema, null, 2);
 
-      const promise = fs.outputFile(path.join(customPathLocale, 'utterances.txt'), str, { flag: 'w' });
-      promises.push(promise);
+        const promise = fs.outputFile(path.join(customPathLocale, 'intent.json'), str, { flag: 'w' });
+        promises.push(promise);
+      }
+
+      if (this.utterances) {
+        const utterances = this.utterances;
+        let str = [];
+
+        _.each(utterances, (values, key) => {
+          _.each(values, (value) => {
+            str.push(`${key} ${value}`);
+          });
+        });
+
+        str = str.join('\n');
+
+        const promise = fs.outputFile(path.join(customPathLocale, 'utterances.txt'), str, { flag: 'w' });
+        promises.push(promise);
+      }
     }
 
     if (this.intents && this.utterances) {
@@ -322,12 +324,12 @@ class alexaSchema {
         let fileName;
 
         if (isSmapiFormat) {
-          const languageModel = { invocationName: name, intents, types };
-          jsonModel = { languageModel };
-          fileName = `${name}.json`;
-        } else {
           const interactionModel = { languageModel: { invocationName: name, intents, types } };
           jsonModel = { interactionModel };
+          fileName = `${name}.json`;
+        } else {
+          const languageModel = { invocationName: name, intents, types };
+          jsonModel = { languageModel };
           fileName = `${_.kebabCase(name)}-model.json`;
         }
 
