@@ -319,16 +319,19 @@ class alexaSchema {
 
       invocationName.map((name) => {
         let jsonModel;
+        let fileName;
 
         if (isSmapiFormat) {
           const languageModel = { invocationName: name, intents, types };
           jsonModel = { languageModel };
+          fileName = `${name}.json`;
         } else {
           const interactionModel = { languageModel: { invocationName: name, intents, types } };
           jsonModel = { interactionModel };
+          fileName = `${_.kebabCase(name)}-model.json`;
         }
 
-        const promise = fs.outputFile(path.join(customPathLocale, `${_.kebabCase(name)}-model.json`), JSON.stringify(jsonModel, null, 2), { flag: 'w' });
+        const promise = fs.outputFile(path.join(customPathLocale, fileName), JSON.stringify(jsonModel, null, 2), { flag: 'w' });
         promises.push(promise);
       });
     }
