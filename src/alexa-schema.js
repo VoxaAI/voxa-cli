@@ -319,14 +319,14 @@ class alexaSchema {
         return ({ values, name });
       });
 
-      invocationName.map((name) => {
+      invocationName.map((name, key) => {
         let jsonModel;
         let fileName;
 
         if (isSmapiFormat) {
           const interactionModel = { languageModel: { invocationName: name, intents, types } };
           jsonModel = { interactionModel };
-          fileName = `${name}.json`;
+          fileName = `${key}.json`;
         } else {
           const languageModel = { invocationName: name, intents, types };
           jsonModel = { languageModel };
