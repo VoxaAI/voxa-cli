@@ -21,11 +21,11 @@ class alexaSchema {
   }
 
   static get VALID_LOCALES() {
-    return ['en-US','en-GB', 'de-DE'];
+    return ['en-US','en-GB','en-CA','en-AU','en-IN', 'de-DE', 'jp-JP'];
   }
 
   static get CONNECTING_WORDS() {
-    return ['by ','from ', 'in ',  'using ', 'with ', 'to ', 'about ', 'for ', 'if', 'whether ', 'and ', 'that ', 'thats ', 'that\'s ' ];
+    return ['by ','from ', 'in ', 'using ', 'with ', 'to ', 'about ', 'for ', 'if', 'whether ', 'and ', 'that ', 'thats ', 'that\'s '];
   }
 
   set locale(locale) {
@@ -125,8 +125,8 @@ class alexaSchema {
     // Make sure we have utterances for builtin intents
     intentBuiltInKeys.map((intentBuiltKey) => {
       assert.isNotEmpty(uttr[intentBuiltKey], `Intent ${intentBuiltKey} have utterances`);
-      if ((!_.includes(intentBuiltKey, 'OnlyIntent')) &&  uttr[intentBuiltKey].length <= this.leastUtterances) {
-        aError.add({ message: `Intent ${intentBuiltKey} have only ${uttr[intentBuiltKey].length} intents, it should have at least ${this.leastUtterances}`, type: AlexaError.ERROR_TYPE.MINIMUM_UTERANCES_ON_INTENT })
+      if ((!_.includes(intentBuiltKey, 'OnlyIntent')) &&  uttr[intentBuiltKey].length < this.leastUtterances) {
+        aError.add({ message: `Intent ${intentBuiltKey} have only ${uttr[intentBuiltKey].length} utterances, it should have at least ${this.leastUtterances}`, type: AlexaError.ERROR_TYPE.MINIMUM_UTERANCES_ON_INTENT })
       }
     })
 
@@ -251,41 +251,43 @@ class alexaSchema {
     aError.print();
   }
 
-  build(pathSpeech, unique, invocationName) {
+  build(pathSpeech, unique, invocationName, isSmapiFormat) {
     invocationName = invocationName || [];
     if (!this.locale) return new Error('Please define a locale. eg. this.locale = \'en-US\'');
     const customPathLocale = unique ? pathSpeech : path.join(pathSpeech, this.locale);
     const promises = [];
 
-    // slotsDraft
-    _.each(this.slots, (value, key) => {
-      const str = _.keys(value).join('\n');
-      const promise = fs.outputFile(path.join(customPathLocale, 'slots', `${key}.txt`), str, { flag: 'w' });
-      promises.push(promise);
-    });
-
-    if (this.intents) {
-      const schema = _.pick(this, ['intents']);
-      const str = JSON.stringify(schema, null, 2);
-
-      const promise = fs.outputFile(path.join(customPathLocale, 'intent.json'), str, { flag: 'w' });
-      promises.push(promise);
-    }
-
-    if (this.utterances) {
-      const utterances = this.utterances;
-      let str = [];
-
-      _.each(utterances, (values, key) => {
-        _.each(values, (value) => {
-          str.push(`${key} ${value}`);
-        });
+    if (!isSmapiFormat) {
+      // slotsDraft
+      _.each(this.slots, (value, key) => {
+        const str = _.keys(value).join('\n');
+        const promise = fs.outputFile(path.join(customPathLocale, 'slots', `${key}.txt`), str, { flag: 'w' });
+        promises.push(promise);
       });
 
-      str = str.join('\n');
+      if (this.intents) {
+        const schema = _.pick(this, ['intents']);
+        const str = JSON.stringify(schema, null, 2);
 
-      const promise = fs.outputFile(path.join(customPathLocale, 'utterances.txt'), str, { flag: 'w' });
-      promises.push(promise);
+        const promise = fs.outputFile(path.join(customPathLocale, 'intent.json'), str, { flag: 'w' });
+        promises.push(promise);
+      }
+
+      if (this.utterances) {
+        const utterances = this.utterances;
+        let str = [];
+
+        _.each(utterances, (values, key) => {
+          _.each(values, (value) => {
+            str.push(`${key} ${value}`);
+          });
+        });
+
+        str = str.join('\n');
+
+        const promise = fs.outputFile(path.join(customPathLocale, 'utterances.txt'), str, { flag: 'w' });
+        promises.push(promise);
+      }
     }
 
     if (this.intents && this.utterances) {
@@ -301,22 +303,39 @@ class alexaSchema {
       });
 
       const types = _.map(this.slots, (value, key) => {
-        const values = _.keys(value).map((v) => ({ name: { value: v }}));
+        const values = _.chain(value)
+        .invertBy()
+        .map((synonyms, slotKey) => {
+          if (!slotKey) {
+            return _.map(synonyms, x => ({ name: { value: x }}))
+          }
+
+          return { name: { value: slotKey, synonyms }};
+        })
+        .flattenDeep()
+        .value();
+
         const name = key;
         return ({ values, name });
       });
 
-      invocationName.map((name) => {
-        const interactionModel = { languageModel: { invocationName: name, intents, types }};
+      _.map(invocationName, (name, key) => {
+        let jsonModel;
+        let fileName;
 
-        const promise = fs.outputFile(path.join(customPathLocale, `${_.kebabCase(name)}-model.json`),  JSON.stringify({ interactionModel }, null, 2), { flag: 'w' });
+        if (isSmapiFormat) {
+          const interactionModel = { languageModel: { invocationName: name, intents, types } };
+          jsonModel = { interactionModel };
+          fileName = `${key}.json`;
+        } else {
+          const languageModel = { invocationName: name, intents, types };
+          jsonModel = { languageModel };
+          fileName = `${_.kebabCase(name)}-model.json`;
+        }
+
+        const promise = fs.outputFile(path.join(customPathLocale, fileName), JSON.stringify(jsonModel, null, 2), { flag: 'w' });
         promises.push(promise);
-
-      })
-
-
-      const promiseSkillBuilder = fs.outputFile(path.join(customPathLocale, 'skillBuilder.json'),  JSON.stringify({ intents, types }, null, 2), { flag: 'w' });
-      promises.push(promiseSkillBuilder);
+      });
     }
 
     return Promise.all(promises);
