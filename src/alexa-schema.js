@@ -319,7 +319,7 @@ class alexaSchema {
         return ({ values, name });
       });
 
-      invocationName.map((name, key) => {
+      _.map(invocationName, (name, key) => {
         let jsonModel;
         let fileName;
 
