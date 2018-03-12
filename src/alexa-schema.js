@@ -25,7 +25,7 @@ class alexaSchema {
   }
 
   static get CONNECTING_WORDS() {
-    return ['by ','from ', 'in ',  'using ', 'with ', 'to ', 'about ', 'for ', 'if', 'whether ', 'and ', 'that ', 'thats ', 'that\'s ' ];
+    return ['by ','from ', 'in ', 'using ', 'with ', 'to ', 'about ', 'for ', 'if', 'whether ', 'and ', 'that ', 'thats ', 'that\'s '];
   }
 
   set locale(locale) {
@@ -125,8 +125,8 @@ class alexaSchema {
     // Make sure we have utterances for builtin intents
     intentBuiltInKeys.map((intentBuiltKey) => {
       assert.isNotEmpty(uttr[intentBuiltKey], `Intent ${intentBuiltKey} have utterances`);
-      if ((!_.includes(intentBuiltKey, 'OnlyIntent')) &&  uttr[intentBuiltKey].length <= this.leastUtterances) {
-        aError.add({ message: `Intent ${intentBuiltKey} have only ${uttr[intentBuiltKey].length} intents, it should have at least ${this.leastUtterances}`, type: AlexaError.ERROR_TYPE.MINIMUM_UTERANCES_ON_INTENT })
+      if ((!_.includes(intentBuiltKey, 'OnlyIntent')) &&  uttr[intentBuiltKey].length < this.leastUtterances) {
+        aError.add({ message: `Intent ${intentBuiltKey} have only ${uttr[intentBuiltKey].length} utterances, it should have at least ${this.leastUtterances}`, type: AlexaError.ERROR_TYPE.MINIMUM_UTERANCES_ON_INTENT })
       }
     })
 
@@ -251,7 +251,7 @@ class alexaSchema {
     aError.print();
   }
 
-  build(pathSpeech, unique, invocationName) {
+  build(pathSpeech, unique, invocationName, isSmapiFormat) {
     invocationName = invocationName || [];
     if (!this.locale) return new Error('Please define a locale. eg. this.locale = \'en-US\'');
     const customPathLocale = unique ? pathSpeech : path.join(pathSpeech, this.locale);
@@ -318,14 +318,19 @@ class alexaSchema {
       });
 
       invocationName.map((name) => {
-        const languageModel = { invocationName: name, intents, types };
+        let jsonModel;
 
-        const promise = fs.outputFile(path.join(customPathLocale, `${_.kebabCase(name)}-model.json`),  JSON.stringify({ languageModel }, null, 2), { flag: 'w' });
+        if (isSmapiFormat) {
+          const languageModel = { invocationName: name, intents, types };
+          jsonModel = { languageModel };
+        } else {
+          const interactionModel = { languageModel: { invocationName: name, intents, types } };
+          jsonModel = { interactionModel };
+        }
+
+        const promise = fs.outputFile(path.join(customPathLocale, `${_.kebabCase(name)}-model.json`), JSON.stringify(jsonModel, null, 2), { flag: 'w' });
         promises.push(promise);
       });
-
-      const promiseSkillBuilder = fs.outputFile(path.join(customPathLocale, 'skillBuilder.json'),  JSON.stringify({ intents, types }, null, 2), { flag: 'w' });
-      promises.push(promiseSkillBuilder);
     }
 
     return Promise.all(promises);
