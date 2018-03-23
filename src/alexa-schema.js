@@ -289,34 +289,50 @@ class alexaSchema {
     }
 
     if (this.intents && this.utterances) {
-      const intents = this.intents.map(intent => {
-        intent.name = intent.intent;
-        intent.samples = this.utterances[intent.name];
-        intent.slots = intent.slots || [];
-        intent.slots = intent.slots.map(slot => {
-          slot.samples = [];
-          return slot;
+      console.log('this.invocations', this.invocations);
+      this.invocations.map((invocation) => {
+        const intents = this.intents
+        .filter(intent => !intent.environment || _.includes(intent.environment, invocation.environment))
+        .map(intent => {
+          console.log('intent', intent.intent, intent.environment);
+          intent.name = intent.intent;
+          intent.samples = this.utterances[intent.name];
+          intent.slots = intent.slots || [];
+          intent.slots = intent.slots.map(slot => {
+            slot.samples = [];
+            return slot;
+          });
+          return _.pick(intent, ['name', 'samples', 'slots']);
         });
-        return _.pick(intent, ['name', 'samples', 'slots']);
-      });
 
-      const types = _.map(this.slots, (value, key) => {
-        const values = _.keys(value).map((v) => ({ name: { value: v }}));
-        const name = key;
-        return ({ values, name });
-      });
+        const slotsUsed = _.chain(intents)
+          .map('slots')
+          .flattenDeep()
+          .map('type')
+          .uniq()
+          .value();
 
-      invocationName.map((name) => {
+        console.log('slotsUsed', slotsUsed);
+        const types = _.chain(this.slots)
+        .map((value, key) => {
+          const values = _.keys(value).map((v) => ({ name: { value: v }}));
+          const name = key;
+          return ({ values, name });
+        })
+        .filter((item) => _.includes(slotsUsed, item.name) || _.includes(item.name, 'AMAZON.') )
+
+        .value();
+
+        const name = invocation.invocationname;
         const interactionModel = { languageModel: { invocationName: name, intents, types }};
 
-        const promise = fs.outputFile(path.join(customPathLocale, `${_.kebabCase(name)}-model.json`),  JSON.stringify({ interactionModel }, null, 2), { flag: 'w' });
+        const promise = fs.outputFile(path.join(customPathLocale, `${_.kebabCase(name)}-${invocation.environment}-${this.locale}-model.json`),  JSON.stringify({ interactionModel }, null, 2), { flag: 'w' });
         promises.push(promise);
 
       })
 
-
-      const promiseSkillBuilder = fs.outputFile(path.join(customPathLocale, 'skillBuilder.json'),  JSON.stringify({ intents, types }, null, 2), { flag: 'w' });
-      promises.push(promiseSkillBuilder);
+      // const promiseSkillBuilder = fs.outputFile(path.join(customPathLocale, 'skillBuilder.json'),  JSON.stringify({ intents, types }, null, 2), { flag: 'w' });
+      // promises.push(promiseSkillBuilder);
     }
 
     return Promise.all(promises);

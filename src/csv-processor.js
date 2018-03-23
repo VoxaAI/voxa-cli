@@ -15,9 +15,48 @@ const placeholders = {
   slots: 'LIST_OF_',
   intents: 'INTENT',
   utterances: 'UTTERANCES_',
+  invocations: 'INVOCATION_NAMES',
+  skillGeneral: 'SKILL_GENERAL_INFORMATION',
+  skillLocaleSettings: 'SKILL_LOCALE_INFORMATION'
 };
 
 const processors = {
+  skillGeneral: worksheet => getRows(worksheet).then((rows) => {
+    let skillGeneralInfo = _(rows).map((row) => {
+      const info = _.pick(row, ['option', 'value', 'key']);
+
+      return info;
+    })
+    .uniq()
+    .value();
+    // others[otherName] = rows;
+    return { skillGeneralInfo };
+  }),
+  skillLocaleSettings: worksheet => getRows(worksheet).then((rows) => {
+    let skillLocaleSetup = _(rows).map((row) => {
+      const info = _.pick(row, ['option', 'value', 'key']);
+
+      return info;
+    })
+    .uniq()
+    .value();
+    // others[otherName] = rows;
+    return { skillLocaleSetup };
+  }),
+  invocations: worksheet => getRows(worksheet).then((rows) => {
+    let invocations = _(rows).map((row) => {
+      const info = _.pick(row, ['invocationname', 'environment']);
+
+      // previousIntent = _.isEmpty(info.intent) ? previousIntent : info.intent;
+      // info.intent = previousIntent;
+
+      return info;
+    })
+    .uniq()
+    .value();
+    // others[otherName] = rows;
+    return { invocations };
+  }),
   slots: worksheet => getRows(worksheet).then((rows) => {
     const slotName = _.includes(worksheet.title, 'AMAZON.') ? worksheet.title.replace('LIST_OF_', '') : worksheet.title;
     const slotNameSanitize = _.trim(_.toLower(slotName).replace(/_/g, '').replace(/ /g, ''));
@@ -52,7 +91,7 @@ const processors = {
   intents: worksheet => getRows(worksheet).then((rows) => {
     let previousIntent;
     let intentsDraft = _(rows).map((row) => {
-      const info = _.pick(row, ['intent', 'slottype', 'slotname']);
+      const info = _.pick(row, ['intent', 'slottype', 'slotname', 'environment']);
 
       previousIntent = _.isEmpty(info.intent) ? previousIntent : info.intent;
       info.intent = previousIntent;
@@ -77,8 +116,19 @@ const processors = {
       .uniq()
       .value();
 
+      const environment = _.chain(value)
+      .filter('environment')
+      .map('environment')
+      .uniq()
+      .first()
+      .split(',')
+      .replace(' ', '')
+      .value();
+      // const environment =
+
       const result = !_.isEmpty(slots) ? { intent, slots } : { intent };
 
+      result.environment = environment;
       intents.push(result);
     }));
 
