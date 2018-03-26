@@ -276,21 +276,24 @@ class alexaSchema {
           .uniq()
           .value();
 
-        const types = _.chain(this.slots, (value, key) => {
-          const values = _.chain(value)
-          .invertBy()
-          .map((synonyms, slotKey) => {
-            if (!slotKey) {
-              return _.map(synonyms, x => ({ name: { value: x }}))
-            }
+        const types = _.chain(this.slots)
+          .map((value, key) => {
+            const values = _.chain(value)
+            .invertBy()
+            .map((synonyms, slotKey) => {
 
-            return { name: { value: slotKey, synonyms }};
-          })
-          .flattenDeep()
-          .value();
+              console.log('slotkey', slotKey);
+              if (!slotKey) {
+                return _.map(synonyms, x => ({ name: { value: x }}))
+              }
 
-          const name = key;
-          return ({ values, name });
+              return { name: { value: slotKey, synonyms }};
+            })
+            .flattenDeep()
+            .value();
+
+            const name = key;
+            return ({ values, name });
         })
         .filter((item) => _.includes(slotsUsed, item.name) || _.includes(item.name, 'AMAZON.') )
         .value();
