@@ -17,11 +17,11 @@ class alexaSchema {
   }
 
   static get VALID_LOCALES() {
-    return ['en-US','en-GB', 'de-DE'];
+    return ['en-US','en-GB','en-CA','en-AU','en-IN', 'de-DE', 'jp-JP'];
   }
 
   static get CONNECTING_WORDS() {
-    return ['by ','from ', 'in ',  'using ', 'with ', 'to ', 'about ', 'for ', 'if', 'whether ', 'and ', 'that ', 'thats ', 'that\'s ' ];
+    return ['by ','from ', 'in ', 'using ', 'with ', 'to ', 'about ', 'for ', 'if', 'whether ', 'and ', 'that ', 'thats ', 'that\'s '];
   }
 
   set locale(locale) {
@@ -120,8 +120,8 @@ class alexaSchema {
     // Make sure we have utterances for builtin intents
     intentBuiltInKeys.map((intentBuiltKey) => {
       assert.isNotEmpty(uttr[intentBuiltKey], `Intent ${intentBuiltKey} have utterances`);
-      if ((!_.includes(intentBuiltKey, 'OnlyIntent')) &&  uttr[intentBuiltKey].length <= this.leastUtterances) {
-        aError.add({ message: `Intent ${intentBuiltKey} have only ${uttr[intentBuiltKey].length} intents, it should have at least ${this.leastUtterances}`, type: AlexaError.ERROR_TYPE.MINIMUM_UTERANCES_ON_INTENT })
+      if ((!_.includes(intentBuiltKey, 'OnlyIntent')) &&  uttr[intentBuiltKey].length < this.leastUtterances) {
+        aError.add({ message: `Intent ${intentBuiltKey} have only ${uttr[intentBuiltKey].length} utterances, it should have at least ${this.leastUtterances}`, type: AlexaError.ERROR_TYPE.MINIMUM_UTERANCES_ON_INTENT })
       }
     })
 
@@ -251,37 +251,6 @@ class alexaSchema {
     // const customPathLocale = unique ? pathSpeech : path.join(pathSpeech);
     const promises = [];
 
-    // // slotsDraft
-    // _.each(this.slots, (value, key) => {
-    //   const str = _.keys(value).join('\n');
-    //   const promise = fs.outputFile(path.join(customPathLocale, 'slots', `${key}.txt`), str, { flag: 'w' });
-    //   promises.push(promise);
-    // });
-    //
-    // if (this.intents) {
-    //   const schema = _.pick(this, ['intents']);
-    //   const str = JSON.stringify(schema, null, 2);
-    //
-    //   const promise = fs.outputFile(path.join(customPathLocale, 'intent.json'), str, { flag: 'w' });
-    //   promises.push(promise);
-    // }
-    //
-    // if (this.utterances) {
-    //   const utterances = this.utterances;
-    //   let str = [];
-    //
-    //   _.each(utterances, (values, key) => {
-    //     _.each(values, (value) => {
-    //       str.push(`${key} ${value}`);
-    //     });
-    //   });
-    //
-    //   str = str.join('\n');
-    //
-    //   const promise = fs.outputFile(path.join(customPathLocale, 'utterances.txt'), str, { flag: 'w' });
-    //   promises.push(promise);
-    // }
-
     //console.log('this', JSON.stringify(this, null, 2));
     if (this.intents && this.utterances) {
       // console.log('this.invocations', this.invocations);
@@ -307,15 +276,23 @@ class alexaSchema {
           .uniq()
           .value();
 
-        // console.log('slotsUsed', slotsUsed);
-        const types = _.chain(this.slots)
-        .map((value, key) => {
-          const values = _.keys(value).map((v) => ({ name: { value: v }}));
+        const types = _.chain(this.slots, (value, key) => {
+          const values = _.chain(value)
+          .invertBy()
+          .map((synonyms, slotKey) => {
+            if (!slotKey) {
+              return _.map(synonyms, x => ({ name: { value: x }}))
+            }
+
+            return { name: { value: slotKey, synonyms }};
+          })
+          .flattenDeep()
+          .value();
+
           const name = key;
           return ({ values, name });
         })
         .filter((item) => _.includes(slotsUsed, item.name) || _.includes(item.name, 'AMAZON.') )
-
         .value();
 
         const name = invocation.invocationname;
