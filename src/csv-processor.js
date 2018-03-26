@@ -32,7 +32,7 @@ const processors = {
     return { skillEnvironmentsInformation };
   }),
   skillGeneral: worksheet => getRows(worksheet).then((rows) => {
-    const skillManifest = { manifestVersion: '1.0' };
+    const manifest = { manifestVersion: '1.0' };
     let skillGeneralInfo = _(rows).map((row) => {
       const info = _.pick(row, ['option', 'value', 'key']);
 
@@ -47,7 +47,7 @@ const processors = {
       if (_.includes(info.key, 'apis.custom.interfaces[]')) {
         const key = info.key.replace('apis.custom.interfaces[].type.', '');
         info.key = 'apis.custom.interfaces';
-        const previouseArr = _.get(skillManifest, info.key, []);
+        const previouseArr = _.get(manifest, info.key, []);
 
         if (info.value) previouseArr.push({ type: key});
 
@@ -57,7 +57,7 @@ const processors = {
       if (_.includes(info.key, 'events.subscriptions[]')) {
         const key = info.key.replace('events.subscriptions[].eventName.', '');
         info.key = 'events.subscriptions';
-        const previouseArr = _.get(skillManifest, info.key, []);
+        const previouseArr = _.get(manifest, info.key, []);
 
         if (info.value) previouseArr.push({ eventName: key});
 
@@ -67,22 +67,22 @@ const processors = {
       if (_.includes(info.key, 'permissions[]')) {
         const key = info.key.replace('permissions[].name.', '');
         info.key = 'permissions';
-        const previouseArr = _.get(skillManifest, info.key, []);
+        const previouseArr = _.get(manifest, info.key, []);
 
         if (info.value) previouseArr.push({ name: key});
 
         info.value = previouseArr;
       }
-      _.set(skillManifest, info.key, info.value);
+      _.set(manifest, info.key, info.value);
 
     })
     .value();
     // others[otherName] = rows;
-    return { skillManifest };
+    return { manifest };
   }),
   skillLocaleSettings: worksheet => getRows(worksheet).then((rows) => {
     const locale = worksheet.title.replace(placeholders.skillLocaleSettings, '');
-    const skillManifest = {};
+    const manifest = {};
     let skillLocaleSetup = _(rows)
     .map((row) => {
       const info = _.pick(row, ['option', 'value', 'key']);
@@ -98,15 +98,15 @@ const processors = {
       if (_.includes(key, 'keywords')) info.value = info.value.split(',');
       if (_.includes(key, '[]')) {
         key = key.replace('[]', '');
-        const previouseArr = _.get(skillManifest, key, []);
+        const previouseArr = _.get(manifest, key, []);
         previouseArr.push(info.value);
         info.value = previouseArr;
       }
 
-      _.set(skillManifest, key, info.value);
+      _.set(manifest, key, info.value);
     })
     .value();
-    return { skillManifest };
+    return { manifest };
   }),
   invocations: worksheet => getRows(worksheet).then((rows) => {
     let invocations = _(rows).map((row) => {

@@ -306,20 +306,20 @@ class alexaSchema {
       });
     }
 
-    if (this.skillManifest && this.skillEnvironmentsInformation) {
+    if (this.manifest && this.skillEnvironmentsInformation) {
       _.chain(this.skillEnvironmentsInformation)
       .map('environment')
       .uniq()
       .map(skillEnvironments => {
-        const skillManifest = _.clone(this.skillManifest);
+        const manifest = _.clone(this.manifest);
 
         _.chain(this.skillEnvironmentsInformation)
         .filter({ environment: skillEnvironments})
         .map(item => {
-          _.set(skillManifest, item.key, item.value)
+          _.set(manifest, item.key, item.value)
         })
         .value();
-        const promise = fs.outputFile(path.join(customPathLocale, `${_.kebabCase(skillEnvironments)}-skill.json`),  JSON.stringify({ skillManifest }, null, 2), { flag: 'w' });
+        const promise = fs.outputFile(path.join(customPathLocale, `${_.kebabCase(skillEnvironments)}-skill.json`),  JSON.stringify({ manifest }, null, 2), { flag: 'w' });
         promises.push(promise);
         return skillEnvironments;
       })
