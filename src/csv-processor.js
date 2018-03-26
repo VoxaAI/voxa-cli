@@ -54,6 +54,16 @@ const processors = {
         info.value = previouseArr;
       }
 
+      if (_.includes(info.key, 'events.subscriptions[]')) {
+        const key = info.key.replace('events.subscriptions[].eventName.', '');
+        info.key = 'events.subscriptions';
+        const previouseArr = _.get(skillManifest, info.key, []);
+
+        if (info.value) previouseArr.push({ type: key});
+
+        info.value = previouseArr;
+      }
+
       if (_.includes(info.key, 'permissions[]')) {
         const key = info.key.replace('permissions[].name.', '');
         info.key = 'permissions';
