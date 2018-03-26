@@ -59,7 +59,7 @@ const processors = {
         info.key = 'events.subscriptions';
         const previouseArr = _.get(skillManifest, info.key, []);
 
-        if (info.value) previouseArr.push({ type: key});
+        if (info.value) previouseArr.push({ eventName: key});
 
         info.value = previouseArr;
       }
