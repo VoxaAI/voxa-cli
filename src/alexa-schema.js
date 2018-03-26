@@ -282,7 +282,6 @@ class alexaSchema {
             .invertBy()
             .map((synonyms, slotKey) => {
 
-              console.log('slotkey', slotKey);
               if (!slotKey) {
                 return _.map(synonyms, x => ({ name: { value: x }}))
               }
