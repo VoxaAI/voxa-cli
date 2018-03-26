@@ -9,7 +9,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@oclif/command": "^1.4.2",
     "bluebird": "^3.5.0",
     "chai": "^4.0.2",
     "commander": "^2.15.1",
