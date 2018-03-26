@@ -44,9 +44,9 @@ const processors = {
     .uniq()
     .map(info => {
       if (_.includes(info.key, 'distributionCountries')) info.value = info.value.split(',');
-      if (_.includes(info.key, 'apis.interfaces[]')) {
-        const key = info.key.replace('apis.interfaces[].type.', '');
-        info.key = 'apis.interfaces';
+      if (_.includes(info.key, 'apis.custom.interfaces[]')) {
+        const key = info.key.replace('apis.custom.interfaces[].type.', '');
+        info.key = 'apis.custom.interfaces';
         const previouseArr = _.get(skillManifest, info.key, []);
 
         if (info.value) previouseArr.push({ type: key});
