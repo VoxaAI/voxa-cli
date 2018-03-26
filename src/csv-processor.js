@@ -8,7 +8,6 @@ const AlexaSchema = require('./alexa-schema');
 const DialogFlowSchema = require('./dialog-flow-schema');
 const CortanaSchema = require('./cortana-schema');
 
-
 // Create a document object using the ID of the spreadsheet - obtained from its URL.
 
 const placeholders = {
@@ -17,31 +16,87 @@ const placeholders = {
   utterances: 'UTTERANCES_',
   invocations: 'INVOCATION_NAMES',
   skillGeneral: 'SKILL_GENERAL_INFORMATION',
-  skillLocaleSettings: 'SKILL_LOCALE_INFORMATION'
+  skillLocaleSettings: 'SKILL_LOCALE_INFORMATION-',
+  skillEnvironmentsInformation: 'SKILL_ENVIRONMENTS_INFORMATION',
 };
 
 const processors = {
+  skillEnvironmentsInformation: worksheet => getRows(worksheet).then((rows) => {
+    const skillEnvironmentsInformation = _(rows).map((row) => {
+      const info = _.pick(row, ['key', 'value', 'environment']);
+
+      return info;
+    })
+    .uniq()
+    .value();
+    return { skillEnvironmentsInformation };
+  }),
   skillGeneral: worksheet => getRows(worksheet).then((rows) => {
+    const skillManifest = { manifestVersion: '1.0' };
     let skillGeneralInfo = _(rows).map((row) => {
       const info = _.pick(row, ['option', 'value', 'key']);
 
+      if (_.toNumber(info.value)) info.value = _.toNumber(info.value);
+      if (info.value === 'TRUE') info.value = true;
+      if (info.value === 'FALSE') info.value = false;
       return info;
     })
     .uniq()
+    .map(info => {
+      if (_.includes(info.key, 'distributionCountries')) info.value = info.value.split(',');
+      if (_.includes(info.key, 'apis.interfaces[]')) {
+        const key = info.key.replace('apis.interfaces[].type.', '');
+        info.key = 'apis.interfaces';
+        const previouseArr = _.get(skillManifest, info.key, []);
+
+        if (info.value) previouseArr.push({ type: key});
+
+        info.value = previouseArr;
+      }
+
+      if (_.includes(info.key, 'permissions[]')) {
+        const key = info.key.replace('permissions[].name.', '');
+        info.key = 'permissions';
+        const previouseArr = _.get(skillManifest, info.key, []);
+
+        if (info.value) previouseArr.push({ name: key});
+
+        info.value = previouseArr;
+      }
+      _.set(skillManifest, info.key, info.value);
+
+    })
     .value();
     // others[otherName] = rows;
-    return { skillGeneralInfo };
+    return { skillManifest };
   }),
   skillLocaleSettings: worksheet => getRows(worksheet).then((rows) => {
-    let skillLocaleSetup = _(rows).map((row) => {
+    const locale = worksheet.title.replace(placeholders.skillLocaleSettings, '');
+    const skillManifest = {};
+    let skillLocaleSetup = _(rows)
+    .map((row) => {
       const info = _.pick(row, ['option', 'value', 'key']);
 
+      if (info.value === 'TRUE') info.value = true;
+      if (info.value === 'FALSE') info.value = false;
       return info;
     })
     .uniq()
+    .map(info => {
+      let key = info.key.replace('locales.', `locales.${locale}.`);
+
+      if (_.includes(key, 'keywords')) info.value = info.value.split(',');
+      if (_.includes(key, '[]')) {
+        key = key.replace('[]', '');
+        const previouseArr = _.get(skillManifest, key, []);
+        previouseArr.push(info.value);
+        info.value = previouseArr;
+      }
+
+      _.set(skillManifest, key, info.value);
+    })
     .value();
-    // others[otherName] = rows;
-    return { skillLocaleSetup };
+    return { skillManifest };
   }),
   invocations: worksheet => getRows(worksheet).then((rows) => {
     let invocations = _(rows).map((row) => {
@@ -169,8 +224,6 @@ const processors = {
   other: worksheet => getRows(worksheet).then((rows) => {
     const firstRow = _.head(rows);
     const headers = _.chain(firstRow).omit(['_xml', 'id', 'app:edited', '_links']).filter(_.isString).values().value();
-
-    console.log('headers', headers);
 
     rows = _(rows)
     .drop()

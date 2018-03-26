@@ -1,58 +1,29 @@
-'use strict';
+#!/usr/bin/env node
 
-const _ = require('lodash');
-const Promise = require('bluebird');
-const processor = require('./src/csv-processor');
+/**
+ * Module dependencies.
+ */
 
-module.exports = function(options) {
-  let invocationName = _.get(options, 'invocationName', []);
-  if (_.isString(invocationName)) {
-    invocationName = [ invocationName ];
+const program = require('commander');
+const path = require('path');
+const builder = require('./builder');
+
+function list(val) {
+  return val.split(',').map(Number);
+}
+
+program
+  .version('0.0.1')
+  .option('-p, --path [/Users/etc/interaction.json]', 'overwrite path to interaction file', path.join(process.cwd(), 'interaction.json'))
+  .parse(process.argv);
+
+
+  try {
+   // a path we KNOW is totally bogus and not a module
+   const interaction = require(program.path);
+   interaction.rootPath = process.cwd();
+   builder(interaction);
   }
-
-  const spreadsheets = _.get(options, 'spreadsheets');
-  const speechPath = _.get(options, 'speechPath');
-  const synonymPath = _.get(options, 'synonymPath');
-  const auth = _.get(options, 'auth');
-  const validate = _.get(options, 'validate', true);
-  const build = _.get(options, 'build', true);
-  const type = _.get(options, 'type', 'alexa');
-  const others = _.get(options, 'othersToDownload', []);
-
-  const spreadsheetPromises = spreadsheets.map((spreadsheet) => processor(spreadsheet, auth, others, type));
-  let resultAlexa;
-  const unique = spreadsheets.length === 1;
-
-  return Promise.all(spreadsheetPromises)
-  .then(_resultAlexa => {
-    resultAlexa = _resultAlexa;
-    return resultAlexa;
-  })
-  .then(() => resultAlexa.map((schema) => {
-    let placeHolderPromise = Promise.resolve();
-
-    if (validate) {
-      console.time('validate');
-      schema.validate();
-      console.timeEnd('validate');
-    }
-    if (build) {
-      placeHolderPromise = schema.build(speechPath, unique, invocationName);
-    }
-
-    return placeHolderPromise;
-  }))
-  .then(() => resultAlexa.map((schema) => {
-    let placeHolderPromise = Promise.resolve();
-    if (synonymPath) {
-      console.time('synonym');
-      placeHolderPromise = schema.buildSynonym(synonymPath, unique);
-      console.timeEnd('synonym');
-    }
-
-    return placeHolderPromise;
-  }))
-  .then(() => console.log('script finished'))
-  .then(() => resultAlexa);
-  ;
-};
+  catch (e) {
+   console.log('oh no!. There was a problem finding', program.path)
+  }

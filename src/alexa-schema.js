@@ -5,11 +5,7 @@ const path = require('path');
 const _ = require('lodash');
 const Promise = require('bluebird');
 const fs = Promise.promisifyAll(require('fs-extra'));
-const PrettyError = require('pretty-error');
 const AlexaError = require('./error');
-
-// instantiate PrettyError, which can then be used to render error objects
-const pe = new PrettyError();
 
 const expect = chai.expect;
 const assert = chai.assert;
@@ -66,7 +62,6 @@ class alexaSchema {
   }
 
   validate() {
-    pe.start();
     const aError = new AlexaError();
     _.templateSettings.interpolate = /{([\s\S]+?)}/g;
     // console.log('this', this);
@@ -251,50 +246,50 @@ class alexaSchema {
     aError.print();
   }
 
-  build(pathSpeech, unique, invocationName) {
-    invocationName = invocationName || [];
+  build(customPathLocale, unique) {
     if (!this.locale) return new Error('Please define a locale. eg. this.locale = \'en-US\'');
-    const customPathLocale = unique ? pathSpeech : path.join(pathSpeech, this.locale);
+    // const customPathLocale = unique ? pathSpeech : path.join(pathSpeech);
     const promises = [];
 
-    // slotsDraft
-    _.each(this.slots, (value, key) => {
-      const str = _.keys(value).join('\n');
-      const promise = fs.outputFile(path.join(customPathLocale, 'slots', `${key}.txt`), str, { flag: 'w' });
-      promises.push(promise);
-    });
+    // // slotsDraft
+    // _.each(this.slots, (value, key) => {
+    //   const str = _.keys(value).join('\n');
+    //   const promise = fs.outputFile(path.join(customPathLocale, 'slots', `${key}.txt`), str, { flag: 'w' });
+    //   promises.push(promise);
+    // });
+    //
+    // if (this.intents) {
+    //   const schema = _.pick(this, ['intents']);
+    //   const str = JSON.stringify(schema, null, 2);
+    //
+    //   const promise = fs.outputFile(path.join(customPathLocale, 'intent.json'), str, { flag: 'w' });
+    //   promises.push(promise);
+    // }
+    //
+    // if (this.utterances) {
+    //   const utterances = this.utterances;
+    //   let str = [];
+    //
+    //   _.each(utterances, (values, key) => {
+    //     _.each(values, (value) => {
+    //       str.push(`${key} ${value}`);
+    //     });
+    //   });
+    //
+    //   str = str.join('\n');
+    //
+    //   const promise = fs.outputFile(path.join(customPathLocale, 'utterances.txt'), str, { flag: 'w' });
+    //   promises.push(promise);
+    // }
 
-    if (this.intents) {
-      const schema = _.pick(this, ['intents']);
-      const str = JSON.stringify(schema, null, 2);
-
-      const promise = fs.outputFile(path.join(customPathLocale, 'intent.json'), str, { flag: 'w' });
-      promises.push(promise);
-    }
-
-    if (this.utterances) {
-      const utterances = this.utterances;
-      let str = [];
-
-      _.each(utterances, (values, key) => {
-        _.each(values, (value) => {
-          str.push(`${key} ${value}`);
-        });
-      });
-
-      str = str.join('\n');
-
-      const promise = fs.outputFile(path.join(customPathLocale, 'utterances.txt'), str, { flag: 'w' });
-      promises.push(promise);
-    }
-
+    //console.log('this', JSON.stringify(this, null, 2));
     if (this.intents && this.utterances) {
-      console.log('this.invocations', this.invocations);
+      // console.log('this.invocations', this.invocations);
       this.invocations.map((invocation) => {
         const intents = this.intents
         .filter(intent => !intent.environment || _.includes(intent.environment, invocation.environment))
         .map(intent => {
-          console.log('intent', intent.intent, intent.environment);
+          // console.log('intent', intent.intent, intent.environment);
           intent.name = intent.intent;
           intent.samples = this.utterances[intent.name];
           intent.slots = intent.slots || [];
@@ -312,7 +307,7 @@ class alexaSchema {
           .uniq()
           .value();
 
-        console.log('slotsUsed', slotsUsed);
+        // console.log('slotsUsed', slotsUsed);
         const types = _.chain(this.slots)
         .map((value, key) => {
           const values = _.keys(value).map((v) => ({ name: { value: v }}));
@@ -326,20 +321,37 @@ class alexaSchema {
         const name = invocation.invocationname;
         const interactionModel = { languageModel: { invocationName: name, intents, types }};
 
-        const promise = fs.outputFile(path.join(customPathLocale, `${_.kebabCase(name)}-${invocation.environment}-${this.locale}-model.json`),  JSON.stringify({ interactionModel }, null, 2), { flag: 'w' });
+        const promise = fs.outputFile(path.join(customPathLocale, this.locale,`${_.kebabCase(name)}-${invocation.environment}-model.json`),  JSON.stringify({ interactionModel }, null, 2), { flag: 'w' });
         promises.push(promise);
 
-      })
+      });
+    }
 
-      // const promiseSkillBuilder = fs.outputFile(path.join(customPathLocale, 'skillBuilder.json'),  JSON.stringify({ intents, types }, null, 2), { flag: 'w' });
-      // promises.push(promiseSkillBuilder);
+    if (this.skillManifest && this.skillEnvironmentsInformation) {
+      _.chain(this.skillEnvironmentsInformation)
+      .map('environment')
+      .uniq()
+      .map(skillEnvironments => {
+        const skillManifest = _.clone(this.skillManifest);
+
+        _.chain(this.skillEnvironmentsInformation)
+        .filter({ environment: skillEnvironments})
+        .map(item => {
+          _.set(skillManifest, item.key, item.value)
+        })
+        .value();
+        const promise = fs.outputFile(path.join(customPathLocale, `${_.kebabCase(skillEnvironments)}-skill.json`),  JSON.stringify({ skillManifest }, null, 2), { flag: 'w' });
+        promises.push(promise);
+        return skillEnvironments;
+      })
+      .value();
     }
 
     return Promise.all(promises);
   }
 
-  buildSynonym(pathSynonym, unique) {
-    const customPathSynonym = unique ? pathSynonym : path.join(pathSynonym, this.locale);
+  buildSynonym(pathSynonym) {
+    const customPathSynonym = path.join(pathSynonym, this.locale);
     if (!this.locale) return new Error('Please define a locale. eg. this.locale = \'en-US\'');
     const promises = [];
     // slotsDraft
@@ -351,6 +363,22 @@ class alexaSchema {
         const promise = fs.outputFile(path.join(customPathSynonym, `${key}.json`), str, { flag: 'w' });
         promises.push(promise);
       }
+    });
+
+    return Promise.all(promises);
+  }
+
+  buildContent(pathContent) {
+    const customPathContent = path.join(pathContent, this.locale);
+    if (!this.locale) return new Error('Please define a locale. eg. this.locale = \'en-US\'');
+    const promises = [];
+    // slotsDraft
+    //console.log('synonym', this.slots);
+
+    _.map(this.others, (value, key) => {
+      const str = JSON.stringify(value, null, 2);
+      const promise = fs.outputFile(path.join(customPathContent, `${_.kebabCase(key)}.json`), str, { flag: 'w' });
+      promises.push(promise);
     });
 
     return Promise.all(promises);
