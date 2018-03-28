@@ -1,0 +1,25 @@
+
+{
+  "local-manifest": {
+    "publishingInformation.locales.en-US.name": "Skill Name in en-US",
+    "publishingInformation.locales.en-GB.name": "Skill Name in en-GB",
+    "apis.custom.endpoint.uri": "https://a4a8e881.ngrok.io/skill",
+    "events.endpoint.uri": "https://a4a8e881.ngrok.io/skill",
+    "apis.custom.endpoint.sslCertificateType": "Wildcard",
+    "events.endpoint.sslCertificateType": "Wildcard"
+  },
+  "content": ["CONTENT_TO_DOWNLOAD_ONE", "CONTENT_TO_DOWNLOAD_TWO"],
+  "spreadsheets": ["INTENT SPREADSHEET", "PUBLISHING SPREADSHEET"],
+  "auth": {
+    "type": "service_account",
+    "project_id": "XXXXX",
+    "private_key_id": "XXXX",
+    "private_key": "XXXX",
+    "client_email": "XXXXX",
+    "client_id": "XXXX",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://accounts.google.com/o/oauth2/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_x509_cert_url": "XXXX"
+  }
+}
