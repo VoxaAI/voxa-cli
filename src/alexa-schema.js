@@ -316,7 +316,6 @@ class alexaSchema {
         });
       }
 
-      console.log(this.skillEnvironmentsInformation);
       _.chain(this.skillEnvironmentsInformation)
       .map('environment')
       .uniq()
