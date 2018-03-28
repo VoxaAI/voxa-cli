@@ -21,6 +21,7 @@ module.exports = function(options) {
   const type = _.get(options, 'type', 'alexa');
   const others = _.get(options, 'content', []);
   const contentPath = _.get(options, 'contentPath', path.join(rootPath, 'content'));
+  const localManifest = _.get(options, 'local-manifest');
 
   const spreadsheetPromises = spreadsheets.map((spreadsheet) => processor(spreadsheet, auth, others, type));
   let resultAlexa;
@@ -34,23 +35,19 @@ module.exports = function(options) {
   .then(() => resultAlexa.map((schema) => {
     let placeHolderPromise = Promise.resolve();
 
-    if (validate) {
-      console.time('validate');
+    if (validate && !_.isEmpty(schema.intents) && !_.isEmpty(schema.slots) && !_.isEmpty(schema.utterances)) {
       schema.validate();
-      console.timeEnd('validate');
     }
     if (build) {
-      placeHolderPromise = schema.build(speechPath);
+      placeHolderPromise = schema.build(speechPath, localManifest);
     }
 
     return placeHolderPromise;
   }))
   .then(() => resultAlexa.map((schema) => {
     let placeHolderPromise = Promise.resolve();
-    if (synonymPath) {
-      console.time('synonym');
+    if (synonymPath && !_.isEmpty(schema.intents) && !_.isEmpty(schema.slots) && !_.isEmpty(schema.utterances)) {
       placeHolderPromise = schema.buildSynonym(synonymPath);
-      console.timeEnd('synonym');
     }
 
     return placeHolderPromise;
@@ -58,9 +55,7 @@ module.exports = function(options) {
   .then(() => resultAlexa.map((schema) => {
     let placeHolderPromise = Promise.resolve();
     if (contentPath) {
-      console.time('content');
       placeHolderPromise = schema.buildContent(contentPath);
-      console.timeEnd('content');
     }
 
     return placeHolderPromise;

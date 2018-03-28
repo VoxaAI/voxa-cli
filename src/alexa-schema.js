@@ -246,7 +246,7 @@ class alexaSchema {
     aError.print();
   }
 
-  build(customPathLocale, unique) {
+  build(customPathLocale, localManifest) {
     if (!this.locale) return new Error('Please define a locale. eg. this.locale = \'en-US\'');
     // const customPathLocale = unique ? pathSpeech : path.join(pathSpeech);
     const promises = [];
@@ -307,6 +307,16 @@ class alexaSchema {
     }
 
     if (this.manifest && this.skillEnvironmentsInformation) {
+      if (localManifest) {
+        const customEnvironment = 'local';
+        const customManifest = { };
+        _.map(localManifest, (value, key) => {
+          customManifest[key] = value;
+          this.skillEnvironmentsInformation.push({ environment: customEnvironment,  key, value });
+        });
+      }
+
+      console.log(this.skillEnvironmentsInformation);
       _.chain(this.skillEnvironmentsInformation)
       .map('environment')
       .uniq()

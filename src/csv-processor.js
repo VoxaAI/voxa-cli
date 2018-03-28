@@ -288,7 +288,6 @@ function getRows(worksheet, offset) {
 module.exports = (spreadsheetId, creds, othersToDownload, type) => {
   let locale;
   let otherCSV = {};
-  console.time('worksheetDownload');
   return getWorksheets(spreadsheetId, creds)
   .then((info) => {
     const title = info.title;
@@ -308,9 +307,7 @@ module.exports = (spreadsheetId, creds, othersToDownload, type) => {
       return { type, worksheet };
     })
     .filter(worksheet => worksheet.type);
-    console.timeEnd('worksheetDownload');
-    // console.log('worksheets', worksheets);
-    console.time('worksheetProcess');
+
     return worksheets;
   })
   .then(sheets => Promise.all(sheets.map(sheet => processors[sheet.type](sheet.worksheet))))
@@ -320,7 +317,6 @@ module.exports = (spreadsheetId, creds, othersToDownload, type) => {
     _.each(values, (value) => {
       _.merge(result, value);
     });
-    console.timeEnd('worksheetProcess');
     let schema = new AlexaSchema(result);
     if (type === 'dialogFlow') schema = new DialogFlowSchema(result);
     if (type === 'cortana') schema = new CortanaSchema(result);

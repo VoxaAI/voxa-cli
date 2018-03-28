@@ -23,7 +23,7 @@ program
    const interaction = require(program.path);
    interaction.rootPath = process.cwd();
    builder(interaction);
-  }
-  catch (e) {
+  } catch (e) {
    console.log('oh no!. There was a problem finding', program.path)
+   console.error(e);
   }
