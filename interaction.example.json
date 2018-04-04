@@ -1,0 +1,12 @@
+
+{
+  "local-manifest": {
+    "publishingInformation.locales.en-US.name": "Skill Name in en-US",
+    "apis.custom.endpoint.uri": "https://xxxxx.ngrok.io/skill",
+    "events.endpoint.uri": "https://xxxxx.ngrok.io/skill",
+    "apis.custom.endpoint.sslCertificateType": "Wildcard",
+    "events.endpoint.sslCertificateType": "Wildcard"
+  },
+  "content": ["CONTENT_TO_DOWNLOAD_ONE", "CONTENT_TO_DOWNLOAD_TWO"],
+  "spreadsheets": ["INTENT SPREADSHEET", "PUBLISHING SPREADSHEET"],
+}

@@ -8,16 +8,120 @@ const AlexaSchema = require('./alexa-schema');
 const DialogFlowSchema = require('./dialog-flow-schema');
 const CortanaSchema = require('./cortana-schema');
 
-
 // Create a document object using the ID of the spreadsheet - obtained from its URL.
 
 const placeholders = {
   slots: 'LIST_OF_',
   intents: 'INTENT',
   utterances: 'UTTERANCES_',
+  invocations: 'INVOCATION_NAMES',
+  skillGeneral: 'SKILL_GENERAL_INFORMATION',
+  skillLocaleSettings: 'SKILL_LOCALE_INFORMATION-',
+  skillEnvironmentsInformation: 'SKILL_ENVIRONMENTS_INFORMATION',
 };
 
 const processors = {
+  skillEnvironmentsInformation: worksheet => getRows(worksheet).then((rows) => {
+    const skillEnvironmentsInformation = _(rows).map((row) => {
+      const info = _.pick(row, ['key', 'value', 'environment']);
+
+      return info;
+    })
+    .uniq()
+    .value();
+    return { skillEnvironmentsInformation };
+  }),
+  skillGeneral: worksheet => getRows(worksheet).then((rows) => {
+    const manifest = { manifestVersion: '1.0' };
+    let skillGeneralInfo = _(rows).map((row) => {
+      const info = _.pick(row, ['option', 'value', 'key']);
+
+      if (_.toNumber(info.value)) info.value = _.toNumber(info.value);
+      if (info.value === 'TRUE') info.value = true;
+      if (info.value === 'FALSE') info.value = false;
+      return info;
+    })
+    .uniq()
+    .map(info => {
+      if (_.includes(info.key, 'distributionCountries')) info.value = info.value.split(',');
+      if (_.includes(info.key, 'apis.custom.interfaces[]')) {
+        const key = info.key.replace('apis.custom.interfaces[].type.', '');
+        info.key = 'apis.custom.interfaces';
+        const previouseArr = _.get(manifest, info.key, []);
+
+        if (info.value) previouseArr.push({ type: key});
+
+        info.value = previouseArr;
+      }
+
+      if (_.includes(info.key, 'events.subscriptions[]')) {
+        const key = info.key.replace('events.subscriptions[].eventName.', '');
+        info.key = 'events.subscriptions';
+        const previouseArr = _.get(manifest, info.key, []);
+
+        if (info.value) previouseArr.push({ eventName: key});
+
+        info.value = previouseArr;
+      }
+
+      if (_.includes(info.key, 'permissions[]')) {
+        const key = info.key.replace('permissions[].name.', '');
+        info.key = 'permissions';
+        const previouseArr = _.get(manifest, info.key, []);
+
+        if (info.value) previouseArr.push({ name: key});
+
+        info.value = previouseArr;
+      }
+      _.set(manifest, info.key, info.value);
+
+    })
+    .value();
+    // others[otherName] = rows;
+    return { manifest };
+  }),
+  skillLocaleSettings: worksheet => getRows(worksheet).then((rows) => {
+    const locale = worksheet.title.replace(placeholders.skillLocaleSettings, '');
+    const manifest = {};
+    let skillLocaleSetup = _(rows)
+    .map((row) => {
+      const info = _.pick(row, ['option', 'value', 'key']);
+
+      if (info.value === 'TRUE') info.value = true;
+      if (info.value === 'FALSE') info.value = false;
+      return info;
+    })
+    .uniq()
+    .map(info => {
+      let key = info.key.replace('locales.', `locales.${locale}.`);
+
+      if (_.includes(key, 'keywords')) info.value = info.value.split(',');
+      if (_.includes(key, '[]')) {
+        key = key.replace('[]', '');
+        const previouseArr = _.get(manifest, key, []);
+        previouseArr.push(info.value);
+        info.value = previouseArr;
+      }
+
+      _.set(manifest, key, info.value);
+    })
+    .value();
+    return { manifest };
+  }),
+  invocations: worksheet => getRows(worksheet).then((rows) => {
+    let invocations = _(rows).map((row) => {
+      const info = _.pick(row, ['invocationname', 'environment']);
+
+      // previousIntent = _.isEmpty(info.intent) ? previousIntent : info.intent;
+      // info.intent = previousIntent;
+
+      return info;
+    })
+    .uniq()
+    .value();
+    // others[otherName] = rows;
+    return { invocations };
+  }),
   slots: worksheet => getRows(worksheet).then((rows) => {
     const slotName = _.includes(worksheet.title, 'AMAZON.') ? worksheet.title.replace('LIST_OF_', '') : worksheet.title;
     const slotNameSanitize = _.trim(_.toLower(slotName).replace(/_/g, '').replace(/ /g, ''));
@@ -52,7 +156,7 @@ const processors = {
   intents: worksheet => getRows(worksheet).then((rows) => {
     let previousIntent;
     let intentsDraft = _(rows).map((row) => {
-      const info = _.pick(row, ['intent', 'slottype', 'slotname']);
+      const info = _.pick(row, ['intent', 'slottype', 'slotname', 'environment']);
 
       previousIntent = _.isEmpty(info.intent) ? previousIntent : info.intent;
       info.intent = previousIntent;
@@ -77,8 +181,19 @@ const processors = {
       .uniq()
       .value();
 
+      const environment = _.chain(value)
+      .filter('environment')
+      .map('environment')
+      .uniq()
+      .first()
+      .split(',')
+      .replace(' ', '')
+      .value();
+      // const environment =
+
       const result = !_.isEmpty(slots) ? { intent, slots } : { intent };
 
+      result.environment = environment;
       intents.push(result);
     }));
 
@@ -119,8 +234,6 @@ const processors = {
   other: worksheet => getRows(worksheet).then((rows) => {
     const firstRow = _.head(rows);
     const headers = _.chain(firstRow).omit(['_xml', 'id', 'app:edited', '_links']).filter(_.isString).values().value();
-
-    console.log('headers', headers);
 
     rows = _(rows)
     .drop()
@@ -175,7 +288,6 @@ function getRows(worksheet, offset) {
 module.exports = (spreadsheetId, creds, othersToDownload, type) => {
   let locale;
   let otherCSV = {};
-  console.time('worksheetDownload');
   return getWorksheets(spreadsheetId, creds)
   .then((info) => {
     const title = info.title;
@@ -195,9 +307,7 @@ module.exports = (spreadsheetId, creds, othersToDownload, type) => {
       return { type, worksheet };
     })
     .filter(worksheet => worksheet.type);
-    console.timeEnd('worksheetDownload');
-    // console.log('worksheets', worksheets);
-    console.time('worksheetProcess');
+
     return worksheets;
   })
   .then(sheets => Promise.all(sheets.map(sheet => processors[sheet.type](sheet.worksheet))))
@@ -207,7 +317,6 @@ module.exports = (spreadsheetId, creds, othersToDownload, type) => {
     _.each(values, (value) => {
       _.merge(result, value);
     });
-    console.timeEnd('worksheetProcess');
     let schema = new AlexaSchema(result);
     if (type === 'dialogFlow') schema = new DialogFlowSchema(result);
     if (type === 'cortana') schema = new CortanaSchema(result);

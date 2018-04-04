@@ -2,6 +2,12 @@
 
 You can create alexa interaction model from csv.
 
+## Install
+
+```
+$ npm install --save voxa-cli
+```
+
 ## Getting started
 
 ### Create credentials and share your spreadsheet with a client
@@ -26,70 +32,43 @@ Find the client_email inside client_secret.json. Back in your spreadsheet, click
 
 ![alt text](https://www.twilio.com/blog/wp-content/uploads/2017/03/2pzVvPzuNHokBSR2KXoPB9XC15xBF-qBCRJJq0Ut987IkqDVeL3sNdqY2oQj-1V1-2X-SdU33jAuwQ88_XxH703HFpoe7slpVUIniinIqbpz2zD6U2pd77C1iXT0Kzd4qFWb9pI0.png)
 
-### Code
+Finally copy the client_secret.json in the root of the project. `client_secret.json`
 
-Create a new file on your skill project `skill-directory/scripts/interaction.js` and paste the following snippets.
+### Interaction.json
+
+Once you have the OAuth2 you should create the interaction.json.
+Create a new file on your skill root project `./interaction.json` and paste the following snippet. Replace all the values you need.
+
+```js
+{
+  "local-manifest": {
+    "publishingInformation.locales.en-US.name": "Local skill Name",
+    "publishingInformation.locales.en-GB.name": "Local skill Name",
+    "apis.custom.endpoint.uri": "https://a4a8e881.ngrok.io/skill",
+    "events.endpoint.uri": "https://a4a8e881.ngrok.io/skill",
+    "apis.custom.endpoint.sslCertificateType": "Wildcard",
+    "events.endpoint.sslCertificateType": "Wildcard"
+  },
+  "content": ["CONTENT_TO_DOWNLOAD_ONE", "CONTENT_TO_DOWNLOAD_TWO"],
+  "spreadsheets": ["INTENT SPREADSHEET", "PUBLISHING SPREADSHEET"],
+}
+```
+
+Finally execute it and voilà :flushed:
 
 ```
-'use strict';
-
-const voxaCli = require('voxa-cli');
-
-voxaCli({
-  spreadsheets: ['A SPREADSHEET ID', 'ANOTHER SPREADSHEET ID'],
-  speechPath: 'skill-directory/speech-assets',
-  synonymPath: 'skill-directory/synonyms',
-  auth: require('./client_secret'),
-  validate: true })
-.then(() => console.log('voxa cli - finish successfully!'));
+$ node node_modules/voxa-cli/
 ```
-
-
-Finally execute it and voilà :flushed: 
-
-`$ node skill-directory/scripts/interaction.js`
 
 ### Options
 
-* **spreadsheets**: Array of spreadsheets. Each csv should be a interaction model for a specific locale.
-* **speechPath**: Path to save the interaction model. It will generate slots, intents, sample utterances, model and skill builder model.
-* **synonymPath**: If your slots have synonyms it will save it to this path.
-* **auth**: Credentials to connect to your spreadsheet.
-* **validate**: Default false, if true it will run your some test around your interaction model.
-
-### Spreadsheet structure
-You can take a look at `example-spreadsheet.xlsx` in the root of the repository 
-* Spreadsheet must contain a valid local on it's name eg. `MySkill - Intents & Utterances-en-US`. Valid Locales are (['en-US','en-GB', 'de-DE'])
-* Tab for intent should be named `INTENT`
-* Tab for utterances should be named `UTTERANCES` eg. `UTTERANCES_MAIN`, `UTTERANCES_HELP`
-* Tab for slots should contain `LIST_OF_` eg. `LIST_OF_TERMS`.
-* If your slots contains synonym add a column named synonym
-
-LIST_OF_TERMS | synonym
---- | ---
-rain | rain
-rainy day | rain
-rainstorm | rain
-rainfall | rain
-
-* Utterances should have the following structure
-
-LaunchIntent | AMAZON.YesIntent
---- | ---
-LaunchIntent | AMAZON.YesIntent
-start | ohh yes
-give me something | yeah
-put some fireworks | here we go
+* **spreadsheets**: Array of spreadsheets. Each csv should be a interaction model for a specific locale. Spreadsheet can also be about publishing information. Make sure to review [Interaction spreadsheet structure]({{ site.url }}/docs/interaction-spreadsheet) and [Publishing spreadsheet structure]({{ site.url }}/docs/publishing-spreadsheet)
+* **content**: other tabs to download. simple table, content description you named!. Make sure to review [content structure]({{ site.url }}/docs/interaction-spreadsheet#tabs-to-download-should-have-the-following-structure)
+* **local-manifest**: Build your own local manifest from the publishing information from the spreadsheets. You can overwrite all the values you want. Make sure to review [Local manifest]({{ site.url }}/docs/local-manifest)
 
 
-### Use a private repo as npm
-
-In your private npm modules add
-```
-{
-    "name": "myapp",
-    "dependencies": {
-        "voxa-cli": "git+ssh://git@github.com:myaccount/myprivate.git",
-    }
-}
-```
+### Other links
+ * [Interaction spreadsheet structure]({{ site.url }}/docs/interaction-spreadsheet)
+ * [Publishing spreadsheet structure]({{ site.url }}/docs/publishing-spreadsheet)
+ * [Content structure]({{ site.url }}/docs/interaction-spreadsheet#tabs-to-download-should-have-the-following-structure)
+ * [Local manifest]({{ site.url }}/docs/local-manifest)

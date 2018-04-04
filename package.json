@@ -1,6 +1,6 @@
 {
   "name": "voxa-cli",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -11,6 +11,7 @@
   "dependencies": {
     "bluebird": "^3.5.0",
     "chai": "^4.0.2",
+    "commander": "^2.15.1",
     "fs-extra": "^4.0.0",
     "google-spreadsheet": "^2.0.4",
     "lodash": "^4.17.4",
