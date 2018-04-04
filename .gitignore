@@ -1,8 +1,12 @@
 node_modules/
 client-secret*
+client_secret*
 speech-assets
 synonyms/
 log.txt
 test.js
 interaction.json
 local-skill.json
+_site
+.sass-cache
+.jekyll-metadata
