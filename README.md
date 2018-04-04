@@ -1,6 +1,6 @@
 # voxa-cli
 
-You can create alexa interaction model from csv.
+Create interaction model and publishing information for your Alexa skills.
 
 ## Install
 
@@ -39,7 +39,7 @@ Finally copy the client_secret.json in the root of the project. `client_secret.j
 Once you have the OAuth2 you should create the interaction.json.
 Create a new file on your skill root project `./interaction.json` and paste the following snippet. Replace all the values you need.
 
-```js
+```
 {
   "local-manifest": {
     "publishingInformation.locales.en-US.name": "Local skill Name",
