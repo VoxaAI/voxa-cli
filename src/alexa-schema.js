@@ -300,7 +300,7 @@ class alexaSchema {
         const name = invocation.invocationname;
         const interactionModel = { languageModel: { invocationName: name, intents, types }};
 
-        const promise = fs.outputFile(path.join(customPathLocale, this.locale,`${_.kebabCase(name)}-${invocation.environment}-model.json`),  JSON.stringify({ interactionModel }, null, 2), { flag: 'w' });
+        const promise = fs.outputFile(path.join(customPathLocale, 'alexa', this.locale,`${_.kebabCase(name)}-${invocation.environment}-model.json`),  JSON.stringify({ interactionModel }, null, 2), { flag: 'w' });
         promises.push(promise);
 
       });
@@ -328,7 +328,7 @@ class alexaSchema {
           _.set(manifest, item.key, item.value)
         })
         .value();
-        const promise = fs.outputFile(path.join(customPathLocale, `${_.kebabCase(skillEnvironments)}-skill.json`),  JSON.stringify({ manifest }, null, 2), { flag: 'w' });
+        const promise = fs.outputFile(path.join(customPathLocale, 'alexa', `${_.kebabCase(skillEnvironments)}-skill.json`),  JSON.stringify({ manifest }, null, 2), { flag: 'w' });
         promises.push(promise);
         return skillEnvironments;
       })
