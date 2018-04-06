@@ -17,8 +17,8 @@ title: VOXA-CLI
 email: rommelb@rain.agency
 description: >- # this means to ignore newlines until "baseurl:"
   Powerful builder of interaction model
-baseurl: "" # the subpath of your site, e.g. /blog
-url: "http://mediarain.github.io/voxa-cli" # the base hostname & protocol for your site, e.g. http://example.com
+baseurl: "/voxa-cli" # the subpath of your site, e.g. /blog
+url: "https://mediarain.github.io/voxa-cli" # the base hostname & protocol for your site, e.g. http://example.com
 host:           0.0.0.0
 port:           4000
 twitter_username: jekyllrb
