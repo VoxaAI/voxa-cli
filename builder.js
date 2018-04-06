@@ -22,10 +22,15 @@ module.exports = function(options) {
   const others = _.get(options, 'content', []);
   const contentPath = _.get(options, 'contentPath', path.join(rootPath, 'content'));
   const localManifest = _.get(options, 'local-manifest');
+  let platform = _.get(options, 'platform', ['alexa']);
+  platform = _.isString(platform) ? [platform] : platform;
 
-  const spreadsheetPromises = spreadsheets.map((spreadsheet) => processor(spreadsheet, auth, others, type));
+  const spreadsheetPromises = _.chain(spreadsheets)
+    .map(spreadsheet => platform.map(platform => ({ spreadsheet, platform })))
+    .flattenDeep()
+    .map((item) => processor(item.spreadsheet, auth, others, item.platform))
+    .value();
   let resultAlexa;
-  const unique = spreadsheets.length === 1;
 
   return Promise.all(spreadsheetPromises)
   .then(_resultAlexa => {

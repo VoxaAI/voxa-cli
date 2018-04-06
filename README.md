@@ -49,6 +49,7 @@ Create a new file on your skill root project `./interaction.json` and paste the 
     "apis.custom.endpoint.sslCertificateType": "Wildcard",
     "events.endpoint.sslCertificateType": "Wildcard"
   },
+  "platform": ["alexa", "dialogFlow"],
   "content": ["CONTENT_TO_DOWNLOAD_ONE", "CONTENT_TO_DOWNLOAD_TWO"],
   "spreadsheets": ["INTENT SPREADSHEET", "PUBLISHING SPREADSHEET"],
 }
@@ -64,6 +65,7 @@ $ node node_modules/voxa-cli/
 
 * **spreadsheets**: Array of spreadsheets. Each csv should be a interaction model for a specific locale. Spreadsheet can also be about publishing information. Make sure to review [Interaction spreadsheet structure]({{ site.url }}/docs/interaction-spreadsheet) and [Publishing spreadsheet structure]({{ site.url }}/docs/publishing-spreadsheet)
 * **content**: other tabs to download. simple table, content description you named!. Make sure to review [content structure]({{ site.url }}/docs/interaction-spreadsheet#tabs-to-download-should-have-the-following-structure)
+* **platform**: We currently support Alexa and Dialog Flow interaction models. Make sure to review [platform structure]({{ site.url }}/docs/platform)
 * **local-manifest**: Build your own local manifest from the publishing information from the spreadsheets. You can overwrite all the values you want. Make sure to review [Local manifest]({{ site.url }}/docs/local-manifest)
 
 
@@ -72,3 +74,4 @@ $ node node_modules/voxa-cli/
  * [Publishing spreadsheet structure]({{ site.url }}/docs/publishing-spreadsheet)
  * [Content structure]({{ site.url }}/docs/interaction-spreadsheet#tabs-to-download-should-have-the-following-structure)
  * [Local manifest]({{ site.url }}/docs/local-manifest)
+ * [Platform]({{ site.url }}/docs/platform)

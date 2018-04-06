@@ -83,7 +83,7 @@ class dialogFlow {
     _.each(this.slots, (value, key) => {
       key = _.kebabCase(key);
       const str = _.keys(value).map(value => ({ value, synonyms: [value] }));
-      const eachUtterancePromise = fs.outputFile(path.join(customPathLocale, 'entities', `${key}_entries_en.json`), JSON.stringify(str, null, 2), { flag: 'w' });
+      const eachUtterancePromise = fs.outputFile(path.join(customPathLocale, 'dialog-flow', 'entities', `${key}_entries_en.json`), JSON.stringify(str, null, 2), { flag: 'w' });
       const entityDefinition = {
         id: uuid(),
         name: key,
@@ -91,7 +91,7 @@ class dialogFlow {
         isEnum: true,
         automatedExpansion: false,
       };
-      promises.push(fs.outputFile(path.join(customPathLocale, 'entities', `${key}.json`), JSON.stringify(entityDefinition, null, 2), { flag: 'w' }));
+      promises.push(fs.outputFile(path.join(customPathLocale, 'dialog-flow', 'entities', `${key}.json`), JSON.stringify(entityDefinition, null, 2), { flag: 'w' }));
       promises.push(eachUtterancePromise);
     });
 
@@ -133,7 +133,7 @@ class dialogFlow {
 
         return ({ data, isTemplate: false, count: 0, updated: 0 });
       });
-      const eachUtterancePromise = fs.outputFile(path.join(customPathLocale, 'intents', `${key}_usersays_en.json`), JSON.stringify(str, null, 2), { flag: 'w' });
+      const eachUtterancePromise = fs.outputFile(path.join(customPathLocale, 'dialog-flow', 'intents', `${key}_usersays_en.json`), JSON.stringify(str, null, 2), { flag: 'w' });
       promises.push(eachUtterancePromise);
     });
 
@@ -166,7 +166,7 @@ class dialogFlow {
         events: intentData.intent === 'LaunchIntent' ?
         [{ name: 'WELCOME' }, { name: 'GOOGLE_ASSISTANT_WELCOME' }] : [],
       };
-      promises.push(fs.outputFile(path.join(customPathLocale, 'intents', `${intentData.intent}.json`), JSON.stringify(entityDefinition, null, 2), { flag: 'w' }));
+      promises.push(fs.outputFile(path.join(customPathLocale, 'dialog-flow', 'intents', `${intentData.intent}.json`), JSON.stringify(entityDefinition, null, 2), { flag: 'w' }));
 
     });
 
@@ -209,17 +209,17 @@ class dialogFlow {
       const schema = _.pick(this, ['intents']);
       const str = JSON.stringify(agent, null, 2);
 
-      const promise = fs.outputFile(path.join(customPathLocale, 'agent.json'), str, { flag: 'w' });
+      const promise = fs.outputFile(path.join(customPathLocale, 'dialog-flow', 'agent.json'), str, { flag: 'w' });
       promises.push(promise);
     }
 
-    promises.push(fs.outputFile(path.join(customPathLocale, 'package.json'),  JSON.stringify({ version: '1.0.0' }, null, 2), { flag: 'w' }));
+    promises.push(fs.outputFile(path.join(customPathLocale, 'dialog-flow', 'package.json'),  JSON.stringify({ version: '1.0.0' }, null, 2), { flag: 'w' }));
 
     return Promise.all(promises);
   }
 
-  buildSynonym(pathSynonym, unique) {
-    const customPathSynonym = unique ? pathSynonym : path.join(pathSynonym, this.locale);
+  buildSynonym(pathSynonym) {
+    const customPathSynonym = path.join(pathSynonym, this.locale);
     if (!this.locale) return new Error('Please define a locale. eg. this.locale = \'en-US\'');
     const promises = [];
     // slotsDraft
@@ -231,6 +231,22 @@ class dialogFlow {
         const promise = fs.outputFile(path.join(customPathSynonym, `${key}.json`), str, { flag: 'w' });
         promises.push(promise);
       }
+    });
+
+    return Promise.all(promises);
+  }
+
+  buildContent(pathContent) {
+    const customPathContent = path.join(pathContent, this.locale);
+    if (!this.locale) return new Error('Please define a locale. eg. this.locale = \'en-US\'');
+    const promises = [];
+    // slotsDraft
+    //console.log('synonym', this.slots);
+
+    _.map(this.others, (value, key) => {
+      const str = JSON.stringify(value, null, 2);
+      const promise = fs.outputFile(path.join(customPathContent, `${_.kebabCase(key)}.json`), str, { flag: 'w' });
+      promises.push(promise);
     });
 
     return Promise.all(promises);
