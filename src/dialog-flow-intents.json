@@ -29,7 +29,7 @@
   ],
   "AMAZON.ResumeIntent": [
     "resume",
-    "continue"
+    "continue",
     "keep going"
   ],
   "AMAZON.RepeatIntent": [

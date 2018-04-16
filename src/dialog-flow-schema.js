@@ -8,6 +8,7 @@ const fs = Promise.promisifyAll(require('fs-extra'));
 const PrettyError = require('pretty-error');
 const AlexaError = require('./error');
 const uuid = require('uuid/v4');
+const dialogFlowBuiltinIntent = require('./dialog-flow-intents');
 
 // instantiate PrettyError, which can then be used to render error objects
 const pe = new PrettyError();
@@ -97,6 +98,7 @@ class dialogFlow {
       });
 
       _.map(this.utterances, (value, key) => {
+        value = _.chain(value).concat(_.get(dialogFlowBuiltinIntent, key, [])).flattenDeep().uniq().compact().value();
         const intentUttr = _.find(includedIntents, { intent: key });
         if (!intentUttr) return;
         const str = value.map(text => {
@@ -114,6 +116,7 @@ class dialogFlow {
             .replace('}', '');
 
             const platformSpecificSlots = _.filter(intentUttr.slots, (slot) => (_.isEmpty(slot.platform) || _.includes(slot.platform, 'dialogFlow')));
+            console.log('slot', platformSpecificSlots);
             const slot = _.find(platformSpecificSlots, { name: variable })
 
             if (isATemplate && slot) {
@@ -141,6 +144,7 @@ class dialogFlow {
       _(includedIntents)
       .filter(intent => !intent.environment || _.includes(intent.environment, invocation.environment))
       .map((intentData) => {
+        const platformSpecificSlots = _.filter(intentData.slots, (slot) => (_.isEmpty(slot.platform) || _.includes(slot.platform, 'dialogFlow')));
         console.log('intent.platformIntent',intentData.intent, intentData.platformIntent)
         const entityDefinition = {
           id: uuid(),
@@ -152,7 +156,7 @@ class dialogFlow {
               resetContexts: false,
               action: intentData.intent,
               affectedContexts: [],
-              parameters: (intentData.slots || []).map(slot => ({
+              parameters: (platformSpecificSlots || []).map(slot => ({
                 dataType: `@${_.kebabCase(slot.type)}`,
                 name: slot.name,
                 value: `$${slot.name}`,
