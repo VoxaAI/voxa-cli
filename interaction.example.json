@@ -8,5 +8,5 @@
     "events.endpoint.sslCertificateType": "Wildcard"
   },
   "content": ["CONTENT_TO_DOWNLOAD_ONE", "CONTENT_TO_DOWNLOAD_TWO"],
-  "spreadsheets": ["INTENT SPREADSHEET", "PUBLISHING SPREADSHEET"],
+  "spreadsheets": ["INTENT SPREADSHEET", "PUBLISHING SPREADSHEET"]
 }

@@ -68,152 +68,159 @@ class dialogFlow {
 
   validate() {
     return true;
-
   }
 
   build(pathSpeech, unique) {
-    //console.log('this', this);
-
     if (!this.locale) return new Error('Please define a locale. eg. this.locale = \'en-US\'');
     const customPathLocale = unique ? pathSpeech : path.join(pathSpeech, this.locale);
     const promises = [];
     var tokenRegx = /{([^}]+)}/g;
 
-    // slotsDraft
-    _.each(this.slots, (value, key) => {
-      key = _.kebabCase(key);
-      const str = _.keys(value).map(value => ({ value, synonyms: [value] }));
-      const eachUtterancePromise = fs.outputFile(path.join(customPathLocale, 'dialog-flow', 'entities', `${key}_entries_en.json`), JSON.stringify(str, null, 2), { flag: 'w' });
-      const entityDefinition = {
-        id: uuid(),
-        name: key,
-        isOverridable: true,
-        isEnum: true,
-        automatedExpansion: false,
-      };
-      promises.push(fs.outputFile(path.join(customPathLocale, 'dialog-flow', 'entities', `${key}.json`), JSON.stringify(entityDefinition, null, 2), { flag: 'w' }));
-      promises.push(eachUtterancePromise);
-    });
+    const includedIntents = _.filter(this.intents, (intent => _.isEmpty(intent.platformIntent) || _.includes(intent.platformIntent, 'dialogFlow')));
 
-    _.each(this.utterances, (value, key) => {
-      const intentUttr = _.find(this.intents, { intent: key });
-      const str = value.map(text => {
-        const data = _.chain(text)
-        .replace(tokenRegx, function (match, inner) {
-          return `|{${inner}}|`;
-        })
-        .split('|')
-        .map(text => {
-          const element = {};
-          const isATemplate = (_.includes(text, '{') && _.includes(text, '}'));
+    this.invocations.map((invocation) => {
+      // slotsDraft
+      _.map(this.slots, (value, key) => {
+        key = _.kebabCase(key);
 
-          const variable = text
-          .replace('{', '')
-          .replace('}', '');
-
-          console.log('s', variable, intentUttr);
-
-          const slot = _.find(intentUttr.slots, { name: variable })
-
-          if (isATemplate && slot) {
-            _.set(element, 'meta', `@${_.kebabCase(slot.type)}`);
-            _.set(element, 'alias', slot.name);
-          }
-
-          if (!_.isEmpty(text)) {
-            _.set(element, 'text', text);
-            _.set(element, 'id', uuid());
-            _.set(element, 'userDefined', isATemplate);
-          }
-
-          return _.isEmpty(element) ? null : element;
-        })
-        .compact()
-        .value();
-
-        return ({ data, isTemplate: false, count: 0, updated: 0 });
+        const str = _.keys(value).map(value => ({ value, synonyms: [value] }));
+        const eachUtterancePromise = fs.outputFile(path.join(customPathLocale, 'dialog-flow', invocation.environment, 'entities', `${key}_entries_en.json`), JSON.stringify(str, null, 2), { flag: 'w' });
+        const entityDefinition = {
+          id: uuid(),
+          name: key,
+          isOverridable: true,
+          isEnum: true,
+          automatedExpansion: false,
+        };
+        promises.push(fs.outputFile(path.join(customPathLocale, 'dialog-flow', invocation.environment, 'entities', `${key}.json`), JSON.stringify(entityDefinition, null, 2), { flag: 'w' }));
+        promises.push(eachUtterancePromise);
       });
-      const eachUtterancePromise = fs.outputFile(path.join(customPathLocale, 'dialog-flow', 'intents', `${key}_usersays_en.json`), JSON.stringify(str, null, 2), { flag: 'w' });
-      promises.push(eachUtterancePromise);
-    });
 
-    _.each(this.intents, (intentData) => {
-      const entityDefinition = {
-        id: uuid(),
-        name: intentData.intent,
-        auto: true,
-        contexts: [],
-        responses: [
-          {
-            resetContexts: false,
-            action: intentData.intent,
-            affectedContexts: [],
-            parameters: (intentData.slots || []).map(slot => ({
-              dataType: `@${_.kebabCase(slot.type)}`,
-              name: slot.name,
-              value: `$${slot.name}`,
-              isList: false
-            })),
-            messages: [],
-            defaultResponsePlatforms: {},
-            speech: []
-          }
-        ],
-        priority: 500000,
-        webhookUsed: true,
-        webhookForSlotFilling: false,
-        fallbackIntent: false,
-        events: intentData.intent === 'LaunchIntent' ?
-        [{ name: 'WELCOME' }, { name: 'GOOGLE_ASSISTANT_WELCOME' }] : [],
-      };
-      promises.push(fs.outputFile(path.join(customPathLocale, 'dialog-flow', 'intents', `${intentData.intent}.json`), JSON.stringify(entityDefinition, null, 2), { flag: 'w' }));
+      _.map(this.utterances, (value, key) => {
+        const intentUttr = _.find(includedIntents, { intent: key });
+        if (!intentUttr) return;
+        const str = value.map(text => {
+          const data = _.chain(text)
+          .replace(tokenRegx, function (match, inner) {
+            return `|{${inner}}|`;
+          })
+          .split('|')
+          .map(text => {
+            const element = {};
+            const isATemplate = (_.includes(text, '{') && _.includes(text, '}'));
 
-    });
+            const variable = text
+            .replace('{', '')
+            .replace('}', '');
 
-    if (this.intents) {
-      const agent = {
-        description: '',
-        language: 'en',
-        activeAssistantAgents: [],
-        googleAssistant: {
-          googleAssistantCompatible: false,
-          project: 'somename',
-          welcomeIntentSignInRequired: false,
-          startIntents: [],
-          systemIntents: [],
-          endIntentIds: [],
-          oAuthLinking: {
-            required: false,
-            grantType: 'AUTH_CODE_GRANT'
+            const platformSpecificSlots = _.filter(intentUttr.slots, (slot) => (_.isEmpty(slot.platform) || _.includes(slot.platform, 'dialogFlow')));
+            const slot = _.find(platformSpecificSlots, { name: variable })
+
+            if (isATemplate && slot) {
+              _.set(element, 'meta', `@${_.kebabCase(slot.type)}`);
+              _.set(element, 'alias', slot.name);
+            }
+
+            if (!_.isEmpty(text)) {
+              _.set(element, 'text', text);
+              _.set(element, 'id', uuid());
+              _.set(element, 'userDefined', isATemplate);
+            }
+
+            return _.isEmpty(element) ? null : element;
+          })
+          .compact()
+          .value();
+
+          return ({ data, isTemplate: false, count: 0, updated: 0 });
+        });
+        const eachUtterancePromise = fs.outputFile(path.join(customPathLocale, 'dialog-flow', invocation.environment, 'intents', `${key}_usersays_en.json`), JSON.stringify(str, null, 2), { flag: 'w' });
+        promises.push(eachUtterancePromise);
+      });
+
+      _(includedIntents)
+      .filter(intent => !intent.environment || _.includes(intent.environment, invocation.environment))
+      .map((intentData) => {
+        console.log('intent.platformIntent',intentData.intent, intentData.platformIntent)
+        const entityDefinition = {
+          id: uuid(),
+          name: intentData.intent,
+          auto: true,
+          contexts: [],
+          responses: [
+            {
+              resetContexts: false,
+              action: intentData.intent,
+              affectedContexts: [],
+              parameters: (intentData.slots || []).map(slot => ({
+                dataType: `@${_.kebabCase(slot.type)}`,
+                name: slot.name,
+                value: `$${slot.name}`,
+                isList: false
+              })),
+              messages: [],
+              defaultResponsePlatforms: {},
+              speech: []
+            }
+          ],
+          priority: 500000,
+          webhookUsed: true,
+          webhookForSlotFilling: false,
+          fallbackIntent: false,
+          events: intentData.intent === 'LaunchIntent' ?
+          [{ name: 'WELCOME' }, { name: 'GOOGLE_ASSISTANT_WELCOME' }] : [],
+        };
+        promises.push(fs.outputFile(path.join(customPathLocale, 'dialog-flow', invocation.environment, 'intents', `${intentData.intent}.json`), JSON.stringify(entityDefinition, null, 2), { flag: 'w' }));
+
+      })
+      .value();
+
+      if (includedIntents) {
+        const agent = {
+          description: '',
+          language: 'en',
+          activeAssistantAgents: [],
+          googleAssistant: {
+            googleAssistantCompatible: false,
+            project: 'somename',
+            welcomeIntentSignInRequired: false,
+            startIntents: [],
+            systemIntents: [],
+            endIntentIds: [],
+            oAuthLinking: {
+              required: false,
+              grantType: 'AUTH_CODE_GRANT'
+            },
+            voiceType: 'MALE_1',
+            capabilities: [],
+            protocolVersion: 'V1'
           },
-          voiceType: 'MALE_1',
-          capabilities: [],
-          protocolVersion: 'V1'
-        },
-        defaultTimezone: 'America/New_York',
-        webhook: {
-          url: '',
-          headers: {
+          defaultTimezone: 'America/New_York',
+          webhook: {
+            url: '',
+            headers: {
+            },
+            available: true,
+            useForDomains: true,
+            cloudFunctionsEnabled: false,
+            cloudFunctionsInitialized: false
           },
-          available: true,
-          useForDomains: true,
-          cloudFunctionsEnabled: false,
-          cloudFunctionsInitialized: false
-        },
-        isPrivate: true,
-        customClassifierMode: 'use.after',
-        mlMinConfidence: 0.2,
-        supportedLanguages: []
-      };
+          isPrivate: true,
+          customClassifierMode: 'use.after',
+          mlMinConfidence: 0.2,
+          supportedLanguages: []
+        };
 
-      const schema = _.pick(this, ['intents']);
-      const str = JSON.stringify(agent, null, 2);
+        const schema = _.pick(this, ['intents']);
+        const str = JSON.stringify(agent, null, 2);
 
-      const promise = fs.outputFile(path.join(customPathLocale, 'dialog-flow', 'agent.json'), str, { flag: 'w' });
-      promises.push(promise);
-    }
+        const promise = fs.outputFile(path.join(customPathLocale, 'dialog-flow', invocation.environment, 'agent.json'), str, { flag: 'w' });
+        promises.push(promise);
+      }
 
-    promises.push(fs.outputFile(path.join(customPathLocale, 'dialog-flow', 'package.json'),  JSON.stringify({ version: '1.0.0' }, null, 2), { flag: 'w' }));
+      promises.push(fs.outputFile(path.join(customPathLocale, 'dialog-flow', invocation.environment, 'package.json'),  JSON.stringify({ version: '1.0.0' }, null, 2), { flag: 'w' }));
+
+    });
 
     return Promise.all(promises);
   }

@@ -17,7 +17,7 @@ class alexaSchema {
   }
 
   static get VALID_LOCALES() {
-    return ['en-US','en-GB','en-CA','en-AU','en-IN', 'de-DE', 'jp-JP'];
+    return ['en-US', 'en-GB', 'en-CA', 'en-AU', 'en-IN', 'de-DE', 'jp-JP'];
   }
 
   static get CONNECTING_WORDS() {
@@ -257,15 +257,22 @@ class alexaSchema {
       this.invocations.map((invocation) => {
         const intents = this.intents
         .filter(intent => !intent.environment || _.includes(intent.environment, invocation.environment))
+        .filter(intent => _.isEmpty(intent.platformIntent) || _.includes(intent.platformIntent, 'alexa'))
         .map(intent => {
           // console.log('intent', intent.intent, intent.environment);
           intent.name = intent.intent;
           intent.samples = this.utterances[intent.name];
           intent.slots = intent.slots || [];
-          intent.slots = intent.slots.map(slot => {
+          intent.slots = _.chain(intent.slots)
+          .map(slot => {
             slot.samples = [];
-            return slot;
-          });
+            if (_.isEmpty(slot.platform) || _.includes(slot.platform, 'alexa')) {
+              return _.pick(slot, ['name', 'type', 'samples']);
+            }
+            return null;
+          })
+          .compact()
+          .value();
           return _.pick(intent, ['name', 'samples', 'slots']);
         });
 

@@ -1,0 +1,55 @@
+{
+  "AMAZON.HelpIntent": [
+    "help",
+    "help me",
+    "can you help me"
+  ],
+  "AMAZON.StopIntent": [
+    "stop",
+    "off",
+    "shut up"
+  ],
+  "AMAZON.CancelIntent": [
+    "cancel",
+    "never mind",
+    "forget it"
+  ],
+  "AMAZON.YesIntent": [
+    "yes",
+    "yes please",
+    "sure"
+  ],
+  "AMAZON.NoIntent": [
+    "no",
+    "no thanks"
+  ],
+  "AMAZON.PauseIntent": [
+    "pause",
+    "pause that"
+  ],
+  "AMAZON.ResumeIntent": [
+    "resume",
+    "continue"
+    "keep going"
+  ],
+  "AMAZON.RepeatIntent": [
+    "repeat",
+    "say that again",
+    "repeat that"
+  ],
+  "AMAZON.StartOverIntent": [
+    "start over",
+    "restart",
+    "start again"
+  ],
+  "AMAZON.PreviousIntent": [
+    "go back",
+    "skip back",
+    "back up"
+  ],
+  "AMAZON.NextIntent": [
+    "next",
+    "skip",
+    "skip forward"
+  ]
+}

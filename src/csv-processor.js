@@ -156,7 +156,7 @@ const processors = {
   intents: worksheet => getRows(worksheet).then((rows) => {
     let previousIntent;
     let intentsDraft = _(rows).map((row) => {
-      const info = _.pick(row, ['intent', 'slottype', 'slotname', 'environment']);
+      const info = _.pick(row, ['intent', 'slottype', 'slotname', 'environment', 'platformslot', 'platformintent']);
 
       previousIntent = _.isEmpty(info.intent) ? previousIntent : info.intent;
       info.intent = previousIntent;
@@ -171,12 +171,21 @@ const processors = {
     // console.log('intentsDraft', intentsDraft)
     const intents = [];
     _.each(intentsDraft, ((value, key) => {
-      // console.log(value)
 
       const intent = key;
+      const platformIntent = _(value)
+      .filter('platformintent')
+      .map('platformintent')
+      .map(_.trim)
+      .compact()
+      .value();
+
       const slots = _(value)
       .filter('slotname')
-      .map(slot => ({ name: _.camelCase(slot.slotname), type: slot.slottype }))
+      .map(slot => ({
+         name: _.camelCase(slot.slotname),
+         type: slot.slottype,
+         platform: _.chain(slot.platformslot).split(', ').map(_.trim).compact().value() }))
       .compact()
       .uniq()
       .value();
@@ -189,9 +198,8 @@ const processors = {
       .split(',')
       .replace(' ', '')
       .value();
-      // const environment =
 
-      const result = !_.isEmpty(slots) ? { intent, slots } : { intent };
+      const result = !_.isEmpty(slots) ? { intent, slots, platformIntent } : { intent, platformIntent };
 
       result.environment = environment;
       intents.push(result);
@@ -317,9 +325,11 @@ module.exports = (spreadsheetId, creds, othersToDownload, type) => {
     _.each(values, (value) => {
       _.merge(result, value);
     });
-    let schema = new AlexaSchema(result);
+    result.invocations = result.invocations || [{ invocationname: 'invocation name', environment: 'staging' }]
+    let schema;
     if (type === 'dialogFlow') schema = new DialogFlowSchema(result);
     if (type === 'cortana') schema = new CortanaSchema(result);
+    if (!schema) schema = new AlexaSchema(result)
 
     schema.locale = locale;
     return schema;
