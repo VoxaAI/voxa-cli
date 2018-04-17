@@ -78,6 +78,16 @@ class dialogFlow {
     var tokenRegx = /{([^}]+)}/g;
 
     const includedIntents = _.filter(this.intents, (intent => _.isEmpty(intent.platformIntent) || _.includes(intent.platformIntent, 'dialogFlow')));
+    this.intents = _.map(this.intents, (intent) => {
+      intent.intent = intent.intent.replace('AMAZON.', '');
+      return intent;
+    });
+
+    this.utterances = _.chain(this.utterances)
+    .toPairs()
+    .map(item => [item[0].replace('AMAZON.', ''), item[1]])
+    .fromPairs()
+    .value();
 
     this.invocations.map((invocation) => {
       // slotsDraft
@@ -116,7 +126,6 @@ class dialogFlow {
             .replace('}', '');
 
             const platformSpecificSlots = _.filter(intentUttr.slots, (slot) => (_.isEmpty(slot.platform) || _.includes(slot.platform, 'dialogFlow')));
-            console.log('slot', platformSpecificSlots);
             const slot = _.find(platformSpecificSlots, { name: variable })
 
             if (isATemplate && slot) {
@@ -145,7 +154,7 @@ class dialogFlow {
       .filter(intent => !intent.environment || _.includes(intent.environment, invocation.environment))
       .map((intentData) => {
         const platformSpecificSlots = _.filter(intentData.slots, (slot) => (_.isEmpty(slot.platform) || _.includes(slot.platform, 'dialogFlow')));
-        console.log('intent.platformIntent',intentData.intent, intentData.platformIntent)
+
         const entityDefinition = {
           id: uuid(),
           name: intentData.intent,
@@ -179,7 +188,25 @@ class dialogFlow {
       })
       .value();
 
-      if (includedIntents) {
+
+    });
+
+
+    if (this.skillEnvironmentsInformation) {
+
+      _.chain(this.skillEnvironmentsInformation)
+      .filter({ platform: 'alexa' })
+      .map('environment')
+      .uniq()
+      .map(skillEnvironments => {
+        const overwriteAgent = {};
+        _.chain(this.skillEnvironmentsInformation)
+        .filter({ environment: skillEnvironments, platform: 'dialogFlow'})
+        .map(item => {
+          _.set(overwriteAgent, item.key, item.value)
+        })
+        .value();
+
         const agent = {
           description: '',
           language: 'en',
@@ -216,15 +243,28 @@ class dialogFlow {
         };
 
         const schema = _.pick(this, ['intents']);
+        _.assign(agent, overwriteAgent);
         const str = JSON.stringify(agent, null, 2);
 
-        const promise = fs.outputFile(path.join(customPathLocale, 'dialog-flow', invocation.environment, 'agent.json'), str, { flag: 'w' });
+        const promise = fs.outputFile(path.join(customPathLocale, 'dialog-flow', skillEnvironments, 'agent.json'), str, { flag: 'w' });
         promises.push(promise);
-      }
+        //
+        // const manifest = _.clone(this.manifest);
+        //
+        // _.chain(this.skillEnvironmentsInformation)
+        // .filter({ environment: skillEnvironments, platform: 'alexa'})
+        // .map(item => {
+        //   _.set(manifest, item.key, item.value)
+        // })
+        // .value();
+        // const promise = fs.outputFile(path.join(customPathLocale, 'alexa', `${_.kebabCase(skillEnvironments)}-skill.json`),  JSON.stringify({ manifest }, null, 2), { flag: 'w' });
+        // promises.push(promise);
+        // return skillEnvironments;
+      })
+      .value();
+    }
 
-      promises.push(fs.outputFile(path.join(customPathLocale, 'dialog-flow', invocation.environment, 'package.json'),  JSON.stringify({ version: '1.0.0' }, null, 2), { flag: 'w' }));
 
-    });
 
     return Promise.all(promises);
   }

@@ -323,14 +323,19 @@ class alexaSchema {
         });
       }
 
+      function justAlexaPlatform(platform) {
+        return platform === 'alexa';
+      }
+
       _.chain(this.skillEnvironmentsInformation)
+      .filter({ platform: 'alexa' })
       .map('environment')
       .uniq()
       .map(skillEnvironments => {
         const manifest = _.clone(this.manifest);
 
         _.chain(this.skillEnvironmentsInformation)
-        .filter({ environment: skillEnvironments})
+        .filter({ environment: skillEnvironments, platform: 'alexa'})
         .map(item => {
           _.set(manifest, item.key, item.value)
         })

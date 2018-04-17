@@ -23,7 +23,7 @@ const placeholders = {
 const processors = {
   skillEnvironmentsInformation: worksheet => getRows(worksheet).then((rows) => {
     const skillEnvironmentsInformation = _(rows).map((row) => {
-      const info = _.pick(row, ['key', 'value', 'environment']);
+      const info = _.pick(row, ['key', 'value', 'environment', 'platform']);
 
       return info;
     })
