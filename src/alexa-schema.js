@@ -307,7 +307,7 @@ class alexaSchema {
         const name = invocation.invocationname;
         const interactionModel = { languageModel: { invocationName: name, intents, types }};
 
-        const promise = fs.outputFile(path.join(customPathLocale, 'alexa', this.locale,`${_.kebabCase(name)}-${invocation.environment}-model.json`),  JSON.stringify({ interactionModel }, null, 2), { flag: 'w' });
+        const promise = fs.outputFile(path.join(customPathLocale, 'alexa', this.locale,`${invocation.environment}-model.json`),  JSON.stringify({ interactionModel }, null, 2), { flag: 'w' });
         promises.push(promise);
 
       });
