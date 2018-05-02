@@ -249,8 +249,33 @@ class dialogFlow {
         const str = JSON.stringify(agent, null, 2);
         const promise = fs.outputFile(path.join(customPathLocale, 'dialog-flow', skillEnvironments, 'agent.json'), str, { flag: 'w' });
         const promisePackage = fs.outputFile(path.join(customPathLocale, 'dialog-flow', skillEnvironments, 'package.json'), JSON.stringify({ version: '1.0.0' }, null, 2), { flag: 'w' });
+
+        const promiseDefaultFallbackIntent = fs.outputFile(path.join(customPathLocale, 'dialog-flow', skillEnvironments, 'intents', 'defaultFallbackIntent.json'), JSON.stringify({
+          id: uuid(),
+          name: 'DefaultFallbackIntent',
+          auto: true,
+          contexts: [],
+          responses: [
+            {
+              resetContexts: false,
+              action: 'input.unknown',
+              affectedContexts: [],
+              parameters: [],
+              messages: [],
+              defaultResponsePlatforms: {},
+              speech: []
+            }
+          ],
+          priority: 500000,
+          webhookUsed: true,
+          webhookForSlotFilling: false,
+          fallbackIntent: true,
+          events: []
+        }, null, 2), { flag: 'w' });
+
         promises.push(promise);
         promises.push(promisePackage);
+        promises.push(promiseDefaultFallbackIntent);
       })
       .value();
     }
