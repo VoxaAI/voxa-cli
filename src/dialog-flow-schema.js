@@ -199,20 +199,15 @@ class dialogFlow {
       .map('environment')
       .uniq()
       .map(skillEnvironments => {
-        const overwriteAgent = {};
-        _.chain(this.skillEnvironmentsInformation)
-        .filter({ environment: skillEnvironments, platform: 'dialogFlow'})
-        .map(item => {
-          _.set(overwriteAgent, item.key, item.value)
-        })
-        .value();
+
 
         const agent = {
           description: '',
           language: 'en',
           activeAssistantAgents: [],
+          disableInteractionLogs: false,
           googleAssistant: {
-            googleAssistantCompatible: false,
+            googleAssistantCompatible: true,
             project: 'somename',
             welcomeIntentSignInRequired: false,
             startIntents: [],
@@ -243,23 +238,19 @@ class dialogFlow {
         };
 
         const schema = _.pick(this, ['intents']);
-        _.assign(agent, overwriteAgent);
-        const str = JSON.stringify(agent, null, 2);
 
+        _.chain(this.skillEnvironmentsInformation)
+        .filter({ environment: skillEnvironments, platform: 'dialogFlow'})
+        .map(item => {
+          _.set(agent, item.key, item.value)
+        })
+        .value();
+
+        const str = JSON.stringify(agent, null, 2);
         const promise = fs.outputFile(path.join(customPathLocale, 'dialog-flow', skillEnvironments, 'agent.json'), str, { flag: 'w' });
+        const promisePackage = fs.outputFile(path.join(customPathLocale, 'dialog-flow', skillEnvironments, 'package.json'), JSON.stringify({ version: '1.0.0' }, null, 2), { flag: 'w' });
         promises.push(promise);
-        //
-        // const manifest = _.clone(this.manifest);
-        //
-        // _.chain(this.skillEnvironmentsInformation)
-        // .filter({ environment: skillEnvironments, platform: 'alexa'})
-        // .map(item => {
-        //   _.set(manifest, item.key, item.value)
-        // })
-        // .value();
-        // const promise = fs.outputFile(path.join(customPathLocale, 'alexa', `${_.kebabCase(skillEnvironments)}-skill.json`),  JSON.stringify({ manifest }, null, 2), { flag: 'w' });
-        // promises.push(promise);
-        // return skillEnvironments;
+        promises.push(promisePackage);
       })
       .value();
     }

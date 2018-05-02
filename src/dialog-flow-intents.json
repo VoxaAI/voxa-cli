@@ -51,5 +51,24 @@
     "next",
     "skip",
     "skip forward"
+  ],
+  "LoopOffIntent": [
+    "loop off"
+  ],
+  "LoopOnIntent": [
+    "loop",
+    "loop on",
+    "keep playing this"
+  ],
+  "ShuffleOffIntent": [
+    "stop shuffling",
+    "shuffle off",
+    "turn off shuffle"
+  ],
+  "ShuffleOnIntent": [
+    "shuffle",
+    "shuffle on",
+    "shuffle the music",
+    "shuffle mode"
   ]
 }
