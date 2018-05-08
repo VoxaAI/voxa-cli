@@ -7,7 +7,7 @@ const Promise = require('bluebird');
 const fs = Promise.promisifyAll(require('fs-extra'));
 const PrettyError = require('pretty-error');
 const AlexaError = require('./error');
-const uuid = require('uuid/v4');
+const uuid = require('uuid/v5');
 const dialogFlowBuiltinIntent = require('./dialog-flow-intents');
 
 // instantiate PrettyError, which can then be used to render error objects
@@ -94,16 +94,15 @@ class dialogFlow {
       _.map(this.slots, (value, key) => {
         key = _.kebabCase(key);
 
-        const str = _.keys(value).map(value => ({ value, synonyms: [value] }));
+        const str = _.chain(value).invertBy().map((synonyms, slotKey) => ({ value: slotKey, synonyms }));
         const eachUtterancePromise = fs.outputFile(path.join(customPathLocale, 'dialog-flow', invocation.environment, 'entities', `${key}_entries_en.json`), JSON.stringify(str, null, 2), { flag: 'w' });
         const entityDefinition = {
-          id: uuid(),
           name: key,
           isOverridable: true,
           isEnum: true,
           automatedExpansion: false,
         };
-        promises.push(fs.outputFile(path.join(customPathLocale, 'dialog-flow', invocation.environment, 'entities', `${key}.json`), JSON.stringify(entityDefinition, null, 2), { flag: 'w' }));
+        promises.push(fs.outputFile(path.join(customPathLocale, 'dialog-flow', invocation.environment, 'entities', `${key}.json`), JSON.stringify(appendUUIDToString(entityDefinition), null, 2), { flag: 'w' }));
         promises.push(eachUtterancePromise);
       });
 
@@ -135,11 +134,10 @@ class dialogFlow {
 
             if (!_.isEmpty(text)) {
               _.set(element, 'text', text);
-              _.set(element, 'id', uuid());
               _.set(element, 'userDefined', isATemplate);
             }
 
-            return _.isEmpty(element) ? null : element;
+            return _.isEmpty(element) ? null : appendUUIDToString(element);
           })
           .compact()
           .value();
@@ -156,7 +154,6 @@ class dialogFlow {
         const platformSpecificSlots = _.filter(intentData.slots, (slot) => (_.isEmpty(slot.platform) || _.includes(slot.platform, 'dialogFlow')));
 
         const entityDefinition = {
-          id: uuid(),
           name: intentData.intent,
           auto: true,
           contexts: [],
@@ -183,7 +180,7 @@ class dialogFlow {
           events: intentData.intent === 'LaunchIntent' ?
           [{ name: 'WELCOME' }, { name: 'GOOGLE_ASSISTANT_WELCOME' }] : [],
         };
-        promises.push(fs.outputFile(path.join(customPathLocale, 'dialog-flow', invocation.environment, 'intents', `${intentData.intent}.json`), JSON.stringify(entityDefinition, null, 2), { flag: 'w' }));
+        promises.push(fs.outputFile(path.join(customPathLocale, 'dialog-flow', invocation.environment, 'intents', `${intentData.intent}.json`), JSON.stringify(appendUUIDToString(entityDefinition), null, 2), { flag: 'w' }));
 
       })
       .value();
@@ -250,8 +247,7 @@ class dialogFlow {
         const promise = fs.outputFile(path.join(customPathLocale, 'dialog-flow', skillEnvironments, 'agent.json'), str, { flag: 'w' });
         const promisePackage = fs.outputFile(path.join(customPathLocale, 'dialog-flow', skillEnvironments, 'package.json'), JSON.stringify({ version: '1.0.0' }, null, 2), { flag: 'w' });
 
-        const promiseDefaultFallbackIntent = fs.outputFile(path.join(customPathLocale, 'dialog-flow', skillEnvironments, 'intents', 'defaultFallbackIntent.json'), JSON.stringify({
-          id: uuid(),
+        const promiseDefaultFallbackIntent = fs.outputFile(path.join(customPathLocale, 'dialog-flow', skillEnvironments, 'intents', 'defaultFallbackIntent.json'), JSON.stringify(appendUUIDToString({
           name: 'DefaultFallbackIntent',
           auto: true,
           contexts: [],
@@ -271,7 +267,7 @@ class dialogFlow {
           webhookForSlotFilling: false,
           fallbackIntent: true,
           events: []
-        }, null, 2), { flag: 'w' });
+        }), null, 2), { flag: 'w' });
 
         promises.push(promise);
         promises.push(promisePackage);
@@ -320,4 +316,8 @@ class dialogFlow {
   }
 }
 
+function appendUUIDToString(obj) {
+  obj.id = uuid(JSON.stringify(obj), uuid.DNS);
+  return obj;
+}
 module.exports = dialogFlow;
