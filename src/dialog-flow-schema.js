@@ -94,7 +94,16 @@ class dialogFlow {
       _.map(this.slots, (value, key) => {
         key = _.kebabCase(key);
 
-        const str = _.chain(value).invertBy().map((synonyms, slotKey) => ({ value: slotKey, synonyms }));
+        const str = _.chain(value).
+        invertBy()
+        .map((synonyms, slotKey) => {
+          if (!slotKey) {
+            return _.map(synonyms, x => ({ value: x, synonyms: [x] });)
+          }
+          return ({ value: slotKey, synonyms });
+        })
+        .flattenDeep()
+        .value();
         const eachUtterancePromise = fs.outputFile(path.join(customPathLocale, 'dialog-flow', invocation.environment, 'entities', `${key}_entries_en.json`), JSON.stringify(str, null, 2), { flag: 'w' });
         const entityDefinition = {
           name: key,
