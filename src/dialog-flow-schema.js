@@ -98,7 +98,7 @@ class dialogFlow {
         invertBy()
         .map((synonyms, slotKey) => {
           if (!slotKey) {
-            return _.map(synonyms, x => ({ value: x, synonyms: [x] });)
+            return _.map(synonyms, x => ({ value: x, synonyms: [x] }))
           }
           return ({ value: slotKey, synonyms });
         })
