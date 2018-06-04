@@ -28,6 +28,7 @@
     "pause that"
   ],
   "ResumeIntent": [
+    "continue",
     "resume",
     "continue",
     "keep going"
