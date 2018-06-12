@@ -23,7 +23,7 @@ class dialogFlow {
   }
 
   static get VALID_LOCALES() {
-    return ['en-US','en-GB', 'de-DE'];
+    return ['en-AU', 'en-US','en-GB', 'de-DE'];
   }
 
   static get CONNECTING_WORDS() {
