@@ -108,7 +108,7 @@ class dialogFlow {
         const entityDefinition = {
           name: key,
           isOverridable: true,
-          isEnum: true,
+          isEnum: false,
           automatedExpansion: false,
         };
         promises.push(fs.outputFile(path.join(customPathLocale, 'dialog-flow', invocation.environment, 'entities', `${key}.json`), JSON.stringify(appendUUIDToString(entityDefinition), null, 2), { flag: 'w' }));
