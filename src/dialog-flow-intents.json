@@ -15,12 +15,29 @@
     "forget it"
   ],
   "YesIntent": [
+    "okay",
+    "of course",
+    "i don't mind",
+    "do it",
+    "ok",
+    "sounds good",
+    "confirm",
+    "that's correct",
+    "I agree",
+    "exactly",
     "yes",
     "yes please",
     "sure"
   ],
   "NoIntent": [
     "no",
+    "I disagree",
+    "not really",
+    "not interested",
+    "I don't want that",
+    "I don't think so",
+    "definitely not",
+    "don't do it",
     "no thanks"
   ],
   "PauseIntent": [

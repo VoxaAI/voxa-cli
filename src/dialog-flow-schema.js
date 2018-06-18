@@ -172,7 +172,7 @@ class dialogFlow {
               action: intentData.intent,
               affectedContexts: [],
               parameters: (platformSpecificSlots || []).map(slot => ({
-                dataType: `@${_.kebabCase(slot.type)}`,
+                dataType: _.includes(slot.type, '@sys.') ? slot.type : `@${_.kebabCase(slot.type)}`,
                 name: slot.name,
                 value: `$${slot.name}`,
                 isList: false
