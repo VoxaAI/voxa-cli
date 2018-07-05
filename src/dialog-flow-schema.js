@@ -118,7 +118,9 @@ class dialogFlow {
       _.map(this.utterances, (value, key) => {
         value = _.chain(value).concat(_.get(dialogFlowBuiltinIntent, key, [])).flattenDeep().uniq().compact().value();
         const intentUttr = _.find(includedIntents, { intent: key });
+
         if (!intentUttr) return;
+        if (intentUttr.environment && !_.includes(intentUttr.environment, invocation.environment)) return;
         const str = value.map(text => {
           const data = _.chain(text)
           .replace(tokenRegx, function (match, inner) {
