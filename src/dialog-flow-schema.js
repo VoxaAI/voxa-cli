@@ -139,7 +139,7 @@ class dialogFlow {
             const slot = _.find(platformSpecificSlots, { name: variable })
 
             if (isATemplate && slot) {
-              _.set(element, 'meta', `@${_.kebabCase(slot.type)}`);
+              _.set(element, 'meta', _.includes(slot.type, '@sys.') ? slot.type : `@${_.kebabCase(slot.type)}`);
               _.set(element, 'alias', slot.name);
             }
 
