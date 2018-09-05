@@ -73,7 +73,7 @@ class dialogFlow {
 
   build(pathSpeech, unique) {
     if (!this.locale) return new Error('Please define a locale. eg. this.locale = \'en-US\'');
-    const customPathLocale = unique ? pathSpeech : path.join(pathSpeech, this.locale);
+    const customPathLocale = unique ? pathSpeech : path.join(pathSpeech);
     const promises = [];
     var tokenRegx = /{([^}]+)}/g;
 
@@ -94,12 +94,21 @@ class dialogFlow {
       _.map(this.slots, (value, key) => {
         key = _.kebabCase(key);
 
-        const str = _.chain(value).invertBy().map((synonyms, slotKey) => ({ value: slotKey, synonyms }));
+        const str = _.chain(value).
+        invertBy()
+        .map((synonyms, slotKey) => {
+          if (!slotKey) {
+            return _.map(synonyms, x => ({ value: x, synonyms: [x] }))
+          }
+          return ({ value: slotKey, synonyms });
+        })
+        .flattenDeep()
+        .value();
         const eachUtterancePromise = fs.outputFile(path.join(customPathLocale, 'dialog-flow', invocation.environment, 'entities', `${key}_entries_en.json`), JSON.stringify(str, null, 2), { flag: 'w' });
         const entityDefinition = {
           name: key,
           isOverridable: true,
-          isEnum: true,
+          isEnum: false,
           automatedExpansion: false,
         };
         promises.push(fs.outputFile(path.join(customPathLocale, 'dialog-flow', invocation.environment, 'entities', `${key}.json`), JSON.stringify(appendUUIDToString(entityDefinition), null, 2), { flag: 'w' }));
@@ -109,7 +118,9 @@ class dialogFlow {
       _.map(this.utterances, (value, key) => {
         value = _.chain(value).concat(_.get(dialogFlowBuiltinIntent, key, [])).flattenDeep().uniq().compact().value();
         const intentUttr = _.find(includedIntents, { intent: key });
+
         if (!intentUttr) return;
+        if (intentUttr.environment && !_.includes(intentUttr.environment, invocation.environment)) return;
         const str = value.map(text => {
           const data = _.chain(text)
           .replace(tokenRegx, function (match, inner) {
@@ -128,7 +139,7 @@ class dialogFlow {
             const slot = _.find(platformSpecificSlots, { name: variable })
 
             if (isATemplate && slot) {
-              _.set(element, 'meta', `@${_.kebabCase(slot.type)}`);
+              _.set(element, 'meta', _.includes(slot.type, '@sys.') ? slot.type : `@${_.kebabCase(slot.type)}`);
               _.set(element, 'alias', slot.name);
             }
 
@@ -163,7 +174,7 @@ class dialogFlow {
               action: intentData.intent,
               affectedContexts: [],
               parameters: (platformSpecificSlots || []).map(slot => ({
-                dataType: `@${_.kebabCase(slot.type)}`,
+                dataType: _.includes(slot.type, '@sys.') ? slot.type : `@${_.kebabCase(slot.type)}`,
                 name: slot.name,
                 value: `$${slot.name}`,
                 isList: false
