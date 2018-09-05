@@ -23,7 +23,7 @@ class dialogFlow {
   }
 
   static get VALID_LOCALES() {
-    return ['en-US','en-GB', 'de-DE'];
+    return ['en-AU', 'en-CA', 'en-IN', 'en-US','en-GB', 'de-DE', 'fr-FR', 'fr-CA', 'ja-JP', 'ko-KR', 'es-ES', 'pt-BR', 'it-IT', 'ru-RU', 'hi-IN', 'th-TH', 'id-ID', 'da-DK', 'no-NO', 'nl-NL', 'sv-SE'];
   }
 
   static get CONNECTING_WORDS() {
@@ -313,6 +313,25 @@ class dialogFlow {
     });
 
     return Promise.all(promises);
+  }
+
+  buildView(viewPath) {
+    const customViewPath= path.join(viewPath, 'views.json');
+    if (!this.locale) return new Error('Please define a locale. eg. this.locale = \'en-US\'');
+
+    let customViews = {};
+    try {
+     customViews = require(customViewPath);
+    } catch (e) {
+
+    }
+
+    _.set(customViews, `${_.toLower(this.locale)}.translation`, this.views);
+
+    const str = JSON.stringify(customViews, null, 2);
+    const promise = fs.outputFile(customViewPath, str, { flag: 'w' });
+
+    return promise;
   }
 }
 

@@ -15,6 +15,7 @@ module.exports = function(options) {
   const spreadsheets = _.get(options, 'spreadsheets' );
   const speechPath = _.get(options, 'speechPath', path.join(rootPath, 'speech-assets'));
   const synonymPath = _.get(options, 'synonymPath', path.join(rootPath, 'synonyms'));
+  const viewsPath = _.get(options, 'viewsPath', path.join(rootPath, 'app'));
   const auth = _.get(options, 'auth');
   const validate = _.get(options, 'validate', true);
   const build = _.get(options, 'build', true);
@@ -61,6 +62,14 @@ module.exports = function(options) {
     let placeHolderPromise = Promise.resolve();
     if (contentPath) {
       placeHolderPromise = schema.buildContent(contentPath);
+    }
+
+    return placeHolderPromise;
+  }))
+  .then(() => resultAlexa.map((schema) => {
+    let placeHolderPromise = Promise.resolve();
+    if (!_.isEmpty(schema.views)) {
+      placeHolderPromise = schema.buildView(viewsPath);
     }
 
     return placeHolderPromise;

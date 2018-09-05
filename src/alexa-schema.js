@@ -17,7 +17,7 @@ class alexaSchema {
   }
 
   static get VALID_LOCALES() {
-    return ['en-US', 'en-GB', 'en-CA', 'en-AU', 'en-IN', 'de-DE', 'jp-JP'];
+    return ['en-US', 'en-GB', 'en-CA', 'en-AU', 'en-IN', 'de-DE', 'jp-JP', 'fr-FR'];
   }
 
   static get CONNECTING_WORDS() {
@@ -382,6 +382,26 @@ class alexaSchema {
     });
 
     return Promise.all(promises);
+  }
+
+  buildView(viewPath) {
+    const customViewPath= path.join(viewPath, 'views.json');
+
+    console.log('locale', this.locale, this.views);
+    if (!this.locale) return new Error('Please define a locale. eg. this.locale = \'en-US\'');
+
+    let customViews = {};
+    try {
+     customViews = require(customViewPath);
+    } catch (e) {
+
+    }
+
+    _.set(customViews, `${_.toLower(this.locale)}.translation`, this.views);
+
+    const promise = fs.outputFile(customViewPath, customViews, { flag: 'w' });
+
+    return promise;
   }
 }
 

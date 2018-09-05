@@ -18,6 +18,7 @@ const placeholders = {
   skillGeneral: 'SKILL_GENERAL_INFORMATION',
   skillLocaleSettings: 'SKILL_LOCALE_INFORMATION-',
   skillEnvironmentsInformation: 'SKILL_ENVIRONMENTS_INFORMATION',
+  views: 'VIEWS_FILE',
 };
 
 const processors = {
@@ -269,7 +270,44 @@ const processors = {
     others[otherName] = rows;
     return { others };
   }),
+  views: worksheet => getRows(worksheet).then((rows) => {
+    const views = _.chain(rows)
+    .reduce((acc, next) => {
+      if (_.isEmpty(next.path)) return acc;
+
+      if (next.path.includes('.say') || next.path.includes('.reprompt')) {
+        acc[next.path] = acc[next.path] || [];
+        console.log('path', next.path, acc[next.path]);
+        acc[next.path].push(sanitizeView(next.value));
+      }
+
+      if (next.path.includes('.dialogFlowSuggestions')) {
+        acc[next.path] = next.value.split('\n').map(sanitizeView);
+      }
+
+      if (_.isEmpty(acc[next.path])) {
+        acc[next.path] = sanitizeView(next.value);
+      }
+
+      return acc;
+    }, {})
+    .toPairs()
+    .reduce((acc, next) => {
+      _.set(acc, next[0], next[1]);
+      return acc;
+    }, {})
+    .value();
+
+    return { views };
+  }),
 };
+
+function sanitizeView (text) {
+  return text
+    .replace(/’/g, '\'')
+    .replace(/“/g, '"')
+    .replace(/”/g, '"');
+}
 
 function getWorksheets(spreadsheetId, creds) {
   const doc = new GoogleSpreadsheet(spreadsheetId);
