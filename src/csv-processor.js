@@ -200,8 +200,18 @@ const processors = {
       .replace(' ', '')
       .value();
 
-      const result = !_.isEmpty(slots) ? { intent, slots, platformIntent } : { intent, platformIntent };
+      const events = _(value)
+      .filter('events')
+      .map('events')
+      .map(event => (event.split(', ')))
+      .map(events => (events.map(event=>({name: _.trim(event)}))))
+      .compact()
+      .uniq()
+      .value();
 
+      const result = !_.isEmpty(slots) ? { intent, slots, platformIntent } : { intent, platformIntent };
+      
+      result.events = _.head(events)
       result.environment = environment;
       intents.push(result);
     }));

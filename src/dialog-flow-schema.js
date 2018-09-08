@@ -162,6 +162,7 @@ class dialogFlow {
       _(includedIntents)
       .filter(intent => !intent.environment || _.includes(intent.environment, invocation.environment))
       .map((intentData) => {
+        const events = intentData.events
         const platformSpecificSlots = _.filter(intentData.slots, (slot) => (_.isEmpty(slot.platform) || _.includes(slot.platform, 'dialogFlow')));
 
         const entityDefinition = {
@@ -189,7 +190,7 @@ class dialogFlow {
           webhookForSlotFilling: false,
           fallbackIntent: false,
           events: intentData.intent === 'LaunchIntent' ?
-          [{ name: 'WELCOME' }, { name: 'GOOGLE_ASSISTANT_WELCOME' }] : [],
+          [{ name: 'WELCOME' }, { name: 'GOOGLE_ASSISTANT_WELCOME' }] : events,
         };
         promises.push(fs.outputFile(path.join(customPathLocale, 'dialog-flow', invocation.environment, 'intents', `${intentData.intent}.json`), JSON.stringify(appendUUIDToString(entityDefinition), null, 2), { flag: 'w' }));
 
