@@ -17,11 +17,7 @@ class alexaSchema {
   }
 
   static get VALID_LOCALES() {
-<<<<<<< HEAD
-    return ['en-US', 'en-GB', 'en-CA', 'en-AU', 'en-IN', 'de-DE', 'jp-JP', 'fr-FR'];
-=======
     return ['en-US', 'en-GB', 'en-CA', 'en-AU', 'en-IN', 'de-DE', 'ja-JP', 'es-ES', 'fr-FR', 'it-IT'];
->>>>>>> 30c0027d561c5b4a5d7f0b46a78c0935c9869b7e
   }
 
   static get CONNECTING_WORDS() {
@@ -390,8 +386,6 @@ class alexaSchema {
 
   buildView(viewPath) {
     const customViewPath= path.join(viewPath, 'views.json');
-
-    console.log('locale', this.locale, this.views);
     if (!this.locale) return new Error('Please define a locale. eg. this.locale = \'en-US\'');
 
     let customViews = {};
@@ -403,7 +397,8 @@ class alexaSchema {
 
     _.set(customViews, `${_.toLower(this.locale)}.translation`, this.views);
 
-    const promise = fs.outputFile(customViewPath, customViews, { flag: 'w' });
+    const str = JSON.stringify(customViews, null, 2);
+    const promise = fs.outputFile(customViewPath, str, { flag: 'w' });
 
     return promise;
   }
