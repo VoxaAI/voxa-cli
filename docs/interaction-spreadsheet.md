@@ -34,14 +34,14 @@ lost in development | development
 
 ### Intent must have the following structure
 
-intent | slotType | slotName | environment
---- | --- | --- | --- |
-LaunchIntent | | | |
-SuperIntent | LIST_OF_REQUESTS | {request} |  |
-TestIntent | LIST_OF_REQUESTS | {request} | development |
+intent | slotType | slotName | environment | events
+--- | --- | --- | --- | --- |
+LaunchIntent | | | | |
+SuperIntent | LIST_OF_REQUESTS | {request} |  | actions_intent_CANCEL |
+TestIntent | LIST_OF_REQUESTS | {request} | development | actions_intent_CANCEL, actions_intent_SIGN_IN
 
 > In this case Test Intent will only be available at development interaction model
-
+> Note for multiple events use comas (,) to separate them
 ### Tabs to download should have the following structure
 
 columnName | columnNameTwo | columnNameThree | columnNameFour
