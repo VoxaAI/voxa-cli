@@ -204,7 +204,7 @@ class dialogFlow {
     if (this.skillEnvironmentsInformation) {
 
       _.chain(this.skillEnvironmentsInformation)
-      .filter({ platform: 'alexa' })
+      .filter({ platform: 'dialogFlow' })
       .map('environment')
       .uniq()
       .map(skillEnvironments => {
