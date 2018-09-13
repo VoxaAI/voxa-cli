@@ -157,7 +157,7 @@ const processors = {
   intents: worksheet => getRows(worksheet).then((rows) => {
     let previousIntent;
     let intentsDraft = _(rows).map((row) => {
-      const info = _.pick(row, ['intent', 'slottype', 'slotname', 'environment', 'platformslot', 'platformintent']);
+      const info = _.pick(row, ['intent', 'slottype', 'slotname', 'environment', 'platformslot', 'platformintent', 'events']);
 
       previousIntent = _.isEmpty(info.intent) ? previousIntent : info.intent;
       info.intent = previousIntent;
