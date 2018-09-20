@@ -155,9 +155,10 @@ const processors = {
     return { slots };
   }),
   intents: worksheet => getRows(worksheet).then((rows) => {
+    const canfulfillintents = [];
     let previousIntent;
     let intentsDraft = _(rows).map((row) => {
-      const info = _.pick(row, ['intent', 'slottype', 'slotname', 'environment', 'platformslot', 'platformintent', 'events']);
+      const info = _.pick(row, ['intent', 'slottype', 'slotname', 'environment', 'platformslot', 'platformintent', 'events', 'canfulfillintent']);
 
       previousIntent = _.isEmpty(info.intent) ? previousIntent : info.intent;
       info.intent = previousIntent;
@@ -209,8 +210,20 @@ const processors = {
       .uniq()
       .value();
 
+      const canfulfillintent = _.chain(value)
+      .filter('canfulfillintent')
+      .map('canfulfillintent')
+      .map(fulfillIntent => _.includes(['true', 'yes'], _.toLower(fulfillIntent)))
+      .compact()
+      .head()
+      .value();
+
+      if (canfulfillintent) {
+        canfulfillintents.push(intent);
+      }
+
       const result = !_.isEmpty(slots) ? { intent, slots, platformIntent } : { intent, platformIntent };
-      
+
       result.events = _.head(events)
       result.environment = environment;
       intents.push(result);
@@ -218,6 +231,9 @@ const processors = {
 
     // console.log(JSON.stringify({ intents }, null, 2));
 
+    if (!_.isEmpty(canfulfillintents)) {
+      return { intents, others: { canfulfillIntent: canfulfillintents } };
+    }
     return { intents };
   }),
   utterances: worksheet => getRows(worksheet).then((rows) => {
