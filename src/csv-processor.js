@@ -332,7 +332,9 @@ function sanitizeView (text) {
   return text
     .replace(/’/g, '\'')
     .replace(/“/g, '"')
-    .replace(/”/g, '"');
+    .replace(/”/g, '"')
+    .replace(/&/g, 'and')
+    ;
 }
 
 function getWorksheets(spreadsheetId, creds) {
