@@ -301,7 +301,7 @@ const processors = {
     .reduce((acc, next) => {
       if (_.isEmpty(next.path)) return acc;
 
-      if (next.path.includes('.say') || next.path.includes('.reprompt')) {
+      if (next.path.includes('.say') || next.path.includes('.reprompt') ||  next.path.includes('.tell') ||  next.path.includes('.ask')) {
         acc[next.path] = acc[next.path] || [];
         console.log('path', next.path, acc[next.path]);
         acc[next.path].push(sanitizeView(next.value));
