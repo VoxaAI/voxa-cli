@@ -338,7 +338,7 @@ class dialogFlow {
 
     }
 
-    _.set(customViews, `${_.toLower(this.locale)}.translation`, this.views);
+    _.set(customViews, `${this.locale}.translation`, this.views);
 
     const str = JSON.stringify(customViews, null, 2);
     const promise = fs.outputFile(customViewPath, str, { flag: 'w' });
