@@ -1,13 +1,39 @@
 {
   "name": "voxa-cli",
-  "version": "1.0.2-alpha25",
-  "description": "",
-  "main": "index.js",
+  "version": "2.0.0-alpha1",
+  "description": "The Voxa CLI tools",
+  "main": "bin/voxa-cli.ts",
+  "bin": {
+    "voxa": "./bin/voxa-cli.js"
+  },
+  "engines": {
+    "node": ">=8.10"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mediarain/voxa-cli.git"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Rain Agency <npm@rain.agency> (http://rain.agency)",
+  "contributors": [
+    "Rommel Berrios <rommel.berrios93@gmail.com>",
+    "Christian Torres <chtorrez@gmail.com>"
+  ],
+  "keywords": [
+    "alexa",
+    "skills",
+    "amazon",
+    "actions",
+    "dialogflow",
+    "google",
+    "framework",
+    "voice",
+    "voxa",
+    "app"
+  ],
+  "license": "MIT",
   "dependencies": {
     "bluebird": "^3.5.0",
     "chai": "^4.0.2",
@@ -17,5 +43,9 @@
     "lodash": "^4.17.4",
     "pretty-error": "^2.1.1",
     "uuid": "^3.1.0"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/mediarain/voxa-cli/issues"
+  },
+  "homepage": "https://github.com/mediarain/voxa-cli#readme"
 }
