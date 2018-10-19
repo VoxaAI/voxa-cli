@@ -5,9 +5,7 @@ const commander = require('commander');
 module.exports = function(argv) {
   const pkg = require('../package.json');
 
-  commander.version(pkg.version);
-  let description = 'Run a generator. Type can be\n';
-
+  commander.version(pkg.version, '-v, --version');
 
   [
     'interaction',
@@ -16,11 +14,15 @@ module.exports = function(argv) {
     commander.usage(c);
 
     const command = require(`./commands/${c}`)
-    const { name, alias, description } = command;
-    commander.command(name || c)
+    const { name, alias, options, description, action } = command;
+    const result = commander.command(name || c)
       .alias(alias)
-      .description(description)
-      .action(command);
+      .description(description);
+    (options || []).forEach(option => {
+      const { flags, description } = option
+      result.option(flags, description);
+    })
+    result.action(action);
   });
 
   commander.parse(argv);

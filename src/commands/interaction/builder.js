@@ -2,7 +2,7 @@
 
 const _ = require('lodash');
 const Promise = require('bluebird');
-const processor = require('./src/csv-processor');
+const processor = require('./csv-processor');
 const path = require('path');
 
 module.exports = function(options) {
