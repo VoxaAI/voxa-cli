@@ -1,7 +1,5 @@
 'use strict';
 
-module.exports = function(argv) {
-};
-
-module.exports.description = '';
 module.exports.alias = '';
+module.exports.description = '';
+module.exports.action = () => { };

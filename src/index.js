@@ -16,8 +16,8 @@ module.exports = function(argv) {
     commander.usage(c);
 
     const command = require(`./commands/${c}`)
-    const { alias, description } = command;
-    commander.command(c)
+    const { name, alias, description } = command;
+    commander.command(name || c)
       .alias(alias)
       .description(description)
       .action(command);
