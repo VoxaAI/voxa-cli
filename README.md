@@ -8,6 +8,19 @@ Create interaction model and publishing information for your Alexa skills.
 $ npm install --save voxa-cli
 ```
 
+## Roadmap
+
+| Feature | Description | Completed | Version |
+|---------|-------------|:---------:|:-------:|
+| **Multicommand support**  | Organize project to support multiple commands | ✅ | 2.0.0 |
+| **Command Init** | Allow user to create an empty (default) project for Voxa 3 | ❌ | 2.0.0 |
+| **Command Interaction** | Improvements to interaction command | ❌ | 2.0.0 |
+| **Typescript** | Move to project to Typescript | ❌ | 2.0.0 |
+| **README.md** | Update/Improve repo README.md | ❌ | 2.0.0 |
+| **Command Plugins** | List, view info and install plugins for Voxa 3 | ❌ | 2.x.x |
+| **Command Init: Templates** | Choose what template want to use to create the project for Voxa 3 | ❌ | 2.x.x |
+| **Command Run** | Serve the application on the development Server | ❌ | 2.x.x |
+
 ## Getting started
 
 ### Create credentials and share your spreadsheet with a client
