@@ -1,0 +1,5 @@
+{
+  "command": "tsc",
+  "isShellCommand": true,
+  "args": ["-p", "."]
+}
