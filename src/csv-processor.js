@@ -297,7 +297,9 @@ const processors = {
     return { others };
   }),
   views: worksheet => getRows(worksheet).then((rows) => {
-    const views = _.chain(rows)
+    const locale = worksheet.title.split('@')[1] || 'en';
+
+    const rawViews = _.chain(rows)
     .reduce((acc, next) => {
       if (_.isEmpty(next.path)) return acc;
 
@@ -324,6 +326,9 @@ const processors = {
     }, {})
     .value();
 
+    const views = {};
+
+    _.set(views, `${locale}.translation`, rawViews);
     return { views };
   }),
 };
