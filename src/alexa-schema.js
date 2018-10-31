@@ -385,19 +385,9 @@ class alexaSchema {
   }
 
   buildView(viewPath) {
-    const customViewPath= path.join(viewPath, 'views.json');
-    if (!this.locale) return new Error('Please define a locale. eg. this.locale = \'en-US\'');
+    const customViewPath = path.join(viewPath, 'views.json');
 
-    let customViews = {};
-    try {
-     customViews = require(customViewPath);
-    } catch (e) {
-
-    }
-
-    _.set(customViews, `${this.locale}.translation`, this.views);
-
-    const str = JSON.stringify(customViews, null, 2);
+    const str = JSON.stringify(this.views, null, 2);
     const promise = fs.outputFile(customViewPath, str, { flag: 'w' });
 
     return promise;
