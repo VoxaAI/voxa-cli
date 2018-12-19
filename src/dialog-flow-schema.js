@@ -76,6 +76,10 @@ class dialogFlow {
     const customPathLocale = unique ? pathSpeech : path.join(pathSpeech);
     const promises = [];
     var tokenRegx = /{([^}]+)}/g;
+    const filePrefix = _.chain(this.locale)
+      .split('-')
+      .first()
+      .value();
 
     const includedIntents = _.filter(this.intents, (intent => _.isEmpty(intent.platformIntent) || _.includes(intent.platformIntent, 'dialogFlow')));
     this.intents = _.map(this.intents, (intent) => {
@@ -104,7 +108,7 @@ class dialogFlow {
         })
         .flattenDeep()
         .value();
-        const eachUtterancePromise = fs.outputFile(path.join(customPathLocale, 'dialog-flow', invocation.environment, 'entities', `${key}_entries_en.json`), JSON.stringify(str, null, 2), { flag: 'w' });
+        const eachUtterancePromise = fs.outputFile(path.join(customPathLocale, 'dialog-flow', invocation.environment, 'entities', `${key}_entries_${filePrefix}.json`), JSON.stringify(str, null, 2), { flag: 'w' });
         const entityDefinition = {
           name: key,
           isOverridable: true,
@@ -155,7 +159,7 @@ class dialogFlow {
 
           return ({ data, isTemplate: false, count: 0, updated: 0 });
         });
-        const eachUtterancePromise = fs.outputFile(path.join(customPathLocale, 'dialog-flow', invocation.environment, 'intents', `${key}_usersays_en.json`), JSON.stringify(str, null, 2), { flag: 'w' });
+        const eachUtterancePromise = fs.outputFile(path.join(customPathLocale, 'dialog-flow', invocation.environment, 'intents', `${key}_usersays_${filePrefix}.json`), JSON.stringify(str, null, 2), { flag: 'w' });
         promises.push(eachUtterancePromise);
       });
 
