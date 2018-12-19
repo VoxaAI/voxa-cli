@@ -370,8 +370,21 @@ module.exports = (spreadsheetId, creds, othersToDownload, type) => {
   return getWorksheets(spreadsheetId, creds)
   .then((info) => {
     const title = info.title;
-    locale = AlexaSchema.VALID_LOCALES.find(loc => _.includes(title, loc) || _.includes(title, _.toLower(loc)));
-    locale = locale || AlexaSchema.VALID_LOCALES[0];
+    let validLocales = null;
+
+    switch(type) {
+      case 'dialogFlow':
+        validLocales = DialogFlowSchema.VALID_LOCALES;
+        break;
+      case 'cortana':
+        validLocales = CortanaSchema.VALID_LOCALES;
+        break;
+      default:
+        validLocales = AlexaSchema.VALID_LOCALES;
+    }
+
+    locale = validLocales.find(loc => _.includes(title, loc) || _.includes(title, _.toLower(loc)));
+    locale = locale || validLocales[0];
     return info.worksheets;
   })
   .then((worksheets) => {
