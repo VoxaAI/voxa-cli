@@ -309,7 +309,7 @@ const processors = {
         acc[next.path].push(sanitizeView(next.value));
       }
 
-      if (next.path.includes('.dialogFlowSuggestions')) {
+      if (next.path.includes('.dialogFlowSuggestions') || next.path.includes('facebookSuggestionChips')) {
         acc[next.path] = next.value.split('\n').map(sanitizeView);
       }
 

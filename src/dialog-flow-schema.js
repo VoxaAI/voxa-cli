@@ -264,7 +264,7 @@ class dialogFlow {
         const promisePackage = fs.outputFile(path.join(customPathLocale, 'dialog-flow', skillEnvironments, 'package.json'), JSON.stringify({ version: '1.0.0' }, null, 2), { flag: 'w' });
 
         const promiseDefaultFallbackIntent = fs.outputFile(path.join(customPathLocale, 'dialog-flow', skillEnvironments, 'intents', 'defaultFallbackIntent.json'), JSON.stringify(appendUUIDToString({
-          name: 'DefaultFallbackIntent',
+          name: 'FallbackIntent',
           auto: true,
           contexts: [],
           responses: [
