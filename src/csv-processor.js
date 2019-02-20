@@ -334,12 +334,22 @@ const processors = {
 };
 
 function sanitizeView (text) {
-  return text
+  return removeNonUTF8Char(text
     .replace(/’/g, '\'')
     .replace(/“/g, '"')
     .replace(/”/g, '"')
-    .replace(/&/g, 'and')
+    .replace(/&/g, 'and'))
     ;
+}
+function removeNonUTF8Char(input) {
+  var output = "";
+
+  for (var i=0; i<input.length; i++) {
+      if (input.charCodeAt(i) !== 8232) {
+          output += input.charAt(i);
+      }
+  }
+  return output;
 }
 
 function getWorksheets(spreadsheetId, creds) {
