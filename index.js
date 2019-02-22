@@ -32,7 +32,6 @@ program
     }
   }
 
-
   try {
    // a path we KNOW is totally bogus and not a module
    interaction.auth = require(authPath);
