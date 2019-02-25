@@ -13,7 +13,7 @@ $ npm install --save voxa-cli
 | Feature | Description | Completed | Version |
 |---------|-------------|:---------:|:-------:|
 | **Multicommand support**  | Organize project to support multiple commands | ✅ | 2.0.0 |
-| **Command Init** | Allow user to create an empty (default) interaction json Voxa 3 | ❌ | 2.0.0 |
+| **Command Init** | Allow user to create an empty (default) interaction json Voxa 3 | ✅ | 2.0.0 |
 | **Command Interaction** | Improvements to interaction command | ✅ | 2.0.0 |
 | **Typescript** | Move to project to Typescript | ✅ | 2.0.0 |
 | **README.md** | Update/Improve repo README.md | ❌ | 2.0.0 |
