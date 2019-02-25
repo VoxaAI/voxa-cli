@@ -1,51 +1,68 @@
-import { VoxaSheet, SheetTypes  } from './VoxaSheet';
-import { Schema, Intent, PublishingInformation } from './Schema';
-import * as _ from 'lodash';
-import * as path from 'path';
-import * as _Promise from 'bluebird';
+/* tslint:disable:no-empty */
+import * as _Promise from "bluebird";
+import * as _ from "lodash";
+import * as path from "path";
+import { IIntent, Schema } from "./Schema";
+import { IVoxaSheet } from "./VoxaSheet";
 
 export class AlexaSchema extends Schema {
-  public NAMESPACE = 'alexa';
-  public AVAILABLE_LOCALES = ['en-US', 'en-GB', 'en-CA', 'en-AU', 'en-IN', 'de-DE', 'ja-JP', 'es-ES', 'fr-FR', 'it-IT'];
-  public environment = 'staging';
+  public NAMESPACE = "alexa";
+  public AVAILABLE_LOCALES = [
+    "en-US",
+    "en-GB",
+    "en-CA",
+    "en-AU",
+    "en-IN",
+    "de-DE",
+    "ja-JP",
+    "es-ES",
+    "fr-FR",
+    "it-IT"
+  ];
+  public environment = "staging";
 
-  constructor(voxaSheets: VoxaSheet[], interactionOption: any) {
+  constructor(voxaSheets: IVoxaSheet[], interactionOption: any) {
     super(voxaSheets, interactionOption);
   }
 
-  validate(locale:string, environment: string) {
+  public validate() {}
 
-  };
-
-  build(locale: string, environment: string) {
+  public build(locale: string, environment: string) {
     this.buildLanguageModel(locale, environment);
     this.buildPublishing(environment);
   }
 
-  buildPublishing(environment: string) {
+  public buildPublishing(environment: string) {
     const manifest = this.mergeManifest(environment);
-    _.set(manifest, 'manifestVersion', '1.0');
+    _.set(manifest, "manifestVersion", "1.0");
 
     this.fileContent.push({
-      path: path.join(this.interactionOptions.rootPath, 'speech-assets', this.NAMESPACE, `${_.kebabCase(environment)}-manifest.json`),
-      content: { manifest },
+      path: path.join(
+        this.interactionOptions.rootPath,
+        "speech-assets",
+        this.NAMESPACE,
+        `${_.kebabCase(environment)}-manifest.json`
+      ),
+      content: { manifest }
     });
   }
 
-  buildLanguageModel(locale: string, environment: string) {
+  public buildLanguageModel(locale: string, environment: string) {
     const invocation = _.find(this.invocations, { locale, environment });
-    const invocationName = _.get(invocation, 'name', 'Skill with no name');
-    const intentsByPlatformAndEnvironments = this.intentsByPlatformAndEnvironments(locale, environment);
+    const invocationName = _.get(invocation, "name", "Skill with no name");
+    const intentsByPlatformAndEnvironments = this.intentsByPlatformAndEnvironments(
+      locale,
+      environment
+    );
 
-    const intents = intentsByPlatformAndEnvironments
-    .map((rawIntent: Intent) => {
-      const { name, samples} = rawIntent;
-      let { slotsDefinition} = rawIntent;
-      slotsDefinition = slotsDefinition.map(slot => {
+    const intents = intentsByPlatformAndEnvironments.map((rawIntent: IIntent) => {
+      const { name, samples } = rawIntent;
+      let { slotsDefinition } = rawIntent;
+      slotsDefinition = slotsDefinition.map((slot: any) => {
         return {
           type: slot.type,
-          name: slot.name.replace('{', '').replace('}', '')
-        }
+          name: slot.name.replace("{", "").replace("}", "")
+        };
       });
 
       const intent = { name, samples, slots: slotsDefinition };
@@ -59,18 +76,28 @@ export class AlexaSchema extends Schema {
     });
 
     this.fileContent.push({
-      path: path.join(this.interactionOptions.rootPath, 'speech-assets', this.NAMESPACE, locale, `${_.kebabCase(environment)}-interaction.json`),
+      path: path.join(
+        this.interactionOptions.rootPath,
+        "speech-assets",
+        this.NAMESPACE,
+        locale,
+        `${_.kebabCase(environment)}-interaction.json`
+      ),
       content: { interactionModel: { languageModel: { invocationName, intents, types } } }
     });
 
     const canFulfillIntents = _.chain(intentsByPlatformAndEnvironments)
-    .filter('canFulfillIntent')
-    .map('name')
-    .value();
+      .filter("canFulfillIntent")
+      .map("name")
+      .value();
 
     this.fileContent.push({
-      path: path.join(this.interactionOptions.rootPath, 'src/content', `${_.kebabCase(environment)}-canfulfill-intents.json`),
-      content: canFulfillIntents,
+      path: path.join(
+        this.interactionOptions.rootPath,
+        "src/content",
+        `${_.kebabCase(environment)}-canfulfill-intents.json`
+      ),
+      content: canFulfillIntents
     });
   }
 }

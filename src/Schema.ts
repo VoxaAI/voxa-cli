@@ -1,33 +1,33 @@
-import { VoxaSheet, SheetTypes, getSheetType } from './VoxaSheet';
-import * as _ from 'lodash';
-import * as fsExtra from 'fs-extra';
-import * as _Promise from 'bluebird';
+import * as _Promise from "bluebird";
+import * as fsExtra from "fs-extra";
+import * as _ from "lodash";
+import { getSheetType, IVoxaSheet, SheetTypes } from "./VoxaSheet";
 const fs = _Promise.promisifyAll(fsExtra);
-import * as path from 'path';
+import * as path from "path";
 import {
   downloadProcessor,
-  invocationProcessor,
-  viewsProcessor,
-  slotProcessor,
   intentUtterProcessor,
+  invocationProcessor,
   publishingProcessor,
-} from './Processor';
+  slotProcessor,
+  viewsProcessor
+} from "./Processor";
 
 export abstract class Schema {
-  public intents: Intent[] = [];
-  public slots: Slot[] = [];
-  public downloads: Download[] = [];
-  public AVAILABLE_LOCALES = ['en-US'];
-  public fileContent: FileContent[] = [];
-  public views: View[] = [];
+  public intents: IIntent[] = [];
+  public slots: ISlot[] = [];
+  public downloads: IDownload[] = [];
+  public AVAILABLE_LOCALES = ["en-US"];
+  public fileContent: IFileContent[] = [];
+  public views: IView[] = [];
   public invocations: Invocation[] = [];
-  public publishing: PublishingInformation[] = [];
+  public publishing: IPublishingInformation[] = [];
 
-  public NAMESPACE = 'alexa';
+  public NAMESPACE = "alexa";
 
   public interactionOptions = {} as any;
 
-  constructor(voxaSheets: VoxaSheet[], interactionOption: any) {
+  constructor(voxaSheets: IVoxaSheet[], interactionOption: any) {
     this.interactionOptions = interactionOption;
     this.publishing = publishingProcessor(voxaSheets, this.AVAILABLE_LOCALES);
     this.intents = intentUtterProcessor(voxaSheets, this.AVAILABLE_LOCALES);
@@ -37,15 +37,16 @@ export abstract class Schema {
     this.invocations = invocationProcessor(voxaSheets, this.AVAILABLE_LOCALES);
   }
 
-  abstract validate(locale:string, environment: string): void;
-  abstract build(locale:string, environment: string): void; // must be implemented in derived classes
+  public abstract validate(locale: string, environment: string): void;
+  public abstract build(locale: string, environment: string): void; // must be implemented in derived classes
 
-  intentsByPlatformAndEnvironments(locale: string, environment: string): Intent[] {
-    return this.intents
-    .reduce((acc:any, intent: any) => {
+  public intentsByPlatformAndEnvironments(locale: string, environment: string): IIntent[] {
+    return this.intents.reduce((acc: any, intent: any) => {
       const diffLocale = locale !== intent.locale;
 
-      if (diffLocale) return acc;
+      if (diffLocale) {
+        return acc;
+      }
 
       if (!_.isEmpty(intent.platforms) && !intent.platforms.includes(this.NAMESPACE)) {
         return acc;
@@ -60,67 +61,78 @@ export abstract class Schema {
     }, []);
   }
 
-  buildDownloads(): void  {
+  public buildDownloads(): void {
     this.downloads.forEach(download => {
       const file = {
-        path: path.join(this.interactionOptions.rootPath, `src/content/${download.locale}/${_.kebabCase(download.name)}.json`),
-        content: download.data,
-      }
-      this.fileContent.push(file as FileContent);
+        path: path.join(
+          this.interactionOptions.rootPath,
+          `src/content/${download.locale}/${_.kebabCase(download.name)}.json`
+        ),
+        content: download.data
+      };
+      this.fileContent.push(file as IFileContent);
     });
   }
 
-  buildViews(): void  {
+  public buildViews(): void {
     const viewsContent = {};
     this.views.forEach(view => {
       _.set(viewsContent, `${view.locale}.translation`, view.data);
     });
 
     const file = {
-      path: path.join(this.interactionOptions.rootPath, 'src/app/views.json'),
-      content: viewsContent,
+      path: path.join(this.interactionOptions.rootPath, "src/app/views.json"),
+      content: viewsContent
     };
-    this.fileContent.push(file as FileContent);
+    this.fileContent.push(file as IFileContent);
   }
 
-  buildSynonyms(): void  {
+  public buildSynonyms(): void {
     this.slots.forEach(slot => {
       const file = {
-        path: path.join(this.interactionOptions.rootPath, `src/synonyms/${slot.locale}/${_.kebabCase(slot.name)}.json`),
-        content: slot.values.reduce((acc, next) => {
-          if (_.isEmpty(next.synonyms)) {
-            acc[next.value] = next.value;
-          } else {
-            next.synonyms.map(syn => {
-              acc[syn] = next.value;
-            });
-          }
-          return acc;
-        }, {} as any),
-      }
-      this.fileContent.push(file as FileContent);
+        path: path.join(
+          this.interactionOptions.rootPath,
+          `src/synonyms/${slot.locale}/${_.kebabCase(slot.name)}.json`
+        ),
+        content: slot.values.reduce(
+          (acc: any, next: any) => {
+            if (_.isEmpty(next.synonyms)) {
+              acc[next.value] = next.value;
+            } else {
+              next.synonyms.map((syn: any) => {
+                acc[syn] = next.value;
+              });
+            }
+            return acc;
+          },
+          {} as any
+        )
+      };
+      this.fileContent.push(file as IFileContent);
     });
   }
 
-  mergeManifest(environment: string): any {
+  public mergeManifest(environment: string): any {
     const manifest = {};
     const NAMESPACE = this.NAMESPACE;
     this.publishing
-    .filter(item => _.isEmpty(item.environments) && item.key.includes(this.NAMESPACE))
-    .forEach(assignPublishingKeys);
+      .filter(item => _.isEmpty(item.environments) && item.key.includes(this.NAMESPACE))
+      .forEach(assignPublishingKeys);
 
     this.publishing
-    .filter(item => _.includes(item.environments, environment) && item.key.includes(this.NAMESPACE))
-    .forEach(assignPublishingKeys);
+      .filter(
+        item => _.includes(item.environments, environment) && item.key.includes(this.NAMESPACE)
+      )
+      .forEach(assignPublishingKeys);
 
     return manifest;
 
-    function assignPublishingKeys(item: PublishingInformation) {
+    function assignPublishingKeys(item: IPublishingInformation) {
       let { key, value } = item;
-      key = key.replace(`${NAMESPACE}.`, '');
+      key = key.replace(`${NAMESPACE}.`, "");
 
-      if (key.includes('[]')) {
-        const keySplitByArray = key.split('[]');
+      if (key.includes("[]")) {
+        const keySplitByArray = key.split("[]");
         key = keySplitByArray[0];
         const subKey = keySplitByArray[1];
 
@@ -135,36 +147,36 @@ export abstract class Schema {
         }
         value = arrayOnPublishingInformation;
       }
-      if (key.includes('keywords') && _.isString(value)) {
-        value = value.split(',').map(_.trim);
+      if (key.includes("keywords") && _.isString(value)) {
+        value = value.split(",").map(_.trim);
       }
       _.set(manifest, key, value);
     }
   }
 }
 
-export interface Intent {
+export interface IIntent {
   name: string;
   samples: string[];
-  slotsDefinition: SlotDefinition[];
+  slotsDefinition: ISlotDefinition[];
   canFulfillIntent: boolean;
   startIntent: boolean;
   signInRequired: boolean;
   endIntent: boolean;
-  events: string[] | Event[];
-  environments: [];
-  platforms: [];
+  events: string[] | IEvent[];
+  environments: string[];
+  platforms: string[];
   locale: string;
 }
 
-export interface Event {
+export interface IEvent {
   name: string;
 }
 
-export interface FileContent {
+export interface IFileContent {
   path: string;
   content: any;
-  //promise?: Promise<void>;
+  // promise?: Promise<void>;
 }
 
 export interface Invocation {
@@ -173,34 +185,34 @@ export interface Invocation {
   environment: string;
 }
 
-export interface SlotDefinition {
+export interface ISlotDefinition {
   name: string;
   type: string;
   // samples: string[];
 }
 
-export interface Slot {
+export interface ISlot {
   locale: string;
   name: string; // LIST_OF_COUNTRIES
-  values: SlotSynonymns[];
+  values: ISlotSynonymns[];
 }
-export interface SlotSynonymns {
+export interface ISlotSynonymns {
   value: string; // united-states
   synonyms: string[]; // USA, united states
 }
 
-export interface View {
+export interface IView {
   locale: string;
   data: {};
 }
 
-export interface Download {
+export interface IDownload {
   name: string;
-  data: {}[];
+  data: Array<{}>;
   locale: string;
 }
 
-export interface PublishingInformation {
+export interface IPublishingInformation {
   key: string;
   value: string | object;
   environments: string[];

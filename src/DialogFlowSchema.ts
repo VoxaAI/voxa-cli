@@ -1,142 +1,182 @@
-import { VoxaSheet, SheetTypes } from './VoxaSheet';
-import { Schema, Intent, PublishingInformation, Event, FileContent } from './Schema';
-import * as _ from 'lodash';
-import * as path from 'path';
-import * as _Promise from 'bluebird';
-import * as uuid from 'uuid/v5';
-import { AGENT, BUILT_IN_INTENTS } from './DialogFlowDefault';
+/* tslint:disable:no-empty no-submodule-imports */
+import * as _Promise from "bluebird";
+import * as _ from "lodash";
+import * as path from "path";
+import * as uuid from "uuid/v5";
+import { AGENT, BUILT_IN_INTENTS } from "./DialogflowDefault";
+import { IFileContent, IIntent, Schema } from "./Schema";
+import { IVoxaSheet } from "./VoxaSheet";
 
-export class DialogFlowSchema extends Schema {
-  public NAMESPACE = 'dialogflow';
-  public AVAILABLE_LOCALES = ['en-US', 'en-AU', 'en-CA', 'en-IN','en-GB', 'de-DE', 'fr-FR', 'fr-CA', 'ja-JP', 'ko-KR', 'es-ES', 'pt-BR', 'it-IT', 'ru-RU', 'hi-IN', 'th-TH', 'id-ID', 'da-DK', 'no-NO', 'nl-NL', 'sv-SE'];
-  public environment = 'staging';
+export class DialogflowSchema extends Schema {
+  public NAMESPACE = "dialogflow";
+  public AVAILABLE_LOCALES = [
+    "en-US",
+    "en-AU",
+    "en-CA",
+    "en-IN",
+    "en-GB",
+    "de-DE",
+    "fr-FR",
+    "fr-CA",
+    "ja-JP",
+    "ko-KR",
+    "es-ES",
+    "pt-BR",
+    "it-IT",
+    "ru-RU",
+    "hi-IN",
+    "th-TH",
+    "id-ID",
+    "da-DK",
+    "no-NO",
+    "nl-NL",
+    "sv-SE"
+  ];
+  public environment = "staging";
   public builtIntents = [] as any;
 
-  constructor(voxaSheets: VoxaSheet[], interactionOption: any) {
+  constructor(voxaSheets: IVoxaSheet[], interactionOption: any) {
     super(voxaSheets, interactionOption);
   }
 
-  validate() {};
+  public validate() {}
 
-  build(locale: string, environment: string) {
+  public build(locale: string, environment: string) {
     this.buildIntent(locale, environment);
     this.buildUtterances(locale, environment);
     this.buildPackage(environment);
     this.buildAgent(locale, environment);
   }
 
-  buildPackage(environment: string) {
-    this.fileContent.push({
-      path: path.join(this.interactionOptions.rootPath, '/speech-assets', this.NAMESPACE, environment, 'package.json'),
+  public buildPackage(environment: string) {
+    const file: IFileContent = {
+      path: path.join(
+        this.interactionOptions.rootPath,
+        "/speech-assets",
+        this.NAMESPACE,
+        environment,
+        "package.json"
+      ),
       content: {
-        version: '1.0.0'
-      },
-    } as FileContent);
+        version: "1.0.0"
+      }
+    };
+    this.fileContent.push(file);
   }
 
-  buildAgent(locale: string, environment: string) {
+  public buildAgent(locale: string, environment: string) {
     const intents = this.builtIntents;
     const invocation = _.find(this.invocations, { locale, environment });
-    console.log( { locale, environment }, this.invocations);
-    const invocationName = _.get(invocation, 'name', 'Skill with no name');
-    const intentsByPlatformAndEnvironments = this.intentsByPlatformAndEnvironments(locale, environment);
-
-    const startIntents = _.chain(intentsByPlatformAndEnvironments)
-    .filter({ startIntent: true })
-    .map(intent => {
-      console.log('intent', intent);
-      console.log('intents', intents)
-      const startIntent = _.chain(intents).find(i => i.name === intent.name).value();
-      if (startIntent) {
-        return ({
-          intentId: _.get(startIntent, 'id'),
-          signInRequired: !!_.get(startIntent, 'signInRequired'),
-        });
-      }
-    })
-    .compact()
-    .value();
-
-    const endIntentIds = _.chain(intentsByPlatformAndEnvironments)
-    .filter({ endIntent: true })
-    .map(intent => {
-      const intentId = _.chain(intents).find(i => i.name === intent.name).get('id').value();
-      return intentId;
-    })
-    .value();
-
-    const agent = _.merge(
-      AGENT,
-      this.mergeManifest(environment),
-      {
-        description: invocationName,
-        language: locale,
-        googleAssistant: { project: _.kebabCase(invocationName), startIntents, endIntentIds }
-      }
+    const invocationName = _.get(invocation, "name", "Skill with no name");
+    const intentsByPlatformAndEnvironments = this.intentsByPlatformAndEnvironments(
+      locale,
+      environment
     );
 
-    this.fileContent.push({
-      path: path.join(this.interactionOptions.rootPath, 'speech-assets', this.NAMESPACE, environment, 'agent.json'),
-      content: agent,
-    } as FileContent);
+    const startIntents = _.chain(intentsByPlatformAndEnvironments)
+      .filter({ startIntent: true })
+      .map(intent => {
+        const startIntent = _.chain(intents)
+          .find(i => i.name === intent.name)
+          .value();
+        if (startIntent) {
+          return {
+            intentId: _.get(startIntent, "id"),
+            signInRequired: !!_.get(startIntent, "signInRequired")
+          };
+        }
+      })
+      .compact()
+      .value();
+
+    const endIntentIds = _.chain(intentsByPlatformAndEnvironments)
+      .filter({ endIntent: true })
+      .map(intent => {
+        const intentId = _.chain(intents)
+          .find(i => i.name === intent.name)
+          .get("id")
+          .value();
+        return intentId;
+      })
+      .value();
+
+    const agent = _.merge(AGENT, this.mergeManifest(environment), {
+      description: invocationName,
+      language: locale,
+      googleAssistant: { project: _.kebabCase(invocationName), startIntents, endIntentIds }
+    });
+
+    const file: IFileContent = {
+      path: path.join(
+        this.interactionOptions.rootPath,
+        "speech-assets",
+        this.NAMESPACE,
+        environment,
+        "agent.json"
+      ),
+      content: agent
+    };
+    this.fileContent.push(file);
   }
 
-  buildUtterances(locale: string, environment: string) {
-    const intentsByPlatformAndEnvironments = this.intentsByPlatformAndEnvironments(locale, environment);
+  public buildUtterances(locale: string, environment: string) {
+    const intentsByPlatformAndEnvironments = this.intentsByPlatformAndEnvironments(
+      locale,
+      environment
+    );
 
-    locale = locale.split('-')[0];
-    const intents = intentsByPlatformAndEnvironments
-    .map((rawIntent: Intent) => {
-      let { name, samples, slotsDefinition, events } = rawIntent;
-      name = name.replace('AMAZON.', '');
+    locale = locale.split("-")[0];
+    const intents = intentsByPlatformAndEnvironments.map((rawIntent: IIntent) => {
+      let { name, samples, events } = rawIntent;
+      const { slotsDefinition } = rawIntent;
+      name = name.replace("AMAZON.", "");
 
       const builtInIntentSamples = _.get(BUILT_IN_INTENTS, name, []);
-      samples = _.chain(samples).concat(builtInIntentSamples).uniq().value();
+      samples = _.chain(samples)
+        .concat(builtInIntentSamples)
+        .uniq()
+        .value();
 
-      events = name === 'LaunchIntent' ?
-      ['WELCOME', 'GOOGLE_ASSISTANT_WELCOME'] : events;
+      events = name === "LaunchIntent" ? ["WELCOME", "GOOGLE_ASSISTANT_WELCOME"] : events;
       events = (events as string[]).map((eventName: string) => ({ name: eventName }));
 
       const parameters = slotsDefinition.map(slot => ({
-        dataType: _.includes(slot.type, '@sys.') ? slot.type : `@${slot.type}`,
+        dataType: _.includes(slot.type, "@sys.") ? slot.type : `@${slot.type}`,
         name: slot.name,
         value: `$${slot.name}`,
-        isList: false,
+        isList: false
       }));
 
-      const resultSamples = samples
-      .map(sample => {
+      const resultSamples = samples.map(sample => {
         const data = _.chain(sample)
-        .replace(/{([^}]+)}/g, function (match, inner) {
-          return `|{${inner}}|`;
-        })
-        .split('|')
-        .map(text => {
-          const element = {};
-          const isATemplate = (_.includes(text, '{') && _.includes(text, '}'));
+          .replace(/{([^}]+)}/g, (match, inner) => {
+            return `|{${inner}}|`;
+          })
+          .split("|")
+          .map(text => {
+            const element = {};
+            const isATemplate = _.includes(text, "{") && _.includes(text, "}");
 
-          const alias = text
-          .replace('{', '')
-          .replace('}', '');
+            const alias = text.replace("{", "").replace("}", "");
 
-           const slot = _.find(parameters, { name: text })
+            const slot = _.find(parameters, { name: text });
 
-          if (isATemplate && slot) {
-            _.set(element, 'meta', slot.dataType);
-            _.set(element, 'alias', alias);
-          }
+            if (isATemplate && slot) {
+              _.set(element, "meta", slot.dataType);
+              _.set(element, "alias", alias);
+            }
 
-          if (!_.isEmpty(text)) {
-            _.set(element, 'text', text);
-            _.set(element, 'userDefined', isATemplate);
-          }
+            if (!_.isEmpty(text)) {
+              _.set(element, "text", text);
+              _.set(element, "userDefined", isATemplate);
+            }
 
-          _.set(element, 'id', hashObj(element));
+            _.set(element, "id", hashObj(element));
 
-          return _.isEmpty(_.omit(element, ['id'])) ? null : element;
-        })
-        .compact()
-        .value();
+            return _.isEmpty(_.omit(element, ["id"])) ? null : element;
+          })
+          .compact()
+          .value();
 
         return {
           data,
@@ -147,34 +187,43 @@ export class DialogFlowSchema extends Schema {
       });
 
       if (!_.isEmpty(resultSamples)) {
-        this.fileContent.push({
-          path: path.join(this.interactionOptions.rootPath, 'speech-assets', this.NAMESPACE, environment, 'intents', `${name}_usersays_${locale}.json`),
-          content: resultSamples,
-        } as FileContent);
+        const file: IFileContent = {
+          path: path.join(
+            this.interactionOptions.rootPath,
+            "speech-assets",
+            this.NAMESPACE,
+            environment,
+            "intents",
+            `${name}_usersays_${locale}.json`
+          ),
+          content: resultSamples
+        };
+        this.fileContent.push(file);
       }
     });
-
   }
-  buildIntent(locale: string, environment: string) {
-    const intentsByPlatformAndEnvironments = this.intentsByPlatformAndEnvironments(locale, environment);
+  public buildIntent(locale: string, environment: string) {
+    const intentsByPlatformAndEnvironments = this.intentsByPlatformAndEnvironments(
+      locale,
+      environment
+    );
 
-    locale = locale.split('-')[0];
-    this.builtIntents = intentsByPlatformAndEnvironments
-    .map((rawIntent: Intent) => {
-      let { name, slotsDefinition, events } = rawIntent;
-      name = name.replace('AMAZON.', '');
-      const fallbackIntent = name === 'FallbackIntent';
-      const action = fallbackIntent ? 'input.unknown': name;
+    locale = locale.split("-")[0];
+    this.builtIntents = intentsByPlatformAndEnvironments.map((rawIntent: IIntent) => {
+      let { name, events } = rawIntent;
+      const { slotsDefinition } = rawIntent;
+      name = name.replace("AMAZON.", "");
+      const fallbackIntent = name === "FallbackIntent";
+      const action = fallbackIntent ? "input.unknown" : name;
 
-      events = name === 'LaunchIntent' ?
-      ['WELCOME', 'GOOGLE_ASSISTANT_WELCOME'] : events;
+      events = name === "LaunchIntent" ? ["WELCOME", "GOOGLE_ASSISTANT_WELCOME"] : events;
       events = (events as string[]).map((eventName: string) => ({ name: eventName }));
 
       const parameters = slotsDefinition.map(slot => ({
-        dataType: _.includes(slot.type, '@sys.') ? slot.type : `@${slot.type}`,
+        dataType: _.includes(slot.type, "@sys.") ? slot.type : `@${slot.type}`,
         name: slot.name,
         value: `$${slot.name}`,
-        isList: false,
+        isList: false
       }));
 
       const intent = {
@@ -196,20 +245,27 @@ export class DialogFlowSchema extends Schema {
         webhookUsed: true,
         webhookForSlotFilling: false,
         fallbackIntent,
-        events,
+        events
       };
 
-      _.set(intent, 'id', hashObj(intent));
-
-      this.fileContent.push({
-        path: path.join(this.interactionOptions.rootPath, 'speech-assets', this.NAMESPACE, environment, 'intents', `${intent.name}.json`),
-        content: intent,
-      } as FileContent);
+      _.set(intent, "id", hashObj(intent));
+      const file: IFileContent = {
+        path: path.join(
+          this.interactionOptions.rootPath,
+          "speech-assets",
+          this.NAMESPACE,
+          environment,
+          "intents",
+          `${intent.name}.json`
+        ),
+        content: intent
+      };
+      this.fileContent.push(file);
       return intent;
     });
   }
 }
 
-function hashObj(obj:{}) {
+function hashObj(obj: {}) {
   return uuid(JSON.stringify(obj), uuid.DNS);
 }
