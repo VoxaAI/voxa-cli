@@ -1,0 +1,7 @@
+.git
+package-lock.json
+yarn.lock
+.vscode
+assets
+client_secret.json
+interaction.json
