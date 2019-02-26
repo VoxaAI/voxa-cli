@@ -1,16 +1,15 @@
-# Change log
+# Changelog
 
 All notable changes to this project will be documented in this file
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [Unreleased]
+### Removed
+- removed security vulnerabilities on dependencies
 
-removed cryptoles
-
-## [2.0.0] - 2019-02-25
-
+## [2.0.0]  - 2019-02-25
 ### Added
 
 - TS support
@@ -23,10 +22,13 @@ removed cryptoles
 - Default structure and support for schemas
 
 ## [1.0.0] - 2018-04-10
-
 ### Added
 
 - Add support for google spreadsheet
 - Add support for multiple views, interaction model, publishing information
 - Add support for Alexa, Dialogflow
 - Add support to download other sheet
+
+[Unreleased]: https://github.com/VoxaAI/voxa-cli/compare/2.0.0...staging
+[2.0.0]: https://github.com/VoxaAI/voxa-cli/compare/1.0.0-alpha1...2.0.0
+[1.0.0]: https://github.com/VoxaAI/voxa-cli/releases/tag/1.0.0-alpha1
