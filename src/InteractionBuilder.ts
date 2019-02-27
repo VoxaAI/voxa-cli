@@ -53,6 +53,7 @@ export const buildInteraction = async (interactionOption: any, authKeys: any) =>
         if (index === 0) {
           schema.buildDownloads();
           schema.buildViews();
+          schema.buildViewsMapping();
           schema.buildSynonyms();
         }
 
