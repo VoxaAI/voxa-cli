@@ -22,7 +22,8 @@ export class AlexaSchema extends Schema {
   public environment = "staging";
 
   constructor(voxaSheets: IVoxaSheet[], interactionOption: any) {
-    super(voxaSheets, interactionOption);
+    super(interactionOption);
+    this.init(voxaSheets);
   }
 
   public validate() {}

@@ -10,6 +10,22 @@ import { IVoxaSheet } from "./VoxaSheet";
 export class DialogflowSchema extends Schema {
   public NAMESPACE = "dialogflow";
   public AVAILABLE_LOCALES = [
+    "en",
+    "de",
+    "fr",
+    "ja",
+    "ko",
+    "es",
+    "pt",
+    "it",
+    "ru",
+    "hi",
+    "th",
+    "id",
+    "da",
+    "no",
+    "nl",
+    "sv",
     "en-US",
     "en-AU",
     "en-CA",
@@ -36,7 +52,8 @@ export class DialogflowSchema extends Schema {
   public builtIntents = [] as any;
 
   constructor(voxaSheets: IVoxaSheet[], interactionOption: any) {
-    super(voxaSheets, interactionOption);
+    super(interactionOption);
+    this.init(voxaSheets);
   }
 
   public validate() {}
@@ -100,9 +117,14 @@ export class DialogflowSchema extends Schema {
       })
       .value();
 
+    const supportedLanguages = _(this.invocations)
+      .map("locale")
+      .uniq()
+      .value();
+
     const agent = _.merge(AGENT, this.mergeManifest(environment), {
       description: invocationName,
-      language: locale,
+      supportedLanguages,
       googleAssistant: { project: _.kebabCase(invocationName), startIntents, endIntentIds }
     });
 

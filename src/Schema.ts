@@ -17,25 +17,15 @@ export abstract class Schema {
   public intents: IIntent[] = [];
   public slots: ISlot[] = [];
   public downloads: IDownload[] = [];
-  public AVAILABLE_LOCALES = ["en-US"];
+  public abstract AVAILABLE_LOCALES: string[];
   public fileContent: IFileContent[] = [];
   public views: IView[] = [];
   public invocations: Invocation[] = [];
   public publishing: IPublishingInformation[] = [];
 
-  public NAMESPACE = "alexa";
+  public abstract NAMESPACE: string;
 
-  public interactionOptions = {} as any;
-
-  constructor(voxaSheets: IVoxaSheet[], interactionOption: any) {
-    this.interactionOptions = interactionOption;
-    this.publishing = publishingProcessor(voxaSheets, this.AVAILABLE_LOCALES);
-    this.intents = intentUtterProcessor(voxaSheets, this.AVAILABLE_LOCALES);
-    this.downloads = downloadProcessor(voxaSheets, this.AVAILABLE_LOCALES);
-    this.views = viewsProcessor(voxaSheets, this.AVAILABLE_LOCALES);
-    this.slots = slotProcessor(voxaSheets, this.AVAILABLE_LOCALES);
-    this.invocations = invocationProcessor(voxaSheets, this.AVAILABLE_LOCALES);
-  }
+  constructor(public interactionOptions: any = {}) {}
 
   public abstract validate(locale: string, environment: string): void;
   public abstract build(locale: string, environment: string): void; // must be implemented in derived classes
@@ -152,6 +142,15 @@ export abstract class Schema {
       }
       _.set(manifest, key, value);
     }
+  }
+
+  protected init(voxaSheets: any) {
+    this.publishing = publishingProcessor(voxaSheets, this.AVAILABLE_LOCALES);
+    this.intents = intentUtterProcessor(voxaSheets, this.AVAILABLE_LOCALES);
+    this.downloads = downloadProcessor(voxaSheets, this.AVAILABLE_LOCALES);
+    this.views = viewsProcessor(voxaSheets, this.AVAILABLE_LOCALES);
+    this.slots = slotProcessor(voxaSheets, this.AVAILABLE_LOCALES);
+    this.invocations = invocationProcessor(voxaSheets, this.AVAILABLE_LOCALES);
   }
 }
 

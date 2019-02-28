@@ -14,8 +14,9 @@ import { getSheetType, IVoxaSheet, SheetTypes } from "./VoxaSheet";
 
 export function sheetLocale(voxaSheet: IVoxaSheet, AVAILABLE_LOCALES: string[]) {
   let locale = AVAILABLE_LOCALES.find((loc: string) =>
-    _.includes(_.toLower(voxaSheet.spreadsheetTitle), _.toLower(loc))
+    _.endsWith(_.toLower(voxaSheet.spreadsheetTitle), _.toLower(loc))
   );
+
   locale = locale || AVAILABLE_LOCALES[0];
 
   return locale;
@@ -75,7 +76,7 @@ export function viewsProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES: stri
   );
 
   return voxaSheetsViews.map((voxaSheet: IVoxaSheet) => {
-    const locale = voxaSheet.sheetTitle.split("@")[1] || AVAILABLE_LOCALES[0];
+    const locale = voxaSheet.sheetTitle.split("@")[1] || sheetLocale(voxaSheet, AVAILABLE_LOCALES);
     const data = _.chain(voxaSheet.data)
       .reduce((acc, view) => {
         const { path } = view;

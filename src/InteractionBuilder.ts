@@ -25,26 +25,26 @@ function defaultOptions(interactionOption: any) {
 
   return { rootPath, spreadsheets, speechPath, synonymPath, viewsPath, contentPath, platforms };
 }
-export const buildInteraction = async (interactionOption: any, authKeys: any) => {
-  interactionOption = defaultOptions(interactionOption);
+export const buildInteraction = async (interactionOptions: any, authKeys: any) => {
+  interactionOptions = defaultOptions(interactionOptions);
   console.time("all");
   console.time("timeframe");
-  const sheets = await transform(interactionOption, authKeys);
+  const sheets = await transform(interactionOptions, authKeys);
   console.timeEnd("timeframe");
   // const alexa = new AlexaSchema(sheets, interactionOption);
-  const platforms = ["alexa", "dialogflow"];
+  const platforms = interactionOptions.platforms || [];
   const schemas = [];
 
   if (platforms.includes("alexa")) {
-    const schema = new AlexaSchema(_.cloneDeep(sheets), interactionOption);
+    const schema = new AlexaSchema(_.cloneDeep(sheets), interactionOptions);
     schemas.push(schema);
-    await fs.remove(path.join(interactionOption.rootPath, "speech-assets/alexa"));
+    await fs.remove(path.join(interactionOptions.rootPath, "speech-assets/alexa"));
   }
 
   if (platforms.includes("dialogflow")) {
-    const schema = new DialogflowSchema(_.cloneDeep(sheets), interactionOption);
+    const schema = new DialogflowSchema(_.cloneDeep(sheets), interactionOptions);
     schemas.push(schema);
-    await fs.remove(path.join(interactionOption.rootPath, "speech-assets/dialogflow"));
+    await fs.remove(path.join(interactionOptions.rootPath, "speech-assets/dialogflow"));
   }
 
   const fileContentsProcess = schemas
