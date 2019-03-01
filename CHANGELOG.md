@@ -6,10 +6,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Added
+
+- Added mapping for views and variables
+
+### Fixed
+
+- Dialogflow generator
+- init and interaction command error on bad formatted URL
+
 ### Removed
+
 - removed security vulnerabilities on dependencies
 
-## [2.0.0]  - 2019-02-25
+## [2.0.0] - 2019-02-25
+
 ### Added
 
 - TS support
@@ -22,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Default structure and support for schemas
 
 ## [1.0.0] - 2018-04-10
+
 ### Added
 
 - Add support for google spreadsheet
@@ -29,6 +42,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add support for Alexa, Dialogflow
 - Add support to download other sheet
 
-[Unreleased]: https://github.com/VoxaAI/voxa-cli/compare/2.0.0...staging
+[unreleased]: https://github.com/VoxaAI/voxa-cli/compare/2.0.0...staging
 [2.0.0]: https://github.com/VoxaAI/voxa-cli/compare/1.0.0-alpha1...2.0.0
 [1.0.0]: https://github.com/VoxaAI/voxa-cli/releases/tag/1.0.0-alpha1
