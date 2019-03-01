@@ -32,7 +32,7 @@ export const buildInteraction = async (interactionOption: any, authKeys: any) =>
   const sheets = await transform(interactionOption, authKeys);
   console.timeEnd("timeframe");
   // const alexa = new AlexaSchema(sheets, interactionOption);
-  const platforms = ["alexa", "dialogflow"];
+  const platforms = interactionOption.platform || ["alexa"];
   const schemas = [];
 
   if (platforms.includes("alexa")) {
