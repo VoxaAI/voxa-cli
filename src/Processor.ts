@@ -14,7 +14,7 @@ import { getSheetType, IVoxaSheet, SheetTypes } from "./VoxaSheet";
 
 export function sheetLocale(voxaSheet: IVoxaSheet, AVAILABLE_LOCALES: string[]) {
   let locale = AVAILABLE_LOCALES.find((loc: string) =>
-    _.includes(_.toLower(voxaSheet.spreadsheetTitle), _.toLower(loc))
+    _.endsWith(_.toLower(voxaSheet.spreadsheetTitle), _.toLower(loc))
   );
   locale = locale || AVAILABLE_LOCALES[0];
 
