@@ -118,9 +118,18 @@ export class DialogflowSchema extends Schema {
       })
       .value();
 
+    const supportedLanguages = _(this.invocations)
+      .filter({ environment })
+      .map("locale")
+      .uniq()
+      .value();
+
+    const language = locale.split("-")[0];
+
     const agent = _.merge(AGENT, this.mergeManifest(environment), {
       description: invocationName,
-      language: locale.split("-")[0],
+      language,
+      supportedLanguages,
       googleAssistant: { project: _.kebabCase(invocationName), startIntents, endIntentIds }
     });
 
