@@ -14,7 +14,7 @@ export const alias = "";
 export const description = "create a new interaction.json";
 
 const ALLOWED_ATTRIBUTES = [
-  "platform",
+  "platforms",
   "spreadsheets",
   "speechPath",
   "content",
@@ -74,8 +74,8 @@ export function action() {
       },
       {
         type: "checkbox",
-        name: "platform",
-        message: "Choose platform",
+        name: "platforms",
+        message: "Choose platforms",
         choices: ["alexa", "dialogflow"],
         when: override
       },

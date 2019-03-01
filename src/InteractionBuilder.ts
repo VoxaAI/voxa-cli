@@ -11,18 +11,28 @@ const fs = _Promise.promisifyAll(fsExtra);
 
 function defaultOptions(interactionOption: any) {
   const rootPath = _.get(interactionOption, "rootPath");
-  const spreadsheets = _.get(interactionOption, "spreadsheets");
+
   const speechPath = _.get(interactionOption, "speechPath", path.join(rootPath, "speech-assets"));
   const synonymPath = _.get(interactionOption, "synonymPath", path.join(rootPath, "synonyms"));
   const viewsPath = _.get(interactionOption, "viewsPath", path.join(rootPath, "app"));
-  // const validate = _.get(interactionOption, 'validate', true);
-  // const type = _.get(interactionOption, 'type', 'alexa');
-  // const others = _.get(interactionOption, 'content', []);
   const contentPath = _.get(interactionOption, "contentPath", path.join(rootPath, "content"));
-  // const localManifest = _.get(interactionOption, 'local-manifest');
   let platforms = _.get(interactionOption, "platforms", ["alexa"]);
   platforms = _.isString(platforms) ? [platforms] : platforms;
 
+  let spreadsheets = _.get(interactionOption, "spreadsheets");
+  spreadsheets = _.isString(spreadsheets) ? [spreadsheets] : spreadsheets;
+  spreadsheets = spreadsheets.map((sheet: string) => {
+    const matched = sheet.match(/docs\.google\.com\/spreadsheets\/d\/(.*)\/.*/);
+    if (sheet.includes("docs.google.com/spreadsheets") && matched && _.isString(matched[1])) {
+      return matched[1];
+    }
+
+    return sheet;
+  });
+
+  if (_.isEmpty(spreadsheets)) {
+    throw Error("Spreadsheet were not specified in the right format");
+  }
   return { rootPath, spreadsheets, speechPath, synonymPath, viewsPath, contentPath, platforms };
 }
 export const buildInteraction = async (interactionOption: any, authKeys: any) => {
@@ -31,8 +41,7 @@ export const buildInteraction = async (interactionOption: any, authKeys: any) =>
   console.time("timeframe");
   const sheets = await transform(interactionOption, authKeys);
   console.timeEnd("timeframe");
-  // const alexa = new AlexaSchema(sheets, interactionOption);
-  const platforms = interactionOption.platform || ["alexa"];
+  const platforms = interactionOption.platforms;
   const schemas = [];
 
   if (platforms.includes("alexa")) {
