@@ -69,7 +69,6 @@ export class DialogflowSchema extends Schema {
   public buildPackage(environment: string) {
     const file: IFileContent = {
       path: path.join(
-        this.interactionOptions.rootPath,
         this.interactionOptions.speechPath,
         this.NAMESPACE,
         environment,
@@ -126,7 +125,6 @@ export class DialogflowSchema extends Schema {
 
     const file: IFileContent = {
       path: path.join(
-        this.interactionOptions.rootPath,
         this.interactionOptions.speechPath,
         this.NAMESPACE,
         environment,
@@ -207,7 +205,6 @@ export class DialogflowSchema extends Schema {
       if (!_.isEmpty(resultSamples)) {
         const file: IFileContent = {
           path: path.join(
-            this.interactionOptions.rootPath,
             this.interactionOptions.speechPath,
             this.NAMESPACE,
             environment,
@@ -269,7 +266,6 @@ export class DialogflowSchema extends Schema {
       _.set(intent, "id", hashObj(intent));
       const file: IFileContent = {
         path: path.join(
-          this.interactionOptions.rootPath,
           this.interactionOptions.speechPath,
           this.NAMESPACE,
           environment,
@@ -301,8 +297,7 @@ export class DialogflowSchema extends Schema {
 
         const fileDef: IFileContent = {
           path: path.join(
-            this.interactionOptions.rootPath,
-            "speech-assets",
+            this.interactionOptions.speechPath,
             this.NAMESPACE,
             environment,
             "entities",
@@ -313,7 +308,6 @@ export class DialogflowSchema extends Schema {
 
         const fileValue: IFileContent = {
           path: path.join(
-            this.interactionOptions.rootPath,
             this.interactionOptions.speechPath,
             this.NAMESPACE,
             environment,

@@ -39,7 +39,6 @@ export class AlexaSchema extends Schema {
 
     this.fileContent.push({
       path: path.join(
-        this.interactionOptions.rootPath,
         this.interactionOptions.speechPath,
         this.NAMESPACE,
         `${_.kebabCase(environment)}-manifest.json`
@@ -78,7 +77,6 @@ export class AlexaSchema extends Schema {
 
     this.fileContent.push({
       path: path.join(
-        this.interactionOptions.rootPath,
         this.interactionOptions.speechPath,
         this.NAMESPACE,
         locale,
