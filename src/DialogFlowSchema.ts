@@ -9,6 +9,22 @@ import { IVoxaSheet } from "./VoxaSheet";
 
 const NAMESPACE = "dialogflow";
 const AVAILABLE_LOCALES = [
+  "en",
+  "de",
+  "fr",
+  "ja",
+  "ko",
+  "es",
+  "pt",
+  "it",
+  "ru",
+  "hi",
+  "th",
+  "id",
+  "da",
+  "no",
+  "nl",
+  "sv",
   "en-US",
   "en-AU",
   "en-CA",
