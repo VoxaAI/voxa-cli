@@ -9,17 +9,17 @@ import { IFileContent } from "./Schema";
 import { transform } from "./Spreadsheet";
 const fs = _Promise.promisifyAll(fsExtra);
 
-function defaultOptions(interactionOption: any) {
-  const rootPath = _.get(interactionOption, "rootPath");
+function defaultOptions(interactionOptions: any) {
+  const rootPath = _.get(interactionOptions, "rootPath");
 
-  const speechPath = _.get(interactionOption, "speechPath", path.join(rootPath, "speech-assets"));
-  const synonymPath = _.get(interactionOption, "synonymPath", path.join(rootPath, "synonyms"));
-  const viewsPath = _.get(interactionOption, "viewsPath", path.join(rootPath, "app"));
-  const contentPath = _.get(interactionOption, "contentPath", path.join(rootPath, "content"));
-  let platforms = _.get(interactionOption, "platforms", ["alexa"]);
+  const speechPath = _.get(interactionOptions, "speechPath", path.join(rootPath, "speech-assets"));
+  const synonymPath = _.get(interactionOptions, "synonymPath", path.join(rootPath, "synonyms"));
+  const viewsPath = _.get(interactionOptions, "viewsPath", path.join(rootPath, "app"));
+  const contentPath = _.get(interactionOptions, "contentPath", path.join(rootPath, "content"));
+  let platforms = _.get(interactionOptions, "platforms", ["alexa"]);
   platforms = _.isString(platforms) ? [platforms] : platforms;
 
-  let spreadsheets = _.get(interactionOption, "spreadsheets");
+  let spreadsheets = _.get(interactionOptions, "spreadsheets");
   spreadsheets = _.isString(spreadsheets) ? [spreadsheets] : spreadsheets;
   spreadsheets = spreadsheets.map((sheet: string) => {
     const matched = sheet.match(/docs\.google\.com\/spreadsheets\/d\/(.*)\/.*/);
@@ -35,28 +35,28 @@ function defaultOptions(interactionOption: any) {
   }
   return { rootPath, spreadsheets, speechPath, synonymPath, viewsPath, contentPath, platforms };
 }
-export const buildInteraction = async (interactionOption: any, authKeys: any) => {
-  interactionOption = defaultOptions(interactionOption);
+export const buildInteraction = async (interactionOptions: any, authKeys: any) => {
+  interactionOptions = defaultOptions(interactionOptions);
   console.time("all");
   console.time("timeframe");
-  const sheets = await transform(interactionOption, authKeys);
+  const sheets = await transform(interactionOptions, authKeys);
   console.timeEnd("timeframe");
-  const platforms = interactionOption.platforms;
+  const platforms = interactionOptions.platforms;
   const schemas = [];
 
   if (platforms.includes("alexa")) {
-    const schema = new AlexaSchema(_.cloneDeep(sheets), interactionOption);
+    const schema = new AlexaSchema(_.cloneDeep(sheets), interactionOptions);
     schemas.push(schema);
     await fs.remove(
-      path.join(interactionOption.rootPath, interactionOption.speechPath, schema.NAMESPACE)
+      path.join(interactionOptions.rootPath, interactionOptions.speechPath, schema.NAMESPACE)
     );
   }
 
   if (platforms.includes("dialogflow")) {
-    const schema = new DialogflowSchema(_.cloneDeep(sheets), interactionOption);
+    const schema = new DialogflowSchema(_.cloneDeep(sheets), interactionOptions);
     schemas.push(schema);
     await fs.remove(
-      path.join(interactionOption.rootPath, interactionOption.speechPath, schema.NAMESPACE)
+      path.join(interactionOptions.rootPath, interactionOptions.speechPath, schema.NAMESPACE)
     );
   }
 

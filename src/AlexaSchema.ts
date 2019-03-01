@@ -22,8 +22,8 @@ const AVAILABLE_LOCALES = [
 export class AlexaSchema extends Schema {
   public environment = "staging";
 
-  constructor(voxaSheets: IVoxaSheet[], interactionOption: any) {
-    super(NAMESPACE, AVAILABLE_LOCALES, voxaSheets, interactionOption);
+  constructor(voxaSheets: IVoxaSheet[], interactionOptions: any) {
+    super(NAMESPACE, AVAILABLE_LOCALES, voxaSheets, interactionOptions);
   }
 
   public validate() {}

@@ -52,8 +52,8 @@ export class DialogflowSchema extends Schema {
   public environment = "staging";
   public builtIntents = [] as any;
 
-  constructor(voxaSheets: IVoxaSheet[], interactionOption: any) {
-    super(NAMESPACE, AVAILABLE_LOCALES, voxaSheets, interactionOption);
+  constructor(voxaSheets: IVoxaSheet[], interactionOptions: any) {
+    super(NAMESPACE, AVAILABLE_LOCALES, voxaSheets, interactionOptions);
   }
 
   public validate() {}
