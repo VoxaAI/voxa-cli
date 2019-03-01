@@ -302,7 +302,7 @@ export class DialogflowSchema extends Schema {
         const fileDef: IFileContent = {
           path: path.join(
             this.interactionOptions.rootPath,
-            "speech-assets",
+            this.interactionOptions.speechPath,
             this.NAMESPACE,
             environment,
             "entities",
