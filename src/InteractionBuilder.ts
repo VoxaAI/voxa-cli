@@ -98,9 +98,7 @@ export const buildInteraction = async (interactionOptions: any, authKeys: any) =
       },
       [] as IFileContent[]
     )
-    .map(file => file.path);
-
-  console.log(fileContentsProcess);
+    .map(file => fs.outputFile(file.path, JSON.stringify(file.content, null, 2), { flag: "w" }));
 
   await Promise.all(fileContentsProcess);
   console.timeEnd("all");
