@@ -8,6 +8,7 @@ import * as _ from "lodash";
 import * as pad from "pad";
 import * as path from "path";
 import { Observable } from "rxjs";
+import { DEFAULT_INTERACTION_OPTIONS } from "../InteractionBuilder";
 
 export const name = "init";
 export const alias = "";
@@ -91,7 +92,7 @@ export function action() {
         type: "input",
         name: "speechPath",
         message: "Specify folder path to save interaction model",
-        default: "speech-assets",
+        default: DEFAULT_INTERACTION_OPTIONS.speechPath,
         when: override
       },
       {
@@ -99,13 +100,13 @@ export function action() {
         name: "contentPath",
         message: "Specify folder path to save all downloable content",
         when: override,
-        default: "content"
+        default: DEFAULT_INTERACTION_OPTIONS.contentPath
       },
       {
         type: "input",
         name: "viewsPath",
         message: "Specify folder path to save views file",
-        default: "/",
+        default: DEFAULT_INTERACTION_OPTIONS.viewsPath,
         when: override
       },
       {

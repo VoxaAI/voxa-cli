@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Dialogflow generator
 - init and interaction command error on bad formatted URL
+- Issue with root path and default interaction options
 
 ### Removed
 

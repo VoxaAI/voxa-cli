@@ -9,14 +9,34 @@ import { IFileContent } from "./Schema";
 import { transform } from "./Spreadsheet";
 const fs = _Promise.promisifyAll(fsExtra);
 
+export const DEFAULT_INTERACTION_OPTIONS = {
+  speechPath: "speech-assets",
+  platforms: ["alexa"],
+  contentPath: "content",
+  viewsPath: "/",
+  synonymPath: "synonyms"
+};
+
 function defaultOptions(interactionOptions: any) {
   const rootPath = _.get(interactionOptions, "rootPath");
 
-  const speechPath = _.get(interactionOptions, "speechPath", path.join(rootPath, "speech-assets"));
-  const synonymPath = _.get(interactionOptions, "synonymPath", path.join(rootPath, "synonyms"));
-  const viewsPath = _.get(interactionOptions, "viewsPath", path.join(rootPath, "app"));
-  const contentPath = _.get(interactionOptions, "contentPath", path.join(rootPath, "content"));
-  let platforms = _.get(interactionOptions, "platforms", ["alexa"]);
+  const speechPath = _.get(
+    interactionOptions,
+    "speechPath",
+    DEFAULT_INTERACTION_OPTIONS.speechPath
+  );
+  const synonymPath = _.get(
+    interactionOptions,
+    "synonymPath",
+    DEFAULT_INTERACTION_OPTIONS.synonymPath
+  );
+  const viewsPath = _.get(interactionOptions, "viewsPath", DEFAULT_INTERACTION_OPTIONS.viewsPath);
+  const contentPath = _.get(
+    interactionOptions,
+    "contentPath",
+    DEFAULT_INTERACTION_OPTIONS.contentPath
+  );
+  let platforms = _.get(interactionOptions, "platforms", DEFAULT_INTERACTION_OPTIONS.platforms);
   platforms = _.isString(platforms) ? [platforms] : platforms;
 
   let spreadsheets = _.get(interactionOptions, "spreadsheets");
