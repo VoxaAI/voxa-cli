@@ -18,17 +18,23 @@ export abstract class Schema {
   public intents: IIntent[] = [];
   public slots: ISlot[] = [];
   public downloads: IDownload[] = [];
-  public AVAILABLE_LOCALES = ["en-US"];
+  public AVAILABLE_LOCALES: string[];
   public fileContent: IFileContent[] = [];
   public views: IView[] = [];
   public invocations: Invocation[] = [];
   public publishing: IPublishingInformation[] = [];
 
-  public NAMESPACE = "alexa";
-
+  public NAMESPACE: string;
   public interactionOptions = {} as any;
 
-  constructor(voxaSheets: IVoxaSheet[], interactionOption: any) {
+  public constructor(
+    namespace: string = "alexa",
+    availableLocales: string[] = ["en-US"],
+    voxaSheets: IVoxaSheet[],
+    interactionOption: any
+  ) {
+    this.AVAILABLE_LOCALES = availableLocales;
+    this.NAMESPACE = namespace;
     this.interactionOptions = interactionOption;
     this.publishing = publishingProcessor(voxaSheets, this.AVAILABLE_LOCALES);
     this.intents = intentUtterProcessor(voxaSheets, this.AVAILABLE_LOCALES);
@@ -67,7 +73,8 @@ export abstract class Schema {
       const file: IFileContent = {
         path: path.join(
           this.interactionOptions.rootPath,
-          `src/content/${download.locale}/${_.kebabCase(download.name)}.json`
+          this.interactionOptions.contentPath,
+          `${download.locale}/${_.kebabCase(download.name)}.json`
         ),
         content: download.data
       };
@@ -151,12 +158,20 @@ export abstract class Schema {
       .value();
 
     const fileViewMap: IFileContent = {
-      path: path.join(this.interactionOptions.rootPath, "src/app/views.map.json"),
+      path: path.join(
+        this.interactionOptions.rootPath,
+        this.interactionOptions.viewsPath,
+        "views.map.json"
+      ),
       content: viewsContent
     };
 
     const fileVariablesMap: IFileContent = {
-      path: path.join(this.interactionOptions.rootPath, "src/app/variables.map.json"),
+      path: path.join(
+        this.interactionOptions.rootPath,
+        this.interactionOptions.viewsPath,
+        "variables.map.json"
+      ),
       content: variablesContent
     };
 
@@ -170,7 +185,11 @@ export abstract class Schema {
       .value();
 
     const file: IFileContent = {
-      path: path.join(this.interactionOptions.rootPath, "src/app/views.json"),
+      path: path.join(
+        this.interactionOptions.rootPath,
+        this.interactionOptions.viewsPath,
+        "views.json"
+      ),
       content: viewsContent
     };
     this.fileContent.push(file);
@@ -181,7 +200,9 @@ export abstract class Schema {
       const file: IFileContent = {
         path: path.join(
           this.interactionOptions.rootPath,
-          `src/synonyms/${slot.locale}/${_.kebabCase(slot.name)}.json`
+          this.interactionOptions.contentPath,
+          "synonyms",
+          `${slot.locale}/${_.kebabCase(slot.name)}.json`
         ),
         content: slot.values.reduce(
           (acc: any, next: any) => {

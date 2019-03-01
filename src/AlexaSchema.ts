@@ -5,24 +5,25 @@ import * as path from "path";
 import { IIntent, Schema } from "./Schema";
 import { IVoxaSheet } from "./VoxaSheet";
 
+const NAMESPACE = "alexa";
+const AVAILABLE_LOCALES = [
+  "en-US",
+  "en-GB",
+  "en-CA",
+  "en-AU",
+  "en-IN",
+  "de-DE",
+  "ja-JP",
+  "es-ES",
+  "fr-FR",
+  "it-IT"
+];
+
 export class AlexaSchema extends Schema {
-  public NAMESPACE = "alexa";
-  public AVAILABLE_LOCALES = [
-    "en-US",
-    "en-GB",
-    "en-CA",
-    "en-AU",
-    "en-IN",
-    "de-DE",
-    "ja-JP",
-    "es-ES",
-    "fr-FR",
-    "it-IT"
-  ];
   public environment = "staging";
 
   constructor(voxaSheets: IVoxaSheet[], interactionOption: any) {
-    super(voxaSheets, interactionOption);
+    super(NAMESPACE, AVAILABLE_LOCALES, voxaSheets, interactionOption);
   }
 
   public validate() {}
@@ -39,7 +40,7 @@ export class AlexaSchema extends Schema {
     this.fileContent.push({
       path: path.join(
         this.interactionOptions.rootPath,
-        "speech-assets",
+        this.interactionOptions.speechPath,
         this.NAMESPACE,
         `${_.kebabCase(environment)}-manifest.json`
       ),
@@ -78,7 +79,7 @@ export class AlexaSchema extends Schema {
     this.fileContent.push({
       path: path.join(
         this.interactionOptions.rootPath,
-        "speech-assets",
+        this.interactionOptions.speechPath,
         this.NAMESPACE,
         locale,
         `${_.kebabCase(environment)}-interaction.json`
@@ -94,7 +95,7 @@ export class AlexaSchema extends Schema {
     this.fileContent.push({
       path: path.join(
         this.interactionOptions.rootPath,
-        "src/content",
+        this.interactionOptions.contentPath,
         `${_.kebabCase(environment)}-canfulfill-intents.json`
       ),
       content: canFulfillIntents

@@ -38,13 +38,17 @@ export const buildInteraction = async (interactionOption: any, authKeys: any) =>
   if (platforms.includes("alexa")) {
     const schema = new AlexaSchema(_.cloneDeep(sheets), interactionOption);
     schemas.push(schema);
-    await fs.remove(path.join(interactionOption.rootPath, "speech-assets/alexa"));
+    await fs.remove(
+      path.join(interactionOption.rootPath, interactionOption.speechPath, schema.NAMESPACE)
+    );
   }
 
   if (platforms.includes("dialogflow")) {
     const schema = new DialogflowSchema(_.cloneDeep(sheets), interactionOption);
     schemas.push(schema);
-    await fs.remove(path.join(interactionOption.rootPath, "speech-assets/dialogflow"));
+    await fs.remove(
+      path.join(interactionOption.rootPath, interactionOption.speechPath, schema.NAMESPACE)
+    );
   }
 
   const fileContentsProcess = schemas

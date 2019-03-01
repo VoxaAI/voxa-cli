@@ -73,7 +73,7 @@ export function action() {
         default: true
       },
       {
-        type: "list",
+        type: "checkbox",
         name: "platform",
         message: "Choose platform",
         choices: ["alexa", "dialogflow"],
@@ -94,20 +94,11 @@ export function action() {
         default: "speech-assets",
         when: override
       },
-
-      {
-        type: "input",
-        name: "content",
-        message: "Specify all other sheets to download separated by comma",
-        default: "",
-        filter: onlyCommaAnswer,
-        when: override
-      },
       {
         type: "input",
         name: "contentPath",
         message: "Specify folder path to save all downloable content",
-        when: (answers: any) => !_.isEmpty(answers.content),
+        when: override,
         default: "content"
       },
       {

@@ -1,5 +1,7 @@
 # Project specifics
-
+views.json
+views.map.json
+variables.map.json
 client-secret*
 client_secret*
 speech-content
@@ -10,6 +12,7 @@ log.txt
 test.js
 interaction.json
 local-skill.json
+content
 
 # Created by https://www.gitignore.io/api/vim,node,macos,jekyll,visualstudiocode
 
