@@ -14,7 +14,7 @@ export const alias = "";
 export const description = "create a new interaction.json";
 
 const ALLOWED_ATTRIBUTES = [
-  "platform",
+  "platforms",
   "spreadsheets",
   "speechPath",
   "content",
@@ -73,9 +73,9 @@ export function action() {
         default: true
       },
       {
-        type: "list",
-        name: "platform",
-        message: "Choose platform",
+        type: "checkbox",
+        name: "platforms",
+        message: "Choose platforms",
         choices: ["alexa", "dialogflow"],
         when: override
       },
@@ -94,20 +94,11 @@ export function action() {
         default: "speech-assets",
         when: override
       },
-
-      {
-        type: "input",
-        name: "content",
-        message: "Specify all other sheets to download separated by comma",
-        default: "",
-        filter: onlyCommaAnswer,
-        when: override
-      },
       {
         type: "input",
         name: "contentPath",
         message: "Specify folder path to save all downloable content",
-        when: (answers: any) => !_.isEmpty(answers.content),
+        when: override,
         default: "content"
       },
       {

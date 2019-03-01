@@ -1,3 +1,4 @@
+/* tslint:disable:forin */
 import * as _Promise from "bluebird";
 import * as fsExtra from "fs-extra";
 import * as _ from "lodash";
@@ -17,17 +18,23 @@ export abstract class Schema {
   public intents: IIntent[] = [];
   public slots: ISlot[] = [];
   public downloads: IDownload[] = [];
-  public AVAILABLE_LOCALES = ["en-US"];
+  public AVAILABLE_LOCALES: string[];
   public fileContent: IFileContent[] = [];
   public views: IView[] = [];
   public invocations: Invocation[] = [];
   public publishing: IPublishingInformation[] = [];
 
-  public NAMESPACE = "alexa";
-
+  public NAMESPACE: string;
   public interactionOptions = {} as any;
 
-  constructor(voxaSheets: IVoxaSheet[], interactionOption: any) {
+  public constructor(
+    namespace: string = "alexa",
+    availableLocales: string[] = ["en-US"],
+    voxaSheets: IVoxaSheet[],
+    interactionOption: any
+  ) {
+    this.AVAILABLE_LOCALES = availableLocales;
+    this.NAMESPACE = namespace;
     this.interactionOptions = interactionOption;
     this.publishing = publishingProcessor(voxaSheets, this.AVAILABLE_LOCALES);
     this.intents = intentUtterProcessor(voxaSheets, this.AVAILABLE_LOCALES);
@@ -63,36 +70,139 @@ export abstract class Schema {
 
   public buildDownloads(): void {
     this.downloads.forEach(download => {
-      const file = {
+      const file: IFileContent = {
         path: path.join(
           this.interactionOptions.rootPath,
-          `src/content/${download.locale}/${_.kebabCase(download.name)}.json`
+          this.interactionOptions.contentPath,
+          `${download.locale}/${_.kebabCase(download.name)}.json`
         ),
         content: download.data
       };
-      this.fileContent.push(file as IFileContent);
+      this.fileContent.push(file);
     });
   }
 
-  public buildViews(): void {
-    const viewsContent = {};
-    this.views.forEach(view => {
-      _.set(viewsContent, `${view.locale}.translation`, view.data);
-    });
+  public buildViewsMapping(): void {
+    function pathsFinder(object: any, prefixes: string[] = []) {
+      let paths: string[] = [];
+      let value: any;
+      if (typeof object === "object") {
+        for (const key in object) {
+          value = object[key];
+          if (typeof value === "object" && !Array.isArray(value)) {
+            paths = paths.concat(pathsFinder(value, prefixes.concat([key])));
+          } else {
+            paths.push(prefixes.concat(key).join("."));
+          }
+        }
+      }
+      return paths;
+    }
 
-    const file = {
-      path: path.join(this.interactionOptions.rootPath, "src/app/views.json"),
+    function variablesFinder(data: any, viewPath: string) {
+      let variables;
+      let value = _.get(data, viewPath);
+
+      if (_.isString(value)) {
+        value = [value];
+      }
+
+      if (_.isArray(value)) {
+        variables = _.chain(value)
+          .map(v => v.match(/{([\s\S]+?)}/g))
+          .flatten()
+          .compact()
+          .map(v => v.replace("}", "").replace("{", ""))
+          .value();
+      }
+
+      return variables;
+    }
+
+    const viewsContent = _.chain(this.views)
+      .map(view => pathsFinder(view.data).map(viewPath => ({ locale: view.locale, viewPath })))
+      .flatten()
+      .reduce(
+        (acc, next) => {
+          const locales = _.get(acc, next.viewPath, []);
+          locales.push(next.locale);
+          acc[next.viewPath] = _.uniq(locales);
+          return acc;
+        },
+        {} as any
+      )
+      .value();
+
+    const variablesContent = _.chain(this.views)
+      .map(view =>
+        pathsFinder(view.data).map(viewPath => ({
+          locale: view.locale,
+          variables: variablesFinder(view.data, viewPath)
+        }))
+      )
+      .flatten()
+      .reduce(
+        (acc, next) => {
+          if (_.isArray(next.variables)) {
+            next.variables.map(variable => {
+              const locales = _.get(acc, variable, []);
+              locales.push(next.locale);
+              acc[variable] = _.uniq(locales);
+            });
+          }
+
+          return acc;
+        },
+        {} as any
+      )
+      .value();
+
+    const fileViewMap: IFileContent = {
+      path: path.join(
+        this.interactionOptions.rootPath,
+        this.interactionOptions.viewsPath,
+        "views.map.json"
+      ),
       content: viewsContent
     };
-    this.fileContent.push(file as IFileContent);
+
+    const fileVariablesMap: IFileContent = {
+      path: path.join(
+        this.interactionOptions.rootPath,
+        this.interactionOptions.viewsPath,
+        "variables.map.json"
+      ),
+      content: variablesContent
+    };
+
+    this.fileContent.push(fileViewMap, fileVariablesMap);
+  }
+
+  public buildViews(): void {
+    const viewsContent = _.chain(this.views)
+      .map(view => [view.locale, { translation: view.data }])
+      .fromPairs()
+      .value();
+
+    const file: IFileContent = {
+      path: path.join(
+        this.interactionOptions.rootPath,
+        this.interactionOptions.viewsPath,
+        "views.json"
+      ),
+      content: viewsContent
+    };
+    this.fileContent.push(file);
   }
 
   public buildSynonyms(): void {
     this.slots.forEach(slot => {
-      const file = {
+      const file: IFileContent = {
         path: path.join(
           this.interactionOptions.rootPath,
-          `src/synonyms/${slot.locale}/${_.kebabCase(slot.name)}.json`
+          this.interactionOptions.contentPath,
+          "synonyms",
+          `${slot.locale}/${_.kebabCase(slot.name)}.json`
         ),
         content: slot.values.reduce(
           (acc: any, next: any) => {
@@ -108,7 +218,7 @@ export abstract class Schema {
           {} as any
         )
       };
-      this.fileContent.push(file as IFileContent);
+      this.fileContent.push(file);
     });
   }
 

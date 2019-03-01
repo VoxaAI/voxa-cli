@@ -7,36 +7,53 @@ import { AGENT, BUILT_IN_INTENTS } from "./DialogflowDefault";
 import { IFileContent, IIntent, Schema } from "./Schema";
 import { IVoxaSheet } from "./VoxaSheet";
 
+const NAMESPACE = "dialogflow";
+const AVAILABLE_LOCALES = [
+  "en",
+  "de",
+  "fr",
+  "ja",
+  "ko",
+  "es",
+  "pt",
+  "it",
+  "ru",
+  "hi",
+  "th",
+  "id",
+  "da",
+  "no",
+  "nl",
+  "sv",
+  "en-US",
+  "en-AU",
+  "en-CA",
+  "en-IN",
+  "en-GB",
+  "de-DE",
+  "fr-FR",
+  "fr-CA",
+  "ja-JP",
+  "ko-KR",
+  "es-ES",
+  "pt-BR",
+  "it-IT",
+  "ru-RU",
+  "hi-IN",
+  "th-TH",
+  "id-ID",
+  "da-DK",
+  "no-NO",
+  "nl-NL",
+  "sv-SE"
+];
+
 export class DialogflowSchema extends Schema {
-  public NAMESPACE = "dialogflow";
-  public AVAILABLE_LOCALES = [
-    "en-US",
-    "en-AU",
-    "en-CA",
-    "en-IN",
-    "en-GB",
-    "de-DE",
-    "fr-FR",
-    "fr-CA",
-    "ja-JP",
-    "ko-KR",
-    "es-ES",
-    "pt-BR",
-    "it-IT",
-    "ru-RU",
-    "hi-IN",
-    "th-TH",
-    "id-ID",
-    "da-DK",
-    "no-NO",
-    "nl-NL",
-    "sv-SE"
-  ];
   public environment = "staging";
   public builtIntents = [] as any;
 
-  constructor(voxaSheets: IVoxaSheet[], interactionOption: any) {
-    super(voxaSheets, interactionOption);
+  constructor(voxaSheets: IVoxaSheet[], interactionOptions: any) {
+    super(NAMESPACE, AVAILABLE_LOCALES, voxaSheets, interactionOptions);
   }
 
   public validate() {}
@@ -44,6 +61,7 @@ export class DialogflowSchema extends Schema {
   public build(locale: string, environment: string) {
     this.buildIntent(locale, environment);
     this.buildUtterances(locale, environment);
+    this.buildEntities(locale, environment);
     this.buildPackage(environment);
     this.buildAgent(locale, environment);
   }
@@ -52,7 +70,7 @@ export class DialogflowSchema extends Schema {
     const file: IFileContent = {
       path: path.join(
         this.interactionOptions.rootPath,
-        "/speech-assets",
+        this.interactionOptions.speechPath,
         this.NAMESPACE,
         environment,
         "package.json"
@@ -102,14 +120,14 @@ export class DialogflowSchema extends Schema {
 
     const agent = _.merge(AGENT, this.mergeManifest(environment), {
       description: invocationName,
-      language: locale,
+      language: locale.split("-")[0],
       googleAssistant: { project: _.kebabCase(invocationName), startIntents, endIntentIds }
     });
 
     const file: IFileContent = {
       path: path.join(
         this.interactionOptions.rootPath,
-        "speech-assets",
+        this.interactionOptions.speechPath,
         this.NAMESPACE,
         environment,
         "agent.json"
@@ -155,20 +173,20 @@ export class DialogflowSchema extends Schema {
           .split("|")
           .map(text => {
             const element = {};
-            const isATemplate = _.includes(text, "{") && _.includes(text, "}");
+            const isTemplate = _.includes(text, "{") && _.includes(text, "}");
 
             const alias = text.replace("{", "").replace("}", "");
 
             const slot = _.find(parameters, { name: text });
 
-            if (isATemplate && slot) {
-              _.set(element, "meta", slot.dataType);
+            if (isTemplate && slot) {
+              _.set(element, "meta", `@${_.kebabCase(slot.dataType)}`);
               _.set(element, "alias", alias);
             }
 
             if (!_.isEmpty(text)) {
               _.set(element, "text", text);
-              _.set(element, "userDefined", isATemplate);
+              _.set(element, "userDefined", isTemplate);
             }
 
             _.set(element, "id", hashObj(element));
@@ -180,7 +198,7 @@ export class DialogflowSchema extends Schema {
 
         return {
           data,
-          isATemplate: false,
+          isTemplate: false,
           count: 0,
           updated: 0
         };
@@ -190,7 +208,7 @@ export class DialogflowSchema extends Schema {
         const file: IFileContent = {
           path: path.join(
             this.interactionOptions.rootPath,
-            "speech-assets",
+            this.interactionOptions.speechPath,
             this.NAMESPACE,
             environment,
             "intents",
@@ -220,9 +238,9 @@ export class DialogflowSchema extends Schema {
       events = (events as string[]).map((eventName: string) => ({ name: eventName }));
 
       const parameters = slotsDefinition.map(slot => ({
-        dataType: _.includes(slot.type, "@sys.") ? slot.type : `@${slot.type}`,
-        name: slot.name,
-        value: `$${slot.name}`,
+        dataType: _.includes(slot.type, "@sys.") ? slot.type : `@${_.kebabCase(slot.type)}`,
+        name: slot.name.replace("{", "").replace("}", ""),
+        value: `$${slot.name.replace("{", "").replace("}", "")}`,
         isList: false
       }));
 
@@ -252,7 +270,7 @@ export class DialogflowSchema extends Schema {
       const file: IFileContent = {
         path: path.join(
           this.interactionOptions.rootPath,
-          "speech-assets",
+          this.interactionOptions.speechPath,
           this.NAMESPACE,
           environment,
           "intents",
@@ -263,6 +281,50 @@ export class DialogflowSchema extends Schema {
       this.fileContent.push(file);
       return intent;
     });
+  }
+
+  public buildEntities(locale: string, environment: string) {
+    const localeEntity = locale.split("-")[0];
+
+    this.slots
+      .filter(slot => !_.includes(slot.name, "@sys."))
+      .forEach(rawSlot => {
+        const { name, values } = rawSlot;
+        const slotName = _.kebabCase(name);
+        const slotContent = {
+          name: slotName,
+          isOverridable: true,
+          isEnum: false,
+          automatedExpansion: false
+        };
+        _.set(slotContent, "id", hashObj(slotContent));
+
+        const fileDef: IFileContent = {
+          path: path.join(
+            this.interactionOptions.rootPath,
+            "speech-assets",
+            this.NAMESPACE,
+            environment,
+            "entities",
+            `${slotName}.json`
+          ),
+          content: slotContent
+        };
+
+        const fileValue: IFileContent = {
+          path: path.join(
+            this.interactionOptions.rootPath,
+            this.interactionOptions.speechPath,
+            this.NAMESPACE,
+            environment,
+            "entities",
+            `${slotName}_entries_${localeEntity}.json`
+          ),
+          content: values
+        };
+
+        this.fileContent.push(fileDef, fileValue);
+      });
   }
 }
 
