@@ -94,8 +94,9 @@ export class DialogflowSchema extends Schema {
     const startIntents = _.chain(intentsByPlatformAndEnvironments)
       .filter({ startIntent: true })
       .map(intent => {
+        const intentName = intent.name.replace("AMAZON.", "");
         const startIntent = _.chain(intents)
-          .find(i => i.name === intent.name)
+          .find(i => i.name === intent.name || i.name === intentName)
           .value();
         if (startIntent) {
           return {
@@ -110,12 +111,15 @@ export class DialogflowSchema extends Schema {
     const endIntentIds = _.chain(intentsByPlatformAndEnvironments)
       .filter({ endIntent: true })
       .map(intent => {
+        const intentName = intent.name.replace("AMAZON.", "");
+
         const intentId = _.chain(intents)
-          .find(i => i.name === intent.name)
+          .find(i => i.name === intent.name || i.name === intentName)
           .get("id")
           .value();
         return intentId;
       })
+      .compact()
       .value();
 
     const supportedLanguages = _(this.invocations)
