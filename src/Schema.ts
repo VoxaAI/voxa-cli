@@ -298,6 +298,7 @@ export interface Invocation {
 export interface ISlotDefinition {
   name: string;
   type: string;
+  platform?: string;
   // samples: string[];
 }
 

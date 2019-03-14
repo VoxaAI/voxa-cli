@@ -167,12 +167,17 @@ export class DialogflowSchema extends Schema {
       events = name === "LaunchIntent" ? ["WELCOME", "GOOGLE_ASSISTANT_WELCOME"] : events;
       events = (events as string[]).map((eventName: string) => ({ name: eventName }));
 
-      const parameters = slotsDefinition.map(slot => ({
-        dataType: _.includes(slot.type, "@sys.") ? slot.type : `@${slot.type}`,
-        name: slot.name,
-        value: `$${slot.name}`,
-        isList: false
-      }));
+      const parameters = _(slotsDefinition)
+        .filter(slot => {
+          return slot.platform === this.NAMESPACE || slot.platform === undefined;
+        })
+        .map(slot => ({
+          dataType: _.includes(slot.type, "@sys.") ? slot.type : `@${slot.type}`,
+          name: slot.name,
+          value: `$${slot.name}`,
+          isList: false
+        }))
+        .value();
 
       const resultSamples = samples.map(sample => {
         const data = _.chain(sample)
@@ -246,12 +251,17 @@ export class DialogflowSchema extends Schema {
       events = name === "LaunchIntent" ? ["WELCOME", "GOOGLE_ASSISTANT_WELCOME"] : events;
       events = (events as string[]).map((eventName: string) => ({ name: eventName }));
 
-      const parameters = slotsDefinition.map(slot => ({
-        dataType: _.includes(slot.type, "@sys.") ? slot.type : `@${_.kebabCase(slot.type)}`,
-        name: slot.name.replace("{", "").replace("}", ""),
-        value: `$${slot.name.replace("{", "").replace("}", "")}`,
-        isList: false
-      }));
+      const parameters = _(slotsDefinition)
+        .filter(slot => {
+          return slot.platform === this.NAMESPACE || slot.platform === undefined;
+        })
+        .map(slot => ({
+          dataType: _.includes(slot.type, "@sys.") ? slot.type : `@${_.kebabCase(slot.type)}`,
+          name: slot.name.replace("{", "").replace("}", ""),
+          value: `$${slot.name.replace("{", "").replace("}", "")}`,
+          isList: false
+        }))
+        .value();
 
       const intent = {
         name,
