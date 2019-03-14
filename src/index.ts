@@ -1,6 +1,7 @@
 "use strict";
 
 import * as commander from "commander";
+import "source-map-support/register";
 import * as pkg from "../package.json";
 
 module.exports = (argv: any) => {
