@@ -1,3 +1,4 @@
+import * as bluebird from "bluebird";
 import crypto = require("crypto");
 import fs = require("fs-extra");
 import { auth, JWT } from "google-auth-library";
@@ -22,9 +23,7 @@ export async function downloadDirs(dirs: string[], assetsRoot: string, key: any)
     const reply = await resInFolder(drive, dir);
     const files = reply.data.files;
     if (files) {
-      for (const file of files) {
-        await downloadFile(drive, file, assetsRoot);
-      }
+      await bluebird.map(files, file => downloadFile(drive, file, assetsRoot));
     }
   }
 }
@@ -67,9 +66,7 @@ async function downloadFile(
     const reply = await resInFolder(driveService, fileResource.id as string);
     const files = reply.data.files;
     if (files) {
-      for (const item of files) {
-        await downloadFile(driveService, item, newRoot);
-      }
+      await bluebird.map(files, file => downloadFile(driveService, file, newRoot));
     }
   }
 }
