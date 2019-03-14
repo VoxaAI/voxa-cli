@@ -168,9 +168,7 @@ export class DialogflowSchema extends Schema {
       events = (events as string[]).map((eventName: string) => ({ name: eventName }));
 
       const parameters = _(slotsDefinition)
-        .filter(slot => {
-          return slot.platform === this.NAMESPACE || slot.platform === undefined;
-        })
+        .filter(slot => this.filterByPlatform(slot))
         .map(slot => ({
           dataType: _.includes(slot.type, "@sys.") ? slot.type : `@${slot.type}`,
           name: slot.name,
@@ -252,9 +250,7 @@ export class DialogflowSchema extends Schema {
       events = (events as string[]).map((eventName: string) => ({ name: eventName }));
 
       const parameters = _(slotsDefinition)
-        .filter(slot => {
-          return slot.platform === this.NAMESPACE || slot.platform === undefined;
-        })
+        .filter(slot => this.filterByPlatform(slot))
         .map(slot => ({
           dataType: _.includes(slot.type, "@sys.") ? slot.type : `@${_.kebabCase(slot.type)}`,
           name: slot.name.replace("{", "").replace("}", ""),

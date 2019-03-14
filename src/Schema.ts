@@ -263,6 +263,10 @@ export abstract class Schema {
       _.set(manifest, key, value);
     }
   }
+
+  protected filterByPlatform(slot: ISlotDefinition) {
+    return slot.platform === this.NAMESPACE || slot.platform === undefined;
+  }
 }
 
 export interface IIntent {

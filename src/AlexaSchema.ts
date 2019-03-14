@@ -60,10 +60,7 @@ export class AlexaSchema extends Schema {
       const { name, samples } = rawIntent;
       let { slotsDefinition } = rawIntent;
       slotsDefinition = _(slotsDefinition)
-        .filter(slot => {
-          return slot.platform === this.NAMESPACE || slot.platform === undefined;
-        })
-
+        .filter(slot => this.filterByPlatform(slot))
         .map((slot: any) => {
           return {
             type: slot.type,
