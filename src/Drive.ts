@@ -23,51 +23,59 @@ export async function downloadDirs(dirs: string[], assetsRoot: string, key: any)
     const reply = await resInFolder(drive, dir);
     const files = reply.data.files;
     if (files) {
-      await bluebird.map(files, file => downloadFile(drive, file, assetsRoot));
+      await bluebird.map(files, file => downloadResource(drive, file, assetsRoot));
     }
   }
 }
 
-async function downloadFile(
+async function downloadResource(
   driveService: drive_v3.Drive,
   fileResource: drive_v3.Schema$File,
   rootPath: string
 ) {
-  if (fileResource.mimeType !== "application/vnd.google-apps.folder") {
-    // tslint:disable-next-line
-    const getOptions = {
-      fileId: fileResource.id,
-      alt: "media"
-    } as drive_v3.Params$Resource$Files$Get;
-    const destPath = path.join(rootPath, fileResource.name as string);
+  if (fileResource.mimeType === "application/vnd.google-apps.folder") {
+    return downloadDirectoryResource(driveService, fileResource, rootPath);
+  }
 
-    let md5 = "";
-    if (fs.pathExistsSync(destPath)) {
-      md5 = await fileMd5(destPath);
-    }
+  // tslint:disable-next-line
+  const getOptions = {
+    fileId: fileResource.id,
+    alt: "media"
+  } as drive_v3.Params$Resource$Files$Get;
+  const destPath = path.join(rootPath, fileResource.name as string);
 
-    if (md5 === fileResource.md5Checksum) {
-      return;
-    }
+  let md5 = "";
+  if (fs.pathExistsSync(destPath)) {
+    md5 = await fileMd5(destPath);
+  }
 
-    const writer = fs.createWriteStream(destPath);
-    const result = (await driveService.files.get(getOptions, { responseType: "stream" })) as any;
+  if (md5 === fileResource.md5Checksum) {
+    return;
+  }
 
-    result.data.pipe(writer);
+  const writer = fs.createWriteStream(destPath);
+  const result = (await driveService.files.get(getOptions, { responseType: "stream" })) as any;
 
-    return new Promise((resolve, reject) => {
-      writer.on("finish", resolve);
-      writer.on("error", reject);
-    });
-  } else {
-    const newRoot = path.join(rootPath, fileResource.name as string);
-    await fs.mkdirp(newRoot);
+  result.data.pipe(writer);
 
-    const reply = await resInFolder(driveService, fileResource.id as string);
-    const files = reply.data.files;
-    if (files) {
-      await bluebird.map(files, file => downloadFile(driveService, file, newRoot));
-    }
+  return new Promise((resolve, reject) => {
+    writer.on("finish", resolve);
+    writer.on("error", reject);
+  });
+}
+
+export async function downloadDirectoryResource(
+  driveService: drive_v3.Drive,
+  fileResource: drive_v3.Schema$File,
+  rootPath: string
+) {
+  const newRoot = path.join(rootPath, fileResource.name as string);
+  await fs.mkdirp(newRoot);
+
+  const reply = await resInFolder(driveService, fileResource.id as string);
+  const files = reply.data.files;
+  if (files) {
+    await bluebird.map(files, file => downloadResource(driveService, file, newRoot));
   }
 }
 

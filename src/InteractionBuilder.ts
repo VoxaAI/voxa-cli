@@ -21,7 +21,7 @@ export interface IInteractionOptions {
   synonymPath?: string;
   spreadsheets: string | string[];
   assets?: string[];
-  assetsRoot?: string;
+  assetsPath?: string;
 }
 
 export interface IDefinedInteractionOptions {
@@ -33,7 +33,7 @@ export interface IDefinedInteractionOptions {
   synonymPath: string;
   spreadsheets: string[];
   assets: string[];
-  assetsRoot: string;
+  assetsPath: string;
 }
 
 export const DEFAULT_INTERACTION_OPTIONS = {
@@ -43,7 +43,7 @@ export const DEFAULT_INTERACTION_OPTIONS = {
   viewsPath: "/",
   synonymPath: "synonyms",
   assets: [],
-  assetsRoot: "assets"
+  assetsPath: "assets"
 };
 
 function defaultOptions(interactionOptions: IInteractionOptions): IDefinedInteractionOptions {
@@ -55,8 +55,8 @@ function defaultOptions(interactionOptions: IInteractionOptions): IDefinedIntera
   const viewsPath: string = interactionOptions.viewsPath || DEFAULT_INTERACTION_OPTIONS.viewsPath;
   const contentPath: string =
     interactionOptions.contentPath || DEFAULT_INTERACTION_OPTIONS.contentPath;
-  const assetsRoot: string =
-    interactionOptions.assetsRoot || DEFAULT_INTERACTION_OPTIONS.assetsRoot;
+  const assetsPath: string =
+    interactionOptions.assetsPath || DEFAULT_INTERACTION_OPTIONS.assetsPath;
 
   const assets: string[] = interactionOptions.assets || DEFAULT_INTERACTION_OPTIONS.assets;
 
@@ -89,7 +89,7 @@ function defaultOptions(interactionOptions: IInteractionOptions): IDefinedIntera
     speechPath,
     synonymPath,
     viewsPath,
-    assetsRoot,
+    assetsPath,
     contentPath,
     platforms,
     assets
@@ -149,7 +149,7 @@ export const buildInteraction = async (interactionOptions: IInteractionOptions, 
   await Promise.all(fileContentsProcess);
   await downloadDirs(
     definedInteractionOptions.assets,
-    definedInteractionOptions.assetsRoot,
+    path.join(definedInteractionOptions.rootPath, definedInteractionOptions.assetsPath),
     authKeys
   );
 

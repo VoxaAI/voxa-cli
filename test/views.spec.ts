@@ -7,7 +7,7 @@ describe("Views", () => {
   });
 
   it("should generate an en-US Launch.say", () => {
-    expect(views["en-US"].translation.Launch).to.deep.equal({
+    expect(views.en.translation.Launch).to.deep.equal({
       say: ["Hello World!"]
     });
   });
