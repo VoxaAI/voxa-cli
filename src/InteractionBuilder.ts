@@ -70,14 +70,7 @@ function defaultOptions(interactionOptions: IInteractionOptions): IDefinedIntera
   let spreadsheets: string[] = _.isString(interactionOptions.spreadsheets)
     ? [interactionOptions.spreadsheets]
     : interactionOptions.spreadsheets;
-  spreadsheets = spreadsheets.map((sheet: string) => {
-    const matched = sheet.match(/docs\.google\.com\/spreadsheets\/d\/(.*)\/.*/);
-    if (sheet.includes("docs.google.com/spreadsheets") && matched && _.isString(matched[1])) {
-      return matched[1];
-    }
-
-    return sheet;
-  });
+  spreadsheets = spreadsheets.map(getSpreadsheetId);
 
   if (_.isEmpty(spreadsheets)) {
     throw Error("Spreadsheet were not specified in the right format");
@@ -155,3 +148,12 @@ export const buildInteraction = async (interactionOptions: IInteractionOptions, 
 
   console.timeEnd("all");
 };
+
+function getSpreadsheetId(sheet: string): string {
+  const matched = sheet.match(/docs\.google\.com\/spreadsheets\/d\/(.*)\/.*/);
+  if (sheet.includes("docs.google.com/spreadsheets") && matched && _.isString(matched[1])) {
+    return matched[1];
+  }
+
+  return sheet;
+}
