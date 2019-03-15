@@ -5,6 +5,9 @@ set -o xtrace
 rm -rf test/out
 
 yarn install --frozen-lockfile
-yarn test-ci
 yarn lint
-yarn report
+
+if [ "${TRAVIS_SECURE_ENV_VARS:-}" = "true" ]; then
+  yarn test-ci
+  yarn report
+fi
