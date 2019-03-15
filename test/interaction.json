@@ -1,0 +1,7 @@
+{
+  "platforms": ["alexa", "dialogflow"],
+  "spreadsheets": ["1Jh04EJInZWIbMiRKGyxBO2JC54PlLof6Sxpcc_YkxsA"],
+  "viewsPath": "out",
+  "speechPath": "out/speech-assets",
+  "contentPath": "out/content"
+}
