@@ -188,7 +188,8 @@ export function intentUtterProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES
             "canFulfillIntent",
             "startIntent",
             "signInRequired",
-            "endIntent"
+            "endIntent",
+            "platformSlot"
           ]);
           previousIntent = _.isEmpty(info.Intent) ? previousIntent : info.Intent;
           info.Intent = previousIntent;
@@ -238,7 +239,8 @@ export function intentUtterProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES
               .filter("slotName")
               .map(slot => ({
                 name: slot.slotName,
-                type: slot.slotType
+                type: slot.slotType,
+                platform: slot.platformSlot
               }))
               .compact()
               .uniq()
