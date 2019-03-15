@@ -44,6 +44,7 @@ export async function action(cmd: any) {
   }
 
   interaction.rootPath = rootPath;
+
   try {
     await buildInteraction(interaction, auth);
   } catch (error) {
