@@ -60,12 +60,9 @@ function defaultOptions(interactionOptions: IInteractionOptions): IDefinedIntera
 
   const assets: string[] = interactionOptions.assets || DEFAULT_INTERACTION_OPTIONS.assets;
 
-  let platforms: ISupportedPlatforms[];
-  if (_.isString(interactionOptions.platforms)) {
-    platforms = [interactionOptions.platforms];
-  } else {
-    platforms = interactionOptions.platforms || DEFAULT_INTERACTION_OPTIONS.platforms;
-  }
+  const platforms: ISupportedPlatforms[] = _.isString(interactionOptions.platforms)
+    ? [interactionOptions.platforms]
+    : interactionOptions.platforms || DEFAULT_INTERACTION_OPTIONS.platforms;
 
   let spreadsheets: string[] = _.isString(interactionOptions.spreadsheets)
     ? [interactionOptions.spreadsheets]
