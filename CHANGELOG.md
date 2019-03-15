@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fix endIntent on dialogflow
 
+### Added
+
+- Added an assets processor to allow downloading media objects from a drive directory
+- Added some unit tests
+
 ## [2.0.1] - 2019-03-05
 
 ### Added
