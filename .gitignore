@@ -13,6 +13,8 @@ test.js
 interaction.json
 local-skill.json
 content
+test/client_secret.json
+test/out
 
 # Created by https://www.gitignore.io/api/vim,node,macos,jekyll,visualstudiocode
 
