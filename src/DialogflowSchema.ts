@@ -94,8 +94,9 @@ export class DialogflowSchema extends Schema {
     const startIntents = _.chain(intentsByPlatformAndEnvironments)
       .filter({ startIntent: true })
       .map(intent => {
+        const intentName = intent.name.replace("AMAZON.", "");
         const startIntent = _.chain(intents)
-          .find(i => i.name === intent.name)
+          .find(i => i.name === intent.name || i.name === intentName)
           .value();
         if (startIntent) {
           return {
@@ -110,12 +111,15 @@ export class DialogflowSchema extends Schema {
     const endIntentIds = _.chain(intentsByPlatformAndEnvironments)
       .filter({ endIntent: true })
       .map(intent => {
+        const intentName = intent.name.replace("AMAZON.", "");
+
         const intentId = _.chain(intents)
-          .find(i => i.name === intent.name)
+          .find(i => i.name === intent.name || i.name === intentName)
           .get("id")
           .value();
         return intentId;
       })
+      .compact()
       .value();
 
     const supportedLanguages = _(this.invocations)
@@ -167,12 +171,15 @@ export class DialogflowSchema extends Schema {
       events = name === "LaunchIntent" ? ["WELCOME", "GOOGLE_ASSISTANT_WELCOME"] : events;
       events = (events as string[]).map((eventName: string) => ({ name: eventName }));
 
-      const parameters = slotsDefinition.map(slot => ({
-        dataType: _.includes(slot.type, "@sys.") ? slot.type : `@${slot.type}`,
-        name: slot.name,
-        value: `$${slot.name}`,
-        isList: false
-      }));
+      const parameters = _(slotsDefinition)
+        .filter(slot => this.filterByPlatform(slot))
+        .map(slot => ({
+          dataType: _.includes(slot.type, "@sys.") ? slot.type : `@${slot.type}`,
+          name: slot.name,
+          value: `$${slot.name}`,
+          isList: false
+        }))
+        .value();
 
       const resultSamples = samples.map(sample => {
         const data = _.chain(sample)
@@ -246,12 +253,15 @@ export class DialogflowSchema extends Schema {
       events = name === "LaunchIntent" ? ["WELCOME", "GOOGLE_ASSISTANT_WELCOME"] : events;
       events = (events as string[]).map((eventName: string) => ({ name: eventName }));
 
-      const parameters = slotsDefinition.map(slot => ({
-        dataType: _.includes(slot.type, "@sys.") ? slot.type : `@${_.kebabCase(slot.type)}`,
-        name: slot.name.replace("{", "").replace("}", ""),
-        value: `$${slot.name.replace("{", "").replace("}", "")}`,
-        isList: false
-      }));
+      const parameters = _(slotsDefinition)
+        .filter(slot => this.filterByPlatform(slot))
+        .map(slot => ({
+          dataType: _.includes(slot.type, "@sys.") ? slot.type : `@${_.kebabCase(slot.type)}`,
+          name: slot.name.replace("{", "").replace("}", ""),
+          value: `$${slot.name.replace("{", "").replace("}", "")}`,
+          isList: false
+        }))
+        .value();
 
       const intent = {
         name,

@@ -59,12 +59,15 @@ export class AlexaSchema extends Schema {
     const intents = intentsByPlatformAndEnvironments.map((rawIntent: IIntent) => {
       const { name, samples } = rawIntent;
       let { slotsDefinition } = rawIntent;
-      slotsDefinition = slotsDefinition.map((slot: any) => {
-        return {
-          type: slot.type,
-          name: slot.name.replace("{", "").replace("}", "")
-        };
-      });
+      slotsDefinition = _(slotsDefinition)
+        .filter(slot => this.filterByPlatform(slot))
+        .map((slot: any) => {
+          return {
+            type: slot.type,
+            name: slot.name.replace("{", "").replace("}", "")
+          };
+        })
+        .value();
 
       const intent = { name, samples, slots: slotsDefinition };
       return intent;
