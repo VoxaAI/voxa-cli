@@ -10,7 +10,7 @@ export const alias = "";
 export const description = "create a interaction.json";
 export const options = [{ flags: "-p, --path <path>", description: "overwrite root path" }];
 
-export function action(cmd: any) {
+export async function action(cmd: any) {
   const interactionFileName = "interaction.json";
   const rootPath = cmd.path || process.cwd();
   const interationPath = path.join(rootPath, interactionFileName);
@@ -44,5 +44,5 @@ export function action(cmd: any) {
   }
 
   interaction.rootPath = rootPath;
-  buildInteraction(interaction, auth);
+  await buildInteraction(interaction, auth);
 }

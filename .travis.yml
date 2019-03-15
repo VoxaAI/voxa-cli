@@ -1,0 +1,8 @@
+language: node_js
+sudo: required
+node_js:
+- '8.10'
+script: "./run-ci.sh"
+before_install:
+- openssl aes-256-cbc -K $encrypted_25878a959762_key -iv $encrypted_25878a959762_iv
+  -in client_secret.json.enc -out test/client_secret.json -d
