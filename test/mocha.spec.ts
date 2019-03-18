@@ -14,6 +14,12 @@ before(async function before() {
   const file = await fs.open(imagePath, "w");
   await fs.close(file);
 
+  // copy the other file to it's final destination, this makes it so we exercise the code path
+  // were we don't download again a file if it's already present
+  const original = path.join(__dirname, "assets/images/small.png");
+  const destination = path.join(__dirname, "out/assets/images/small.png");
+  await fs.copy(original, destination);
+
   // run the actual command
   await action({ path: __dirname });
 });
