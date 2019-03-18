@@ -4,7 +4,6 @@ node_js:
   - "8.10"
 before_install:
   - "./decrypt.sh"
-scripts:
-  - "./run-ci.sh"
+script: "./run-ci.sh"
 after_success:
-  - ./coverage.sh
+  - "./coverage.sh"
