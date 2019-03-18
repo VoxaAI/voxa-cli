@@ -45,7 +45,7 @@ async function downloadResource(
   const destPath = path.join(rootPath, fileResource.name as string);
 
   let md5 = "";
-  if (fs.pathExistsSync(destPath)) {
+  if (await fs.pathExists(destPath)) {
     md5 = await fileMd5(destPath);
   }
 

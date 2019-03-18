@@ -121,10 +121,12 @@ export const buildInteraction = async (interactionOptions: IInteractionOptions, 
   const fileContentsProcess = schemas
     .reduce(
       (acc, schema, index) => {
-        schema.buildDownloads();
-        schema.buildViews();
-        schema.buildViewsMapping();
-        schema.buildSynonyms();
+        if (index === 0) {
+          schema.buildDownloads();
+          schema.buildViews();
+          schema.buildViewsMapping();
+          schema.buildSynonyms();
+        }
 
         schema.invocations.map(invoc => {
           schema.build(invoc.locale, invoc.environment);
