@@ -1,0 +1,2 @@
+export TS_NODE_TRANSPILE_ONLY=true # faster compile time/reload time
+export TS_NODE_PRETTY=true # better error messages

@@ -2,6 +2,8 @@ language: node_js
 sudo: required
 node_js:
   - "8.10"
-script: "./run-ci.sh"
 before_install:
   - "./decrypt.sh"
+script: "./run-ci.sh"
+after_success:
+  - "./coverage.sh"

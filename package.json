@@ -58,24 +58,26 @@
     "path": "^0.12.7",
     "pretty-error": "^2.1.1",
     "rxjs": "^6.4.0",
+    "source-map-support": "^0.5.9",
     "uuid": "^3.3.2"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
+    "@types/chai-fs": "^2.0.1",
     "@types/mocha": "^5.2.6",
     "@types/node": "^10.10.1",
+    "chai-fs": "^2.0.0",
     "husky": "^1.3.1",
     "mocha": "^6.0.2",
     "mocha-jenkins-reporter": "^0.4.1",
     "nyc": "^13.3.0",
     "prettier": "^1.16.4",
     "pretty-quick": "^1.10.0",
-    "source-map-support": "^0.5.9",
     "ts-node": "^8.0.3",
     "tslint": "^5.11.0",
     "tslint-config-prettier": "^1.18.0",
     "tslint-no-unused-expression-chai": "^0.1.3",
-    "typescript": "^3.0.3"
+    "typescript": "^3.3.3333"
   },
   "bugs": {
     "url": "https://github.com/mediarain/voxa-cli/issues"
