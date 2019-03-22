@@ -10,8 +10,8 @@ describe("Media Assets", () => {
   });
 
   it("should download the files and those be valid", () => {
-    const originalImage = path.join(__dirname, "out/assets/images/large.png");
-    const downloadedImage = path.join(__dirname, "assets/images/large.png");
+    const originalImage = path.join(__dirname, "out/assets/images/small.png");
+    const downloadedImage = path.join(__dirname, "assets/images/small.png");
     expect(originalImage)
       .to.be.a.file()
       .and.equal(downloadedImage);

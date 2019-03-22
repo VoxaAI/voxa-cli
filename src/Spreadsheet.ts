@@ -63,8 +63,6 @@ function refactorExcelData(sheet: IVoxaSheet) {
 }
 
 async function transformGoogleSheets(options: any, authKeys: {}): Promise<IVoxaSheet[]> {
-  const client = auth.fromJSON(authKeys) as JWT;
-  client.scopes = ["https://www.googleapis.com/auth/spreadsheets.readonly"];
   const spreadsheetsId = _.chain(options)
     .get("spreadsheets")
     .map(getSpreadsheetId)
@@ -73,10 +71,12 @@ async function transformGoogleSheets(options: any, authKeys: {}): Promise<IVoxaS
 
   let spreadsheetResp = [] as any[];
 
-  if (_.isEmpty(spreadsheetsId)) {
+  if (_.isEmpty(spreadsheetsId) || _.isEmpty(authKeys)) {
     return [];
   }
 
+  const client = auth.fromJSON(authKeys) as JWT;
+  client.scopes = ["https://www.googleapis.com/auth/spreadsheets.readonly"];
   try {
     spreadsheetResp = await _Promise.all(
       spreadsheetsId.map((spreadsheetId: string) =>

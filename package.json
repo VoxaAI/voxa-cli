@@ -13,7 +13,7 @@
     "url": "https://github.com/mediarain/voxa-cli.git"
   },
   "scripts": {
-    "test": "mocha test/*.spec.* test/**/*.spec.*",
+    "test": "rm -rf test/out/ && mocha test/*.spec.* test/**/*.spec.*",
     "test-ci": "nyc mocha --colors --reporter mocha-jenkins-reporter test test/*.spec.* test/**/*.spec.*",
     "report": "nyc report --reporter=json && nyc report --reporter html && nyc report --reporter=lcov && nyc report --reporter=cobertura",
     "lint": "tslint --config tslint.json --project tsconfig.json --exclude \"**/*.json\"",
