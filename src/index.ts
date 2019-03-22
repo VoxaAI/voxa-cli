@@ -4,7 +4,7 @@ import * as commander from "commander";
 import "source-map-support/register";
 import * as pkg from "../package.json";
 
-module.exports = (argv: any) => {
+module.exports = async (argv: any) => {
   commander.version(pkg.version, "-v, --version");
   ["interaction", "init"].forEach(c => {
     commander.usage(c);
@@ -20,7 +20,9 @@ module.exports = (argv: any) => {
       const descriptionOption = option.description;
       result.option(flags, descriptionOption);
     });
-    result.action(action);
+    result.action(async cmd => {
+      await action(cmd);
+    });
   });
 
   commander.parse(argv);

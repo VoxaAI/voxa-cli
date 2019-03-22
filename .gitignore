@@ -1,4 +1,5 @@
 # Project specifics
+*.xlsx
 views.json
 views.map.json
 variables.map.json

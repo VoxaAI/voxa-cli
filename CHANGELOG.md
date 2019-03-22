@@ -7,12 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Now supports url format for spreadsheet url
+
+### Removed
+
+- Removed support for generic id for spreadsheets, have to explicit provide google spreadsheet shared URL
+
 ### Fixed
 
 - Fix endIntent on dialogflow
 
 ### Added
 
+- Added to process local xlsx
 - Added an assets processor to allow downloading media objects from a drive directory
 - Added some unit tests
 

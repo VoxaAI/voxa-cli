@@ -37,10 +37,10 @@ export async function action(cmd: any) {
     // a path we KNOW is totally bogus and not a module
     auth = require(authPath);
   } catch (e) {
-    if (e.code === "MODULE_NOT_FOUND") {
-      console.log(`mm... Make sure to create ${authFileName} from Google console`);
-      return;
-    }
+    // if (e.code === "MODULE_NOT_FOUND") {
+    //   console.log(`mm... Make sure to create ${authFileName} from Google console`);
+    //   return;
+    // }
   }
 
   interaction.rootPath = rootPath;
