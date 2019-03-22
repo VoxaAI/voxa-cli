@@ -4,7 +4,7 @@
 import * as _Promise from "bluebird";
 import * as fs from "fs-extra";
 import { auth, JWT } from "google-auth-library";
-import { google } from "googleapis";
+import { google, sheets_v4 } from "googleapis";
 import * as _ from "lodash";
 import * as xlsx from "node-xlsx";
 import * as path from "path";
@@ -62,6 +62,63 @@ function refactorExcelData(sheet: IVoxaSheet) {
   return sheet;
 }
 
+function refactorSpreadsheet(
+  spreadsheetsId: string[],
+  spreadsheetResp: sheets_v4.Resource$Spreadsheets$Sheets[] | any[]
+) {
+  return _.chain(spreadsheetResp)
+    .map((spreadsheet, index: number) => {
+      const spreadsheetTitle = _.get(spreadsheet, "data.properties.title");
+      const spreadsheetId = spreadsheetsId[index];
+      const sheetNames = _.chain(spreadsheet)
+        .get("data.sheets", [])
+        .map("properties.title")
+        .value();
+      return sheetNames.map((sheetTitle: string) => {
+        const voxaSheet: IVoxaSheet = { spreadsheetId, spreadsheetTitle, sheetTitle, type: "none" };
+        return voxaSheet;
+      });
+    })
+    .flatten()
+    .map(findSheetType)
+    .compact()
+    .value();
+}
+
+async function spreadsheetToVoxaSheet(
+  client: JWT,
+  spreadsheetsId: string[],
+  spreadsheetResp: sheets_v4.Resource$Spreadsheets$Sheets[] | any[]
+) {
+  spreadsheetResp = refactorSpreadsheet(spreadsheetsId, spreadsheetResp);
+
+  let sheetPromises = spreadsheetResp.map((sheet: IVoxaSheet) =>
+    readSheetTab({
+      auth: client,
+      spreadsheetId: sheet.spreadsheetId,
+      range: `${sheet.sheetTitle}!A1:ZZZ`
+    })
+  );
+
+  try {
+    sheetPromises = await _Promise.all(sheetPromises);
+  } catch (e) {
+    throw new Error(`Unable to get spreadsheet ${e}`);
+  }
+
+  return spreadsheetResp.map((sheet: IVoxaSheet, index: number) => {
+    const data = _.chain(sheetPromises[index])
+      .get("data.values", [])
+      .reduce(rowFormatted, [])
+      .drop()
+      .value();
+
+    // Apply processor
+    sheet.data = data;
+    return sheet;
+  });
+}
+
 async function transformGoogleSheets(options: any, authKeys: {}): Promise<IVoxaSheet[]> {
   const spreadsheetsId = _.chain(options)
     .get("spreadsheets")
@@ -88,48 +145,7 @@ async function transformGoogleSheets(options: any, authKeys: {}): Promise<IVoxaS
     throw new Error(`Unable to read spreadsheets. Make sure user has access. ${e}`);
   }
 
-  spreadsheetResp = _.chain(spreadsheetResp)
-    .map((spreadsheet: string, index: number) => {
-      const spreadsheetTitle = _.get(spreadsheet, "data.properties.title");
-      const spreadsheetId = spreadsheetsId[index];
-      const sheetNames = _.chain(spreadsheet)
-        .get("data.sheets", [])
-        .map("properties.title")
-        .value();
-      return sheetNames.map((sheetTitle: string) => {
-        const voxaSheet: IVoxaSheet = { spreadsheetId, spreadsheetTitle, sheetTitle, type: "none" };
-        return voxaSheet;
-      });
-    })
-    .flatten()
-    .map(findSheetType)
-    .compact()
-    .value();
-  let sheetPromises = spreadsheetResp.map((sheet: IVoxaSheet) =>
-    readSheetTab({
-      auth: client,
-      spreadsheetId: sheet.spreadsheetId,
-      range: `${sheet.sheetTitle}!A1:ZZZ`
-    })
-  );
-
-  try {
-    sheetPromises = await _Promise.all(sheetPromises);
-  } catch (e) {
-    throw new Error(`Unable to get spreadsheet ${e}`);
-  }
-
-  return spreadsheetResp.map((sheet: IVoxaSheet, index: number) => {
-    const data = _.chain(sheetPromises[index])
-      .get("data.values", [])
-      .reduce(rowFormatted, [])
-      .drop()
-      .value();
-
-    // Apply processor
-    sheet.data = data;
-    return sheet;
-  });
+  return spreadsheetToVoxaSheet(client, spreadsheetsId, spreadsheetResp);
 }
 
 export async function transformLocalExcel(options: any, authKeys: {}): Promise<IVoxaSheet[]> {
