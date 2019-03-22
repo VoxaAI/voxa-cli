@@ -1,6 +1,8 @@
 {
   "platforms": ["dialogflow", "alexa"],
-  "spreadsheets": ["Voxa Cli Intents Utterances en-US.xlsx"],
+  "spreadsheets": [
+    "https://docs.google.com/spreadsheets/d/1Jh04EJInZWIbMiRKGyxBO2JC54PlLof6Sxpcc_YkxsA/edit"
+  ],
   "viewsPath": "out",
   "speechPath": "out/speech-assets",
   "contentPath": "out/content",

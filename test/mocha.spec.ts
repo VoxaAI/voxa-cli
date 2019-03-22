@@ -1,6 +1,7 @@
 import fs = require("fs-extra");
 import path = require("path");
 import { action } from "../src/commands/interaction";
+import { hasAGoogleServiceAccount } from "./utils";
 
 before(async function before() {
   this.timeout(20000);
@@ -21,5 +22,9 @@ before(async function before() {
   await fs.copy(original, destination);
 
   // run the actual command
-  await action({ path: __dirname });
+
+  const interactionToLoad = (await hasAGoogleServiceAccount())
+    ? "interaction.json"
+    : "interaction-no-secret.json";
+  await action({ path: __dirname, interactionFileName: interactionToLoad });
 });

@@ -11,8 +11,8 @@ export const description = "create a interaction.json";
 export const options = [{ flags: "-p, --path <path>", description: "overwrite root path" }];
 
 export async function action(cmd: any) {
-  const interactionFileName = "interaction.json";
   const rootPath = cmd.path || process.cwd();
+  const interactionFileName = cmd.interactionFileName || "interaction.json";
   const interationPath = path.join(rootPath, interactionFileName);
   const authFileName = "client_secret.json";
   const authPath = path.join(rootPath, authFileName);
