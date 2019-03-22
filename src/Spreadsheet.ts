@@ -10,12 +10,61 @@ import * as xlsx from "node-xlsx";
 import * as path from "path";
 import { IVoxaSheet, SheetTypes } from "./VoxaSheet";
 
+const sheets = google.sheets("v4");
+const readSpreadsheet: any = _Promise.promisify(sheets.spreadsheets.get, { context: sheets });
+const readSheetTab: any = _Promise.promisify(sheets.spreadsheets.values.get, { context: sheets });
+
+function findLocalFiles(spreadsheet: string): string[] {
+  const fsStats = fs.lstatSync(spreadsheet);
+  if (fsStats.isDirectory()) {
+    return fs
+      .readdirSync(spreadsheet)
+      .filter(f => _.includes(f, "xlsx"))
+      .map(f => path.join(spreadsheet, f));
+  }
+  return [spreadsheet];
+}
+
+function readFileCreateWorkbook(f: string) {
+  const workbook = xlsx.parse(f);
+  const spreadsheetTitle = _.last(f.split("/"));
+  const spreadsheetId = f;
+  if (!_.isString(spreadsheetTitle)) {
+    return undefined;
+  }
+  return workbook.map(book => ({
+    spreadsheetId,
+    spreadsheetTitle,
+    sheetTitle: book.name,
+    type: "none",
+    data: book.data
+  }));
+}
+
+function refactorExcelData(sheet: IVoxaSheet) {
+  sheet.data = _.chain(sheet)
+    .get("data")
+    .map((next, index: number, arr) => {
+      if (index === 0) {
+        return next;
+      }
+      const head = arr[0];
+
+      const extraColumns = head.length - next.length;
+      if (extraColumns > 0) {
+        next = _.concat(next, _.fill(Array(extraColumns), undefined));
+      }
+      return next;
+    })
+    .reduce(rowFormatted, [] as any[])
+    .drop()
+    .value();
+  return sheet;
+}
+
 async function transformGoogleSheets(options: any, authKeys: {}): Promise<IVoxaSheet[]> {
   const client = auth.fromJSON(authKeys) as JWT;
   client.scopes = ["https://www.googleapis.com/auth/spreadsheets.readonly"];
-  const sheets = google.sheets("v4");
-  const readSpreadsheet: any = _Promise.promisify(sheets.spreadsheets.get, { context: sheets });
-  const readSheetTab: any = _Promise.promisify(sheets.spreadsheets.values.get, { context: sheets });
   const spreadsheetsId = _.chain(options)
     .get("spreadsheets")
     .map(getSpreadsheetId)
@@ -84,59 +133,11 @@ async function transformGoogleSheets(options: any, authKeys: {}): Promise<IVoxaS
 }
 
 export async function transformLocalExcel(options: any, authKeys: {}): Promise<IVoxaSheet[]> {
-  const findFiles = (spreadsheet: string): string[] => {
-    const fsStats = fs.lstatSync(spreadsheet);
-    if (fsStats.isDirectory()) {
-      return fs
-        .readdirSync(spreadsheet)
-        .filter(f => _.includes(f, "xlsx"))
-        .map(f => path.join(spreadsheet, f));
-    }
-    return [spreadsheet];
-  };
-
-  const readFileCreateWorkbook = (f: string) => {
-    const workbook = xlsx.parse(f);
-    const spreadsheetTitle = _.last(f.split("/"));
-    const spreadsheetId = f;
-    if (!_.isString(spreadsheetTitle)) {
-      return undefined;
-    }
-    return workbook.map(book => ({
-      spreadsheetId,
-      spreadsheetTitle,
-      sheetTitle: book.name,
-      type: "none",
-      data: book.data
-    }));
-  };
-
-  const refactorExcelData = (sheet: IVoxaSheet) => {
-    sheet.data = _.chain(sheet)
-      .get("data")
-      .map((next, index: number, arr) => {
-        if (index === 0) {
-          return next;
-        }
-        const head = arr[0];
-
-        const extraColumns = head.length - next.length;
-        if (extraColumns > 0) {
-          next = _.concat(next, _.fill(Array(extraColumns), undefined));
-        }
-        return next;
-      })
-      .reduce(rowFormatted, [] as any[])
-      .drop()
-      .value();
-    return sheet;
-  };
-
   const vsheet = (_.chain(options)
     .get("spreadsheets")
     .map(f => (f.indexOf("/") === 0 ? f : path.join(options.rootPath, f)))
     .filter(spreadsheet => fs.pathExistsSync(spreadsheet))
-    .map(findFiles)
+    .map(findLocalFiles)
     .flatten()
     .map(readFileCreateWorkbook)
     .flatten()
