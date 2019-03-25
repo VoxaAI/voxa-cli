@@ -1,6 +1,7 @@
 /* tslint:disable:no-submodule-imports no-console */
 "use strict";
 
+import { all } from "bluebird";
 import * as colors from "colors";
 import * as fs from "fs-extra";
 import * as inquirer from "inquirer";
@@ -23,7 +24,7 @@ const ALLOWED_ATTRIBUTES = [
   "viewsPath"
 ];
 
-export function action() {
+export async function action() {
   const interactionFile = path.join(process.cwd(), "interaction.json");
   let hasAnInteractionFile = false;
   try {
@@ -47,22 +48,29 @@ export function action() {
         .value();
     };
     const noEmptyAnswer = (input: string) => !_.isEmpty(input);
-    const mustBeSpreadsheetURLOrLength30 = (input: string) => {
-      const result = _.chain(input)
+    const mustBeSpreadsheetURLOrLength30 = async (input: string) => {
+      let result: any = _.chain(input)
         .split(",")
         .map(_.trim)
         .compact()
-        .every((i: string) => {
-          const matched = i.match(/docs\.google\.com\/spreadsheets\/d\/(.*)\/.*/);
-          if (i.includes("docs.google.com/spreadsheets") && matched && _.isString(matched[1])) {
-            i = matched[1];
+        .map((i: string) => {
+          if (i.includes("docs.google.com/spreadsheets")) {
+            const matched = i.match(/docs\.google\.com\/spreadsheets\/d\/(.*)\/.*/);
+            return matched && _.isString(matched[1]) && matched[1].length > 30;
           }
-          return i.length > 30;
+
+          const customPath = i.indexOf("/") === 0 ? i : path.join(process.cwd(), i);
+
+          return fs.pathExists(customPath);
         })
         .value();
+
+      result = await all(result);
+      result = result.every((r: boolean) => r);
+
       return noEmptyAnswer(input) && result
         ? true
-        : "Insert a proper spreadsheet url or id eg. https://docs.google.com/spreadsheets/d/XXXXXXX/edit#gid=0";
+        : "Insert a proper google spreadsheet url. https://docs.google.com/spreadsheets/d/XXXXXXX/edit#gid=0 or a local directory or file";
     };
 
     const questions = [
@@ -91,7 +99,7 @@ export function action() {
       {
         type: "input",
         name: "speechPath",
-        message: "Specify folder path to save interaction model",
+        message: "Specify folder path to save interaction model and manifest",
         default: DEFAULT_INTERACTION_OPTIONS.speechPath,
         when: override
       },
@@ -141,7 +149,7 @@ export function action() {
       .fromPairs()
       .value();
   }
-  function executePrompt(): any {
+  async function executePrompt(): Promise<any> {
     return inquirer.prompt(observe).then((answers: any) => {
       if (answers.interactionFile && !answers.isCorrect) {
         return executePrompt();
@@ -154,7 +162,7 @@ export function action() {
         printVariables(answers);
       }
       answers = _.pick(answers, ALLOWED_ATTRIBUTES);
-      return fs.outputFileSync(
+      return fs.outputFile(
         path.join(process.cwd(), "interaction.json"),
         JSON.stringify(answers, null, 2),
         { flag: "w" }
@@ -162,5 +170,5 @@ export function action() {
     });
   }
 
-  executePrompt();
+  await executePrompt();
 }

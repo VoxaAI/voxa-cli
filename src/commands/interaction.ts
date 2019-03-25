@@ -11,8 +11,8 @@ export const description = "create a interaction.json";
 export const options = [{ flags: "-p, --path <path>", description: "overwrite root path" }];
 
 export async function action(cmd: any) {
-  const interactionFileName = "interaction.json";
   const rootPath = cmd.path || process.cwd();
+  const interactionFileName = cmd.interactionFileName || "interaction.json";
   const interationPath = path.join(rootPath, interactionFileName);
   const authFileName = "client_secret.json";
   const authPath = path.join(rootPath, authFileName);
@@ -37,10 +37,10 @@ export async function action(cmd: any) {
     // a path we KNOW is totally bogus and not a module
     auth = require(authPath);
   } catch (e) {
-    if (e.code === "MODULE_NOT_FOUND") {
-      console.log(`mm... Make sure to create ${authFileName} from Google console`);
-      return;
-    }
+    // if (e.code === "MODULE_NOT_FOUND") {
+    //   console.log(`mm... Make sure to create ${authFileName} from Google console`);
+    //   return;
+    // }
   }
 
   interaction.rootPath = rootPath;

@@ -64,10 +64,9 @@ function defaultOptions(interactionOptions: IInteractionOptions): IDefinedIntera
     ? [interactionOptions.platforms]
     : interactionOptions.platforms || DEFAULT_INTERACTION_OPTIONS.platforms;
 
-  let spreadsheets: string[] = _.isString(interactionOptions.spreadsheets)
+  const spreadsheets: string[] = _.isString(interactionOptions.spreadsheets)
     ? [interactionOptions.spreadsheets]
     : interactionOptions.spreadsheets;
-  spreadsheets = spreadsheets.map(getSpreadsheetId);
 
   if (_.isEmpty(spreadsheets)) {
     throw Error("Spreadsheet were not specified in the right format");
@@ -122,6 +121,7 @@ export const buildInteraction = async (interactionOptions: IInteractionOptions, 
     .reduce(
       (acc, schema, index) => {
         if (index === 0) {
+          // We only want to execute this file once
           schema.buildDownloads();
           schema.buildViews();
           schema.buildViewsMapping();
@@ -147,12 +147,3 @@ export const buildInteraction = async (interactionOptions: IInteractionOptions, 
 
   console.timeEnd("all");
 };
-
-function getSpreadsheetId(sheet: string): string {
-  const matched = sheet.match(/docs\.google\.com\/spreadsheets\/d\/(.*)\/.*/);
-  if (sheet.includes("docs.google.com/spreadsheets") && matched && _.isString(matched[1])) {
-    return matched[1];
-  }
-
-  return sheet;
-}

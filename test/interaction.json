@@ -1,9 +1,3 @@
 {
-  "platforms": ["dialogflow", "alexa"],
-  "spreadsheets": ["1Jh04EJInZWIbMiRKGyxBO2JC54PlLof6Sxpcc_YkxsA"],
-  "viewsPath": "out",
-  "speechPath": "out/speech-assets",
-  "contentPath": "out/content",
-  "assets": ["1MMjLUHViqoZTHXlMPU93Ig-Y0Gkyt5ey"],
-  "assetsPath": "out/assets"
+  "spreadsheets": ["INTENT SPREADSHEET", "PUBLISHING SPREADSHEET"]
 }

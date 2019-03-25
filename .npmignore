@@ -6,3 +6,5 @@ assets
 client_secret.json
 interaction.json
 content
+*.xlsx
+test
