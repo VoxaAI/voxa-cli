@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.0] - 2019-03-25
+
 ### Changed
 
 - Now supports url format for spreadsheet url
@@ -65,7 +67,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add support for Alexa, Dialogflow
 - Add support to download other sheet
 
-[unreleased]: https://github.com/VoxaAI/voxa-cli/compare/2.0.1...staging
+[unreleased]: https://github.com/VoxaAI/voxa-cli/compare/2.1.0...staging
+[2.1.0]: https://github.com/VoxaAI/voxa-cli/compare/2.0.1...2.1.0
 [2.0.1]: https://github.com/VoxaAI/voxa-cli/compare/2.0.0...2.0.1
 [2.0.0]: https://github.com/VoxaAI/voxa-cli/compare/1.0.0-alpha1...2.0.0
 [1.0.0]: https://github.com/VoxaAI/voxa-cli/releases/tag/1.0.0-alpha1
