@@ -1,24 +1,38 @@
 import { expect } from "chai";
+import * as path from "path";
+import { configurationToExecute } from "./utils";
 
-describe("Dialogflow", () => {
-  let agent: any;
+const interactions = configurationToExecute();
 
-  before(async () => {
-    agent = await require("./out/speech-assets/dialogflow/production/agent.json");
-  });
+interactions.forEach(interactionFile => {
+  describe("Dialogflow", () => {
+    let agent: any;
 
-  describe("GOOGLE_ASSISTANT_WELCOME", () => {
-    let intent: any;
     before(async () => {
-      intent = await require("./out/speech-assets/dialogflow/production/intents/GOOGLE_ASSISTANT_WELCOME.json");
+      agent = await require(path.join(
+        __dirname,
+        interactionFile.speechPath,
+        "dialogflow/production/agent.json"
+      ));
     });
 
-    it("should generate a GOOGLE_ASSISTANT_WELCOME intent", () => {
-      expect(intent.name).to.equal("GOOGLE_ASSISTANT_WELCOME");
-    });
+    describe("GOOGLE_ASSISTANT_WELCOME", () => {
+      let intent: any;
+      before(async () => {
+        intent = await require(path.join(
+          __dirname,
+          interactionFile.speechPath,
+          "dialogflow/production/intents/GOOGLE_ASSISTANT_WELCOME.json"
+        ));
+      });
 
-    it("should set the GOOGLE_ASSISTANT_WELCOME intent as a startIntent", () => {
-      expect(agent.googleAssistant.startIntents[0].intentId).to.equal(intent.id);
+      it("should generate a GOOGLE_ASSISTANT_WELCOME intent", () => {
+        expect(intent.name).to.equal("GOOGLE_ASSISTANT_WELCOME");
+      });
+
+      it("should set the GOOGLE_ASSISTANT_WELCOME intent as a startIntent", () => {
+        expect(agent.googleAssistant.startIntents[0].intentId).to.equal(intent.id);
+      });
     });
   });
 });

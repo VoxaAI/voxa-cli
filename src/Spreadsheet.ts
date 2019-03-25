@@ -62,10 +62,10 @@ function refactorExcelData(sheet: IVoxaSheet) {
   return sheet;
 }
 
-function refactorSpreadsheet(
+function initVoxaSheet(
   spreadsheetsId: string[],
-  spreadsheetResp: sheets_v4.Resource$Spreadsheets$Sheets[] | any[]
-) {
+  spreadsheetResp: sheets_v4.Resource$Spreadsheets$Sheets[]
+): IVoxaSheet[] {
   return _.chain(spreadsheetResp)
     .map((spreadsheet, index: number) => {
       const spreadsheetTitle = _.get(spreadsheet, "data.properties.title");
@@ -88,9 +88,12 @@ function refactorSpreadsheet(
 async function spreadsheetToVoxaSheet(
   client: JWT,
   spreadsheetsId: string[],
-  spreadsheetResp: sheets_v4.Resource$Spreadsheets$Sheets[] | any[]
-) {
-  spreadsheetResp = refactorSpreadsheet(spreadsheetsId, spreadsheetResp);
+  spreadsheetResp: sheets_v4.Resource$Spreadsheets$Sheets[] | IVoxaSheet[]
+): Promise<IVoxaSheet[]> {
+  spreadsheetResp = initVoxaSheet(
+    spreadsheetsId,
+    spreadsheetResp as sheets_v4.Resource$Spreadsheets$Sheets[]
+  );
 
   let sheetPromises = spreadsheetResp.map((sheet: IVoxaSheet) =>
     readSheetTab({
@@ -122,7 +125,7 @@ async function spreadsheetToVoxaSheet(
 async function transformGoogleSheets(options: any, authKeys: {}): Promise<IVoxaSheet[]> {
   const spreadsheetsId = _.chain(options)
     .get("spreadsheets")
-    .map(getSpreadsheetId)
+    .map(getGoogleSpreadsheetId)
     .compact()
     .value() as string[];
 
@@ -224,7 +227,7 @@ function rowFormatted(acc: any[], next: any, iindex: number, arr: any[]) {
   return acc;
 }
 
-function getSpreadsheetId(sheet: string): string | undefined {
+function getGoogleSpreadsheetId(sheet: string): string | undefined {
   const matched = sheet.match(/docs\.google\.com\/spreadsheets\/d\/(.*)\/.*/);
   return sheet.includes("docs.google.com/spreadsheets") && matched && _.isString(matched[1])
     ? matched[1]
