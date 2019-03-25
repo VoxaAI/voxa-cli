@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Added support for custom interaction file path
 - Added test for Alexa
 - Added to process local xlsx
 - Added an assets processor to allow downloading media objects from a drive directory
