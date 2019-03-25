@@ -23,9 +23,13 @@ before(async function before() {
   await fs.copy(original, destination);
 
   // run the actual command
-  const actionsToEvaluate = configurationToExecute().map(interaction =>
-    action({ path: __dirname, interactionFileName: interaction.interactionFileName })
-  );
+  const actionsToEvaluate = configurationToExecute().map(interaction => {
+    if (interaction.skip) {
+      return;
+    }
+
+    return action({ path: __dirname, interactionFileName: interaction.interactionFileName });
+  });
 
   await all(actionsToEvaluate);
 });

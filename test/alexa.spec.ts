@@ -5,10 +5,14 @@ import { configurationToExecute } from "./utils";
 const interactions = configurationToExecute();
 
 interactions.forEach(interactionFile => {
-  describe("Alexa", () => {
+  describe(`${interactionFile.name} Alexa`, () => {
     let interaction: any;
 
-    before(async () => {
+    before(async function before() {
+      if (interactionFile.skip) {
+        return this.skip();
+      }
+
       interaction = await require(path.join(
         __dirname,
         interactionFile.speechPath,

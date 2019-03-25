@@ -5,10 +5,14 @@ import { configurationToExecute } from "./utils";
 const interactions = configurationToExecute();
 
 interactions.forEach(interactionFile => {
-  describe("Dialogflow", () => {
+  describe(`${interactionFile.name} Dialogflow`, () => {
     let agent: any;
 
-    before(async () => {
+    before(async function before() {
+      if (interactionFile.skip) {
+        return this.skip();
+      }
+
       agent = await require(path.join(
         __dirname,
         interactionFile.speechPath,

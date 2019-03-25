@@ -16,10 +16,12 @@ function loadInteraction(interactionFileName: string) {
   return { ...interaction, interactionFileName };
 }
 export function configurationToExecute() {
-  const interactions = [loadInteraction("interaction-excel.json")];
+  const interactions = [{ ...loadInteraction("interaction-excel.json"), ...{ name: "Excel" } }];
 
   if (!_.isEmpty(googleSecret)) {
-    interactions.push(loadInteraction("interaction-google.json"));
+    interactions.push({ ...loadInteraction("interaction-google.json"), ...{ name: "Google" } });
+  } else {
+    interactions.push({ name: "Google", skip: true });
   }
 
   return interactions;
