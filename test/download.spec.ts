@@ -8,8 +8,14 @@ use(Chaifs);
 const interactions = configurationToExecute();
 
 interactions.forEach(interactionFile => {
-  if (interactionFile.interactionFileName === "interaction-google.json") {
+  if (interactionFile.name === "Google") {
     describe("Media Assets", async () => {
+      before(function before() {
+        if (interactionFile.skip) {
+          return this.skip();
+        }
+      });
+
       it("should create the assets directory", () => {
         expect(path.join(__dirname, interactionFile.assetsPath)).to.exist;
       });
