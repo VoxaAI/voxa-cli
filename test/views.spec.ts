@@ -5,9 +5,13 @@ import { configurationToExecute } from "./utils";
 const interactions = configurationToExecute();
 
 interactions.forEach(interaction => {
-  describe("Views", () => {
+  describe(`${interaction.name} Views`, () => {
     let views: any;
-    before(async () => {
+    before(async function before() {
+      if (interaction.skip) {
+        return this.skip();
+      }
+
       views = await require(path.join(__dirname, interaction.viewsPath, "views.json"));
     });
 
