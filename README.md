@@ -2,6 +2,10 @@
 
 Create interaction model and publishing information for your Alexa skills.
 
+[![Build Status](https://travis-ci.org/VoxaAI/voxa-cli.svg?branch=staging)](https://travis-ci.org/VoxaAI/voxa-cli)
+[![Code Coverage](https://codecov.io/gh/voxaai/voxa-cli/branch/staging/graph/badge.svg)](https://travis-ci.org/VoxaAI/voxa-cli)
+
+
 ## Install
 
 ```
