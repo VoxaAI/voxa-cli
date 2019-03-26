@@ -34,7 +34,7 @@ interactions.forEach(interactionFile => {
                 },
                 {
                   name: "NumberIntent",
-                  samples: ["The number {number}"],
+                  samples: ["The number {number}", "Another number utterance {number}"],
                   slots: [
                     {
                       type: "AMAZON.Number",
