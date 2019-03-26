@@ -24,5 +24,10 @@ function loadInteraction(name: interactionNames) {
 }
 
 export function configurationToExecute() {
-  return [loadInteraction("Excel"), loadInteraction("Google")];
+  const excelInteraction = loadInteraction("Excel");
+  const googleInteraction = loadInteraction("Google");
+  if (_.isEmpty(googleSecret)) {
+    googleInteraction.skip = true;
+  }
+  return [excelInteraction, googleInteraction];
 }
