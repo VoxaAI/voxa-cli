@@ -11,23 +11,24 @@ try {
   console.log("No client secret for google");
 }
 
-type interactionNames = "Google" | "Excel";
+type interactionNames = "Google" | "Excel" | "OpenDocument";
 
-function loadInteraction(name: interactionNames) {
+async function loadInteraction(name: interactionNames) {
   try {
     const interactionFileName = `interaction-${name.toLowerCase()}.json`;
-    const interaction = require(`./${interactionFileName}`);
+    const interaction = await require(`./${interactionFileName}`);
     return { ...interaction, interactionFileName, name };
   } catch {
     return { name, skip: true };
   }
 }
 
-export function configurationToExecute() {
-  const excelInteraction = loadInteraction("Excel");
-  const googleInteraction = loadInteraction("Google");
+export async function configurationToExecute() {
+  const excelInteraction = await loadInteraction("Excel");
+  const openDocumentInteraction = await loadInteraction("OpenDocument");
+  const googleInteraction = await loadInteraction("Google");
   if (_.isEmpty(googleSecret)) {
     googleInteraction.skip = true;
   }
-  return [excelInteraction, googleInteraction];
+  return [googleInteraction, excelInteraction, openDocumentInteraction];
 }
