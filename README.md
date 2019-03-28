@@ -92,7 +92,7 @@ Finally create a file and name it `azure.secret.json` in the root folder of your
 {
   "client_id": "XXXXXX",
   "client_secret": "YYYYYYY",
-  "tenant_directory": "ZZZZZZZZ" // could tenant directory name or id
+  "tenant_directory": "ZZZZZZZZ" // could be tenant directory name or id
 }
 ```
 
