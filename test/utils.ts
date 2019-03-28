@@ -13,20 +13,20 @@ try {
 
 type interactionNames = "Google" | "Excel" | "OpenDocument";
 
-async function loadInteraction(name: interactionNames) {
+function loadInteraction(name: interactionNames) {
   try {
     const interactionFileName = `interaction-${name.toLowerCase()}.json`;
-    const interaction = await require(`./${interactionFileName}`);
+    const interaction = require(`./${interactionFileName}`);
     return { ...interaction, interactionFileName, name };
   } catch {
     return { name, skip: true };
   }
 }
 
-export async function configurationToExecute() {
-  const excelInteraction = await loadInteraction("Excel");
-  const openDocumentInteraction = await loadInteraction("OpenDocument");
-  const googleInteraction = await loadInteraction("Google");
+export function configurationToExecute() {
+  const excelInteraction = loadInteraction("Excel");
+  const openDocumentInteraction = loadInteraction("OpenDocument");
+  const googleInteraction = loadInteraction("Google");
   if (_.isEmpty(googleSecret)) {
     googleInteraction.skip = true;
   }
