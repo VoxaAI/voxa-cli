@@ -59,6 +59,10 @@ export async function action() {
             return matched && _.isString(matched[1]) && matched[1].length > 30;
           }
 
+          if (i.includes(".sharepoint.com") && i.length > 30) {
+            return true;
+          }
+
           const customPath = i.indexOf("/") === 0 ? i : path.join(process.cwd(), i);
 
           return fs.pathExists(customPath);
@@ -70,7 +74,7 @@ export async function action() {
 
       return noEmptyAnswer(input) && result
         ? true
-        : "Insert a proper google spreadsheet url. https://docs.google.com/spreadsheets/d/XXXXXXX/edit#gid=0 or a local directory or file";
+        : "Insert a proper google spreadsheet url, Office 365 sharepoint url, local file or local directory path. e.g. https://docs.google.com/spreadsheets/d/XXXXXXX/edit#gid=0, https://XXXXXX.sharepoint.com/:x:/g/personal/YYYYYY/ZZZZZZZ, /Users/local/file.xlsx or /Users/local/sheets/";
     };
 
     const questions = [
