@@ -21,28 +21,28 @@ export function rowFormatted(acc: any[], next: any, iindex: number, arr: any[]) 
   const item = _.chain(arr)
     .head()
     .zip(next)
-    .map((zipObj: any) => {
-      const key = zipObj[0];
-      let val = zipObj[1];
-      const valTemp = _.toLower(val);
-
-      if (_.includes(["true", "yes"], valTemp)) {
-        val = true;
-      }
-
-      if (_.includes(["false", "no"], valTemp)) {
-        val = false;
-      }
-
-      if (typeof valTemp === "string" && valTemp.length === 0) {
-        val = undefined;
-      }
-
-      return [key, val];
-    })
+    .map((zipObj: any) => [zipObj[0], valueFormatted(zipObj[1])])
     .fromPairs()
     .value();
 
   acc.push(item);
   return acc;
+}
+
+function valueFormatted(val: any) {
+  const valTemp = _.toLower(val);
+
+  if (_.includes(["true", "yes"], valTemp)) {
+    val = true;
+  }
+
+  if (_.includes(["false", "no"], valTemp)) {
+    val = false;
+  }
+
+  if (typeof valTemp === "string" && valTemp.length === 0) {
+    val = undefined;
+  }
+
+  return val;
 }

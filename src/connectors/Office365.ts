@@ -43,7 +43,7 @@ export async function buildFromOffice365(options: any) {
   }
 
   await fs.remove(path.join(options.rootPath, OFFICE_PATH));
-  return createExcelFile(officeSharedIds, accessToken, options);
+  return downloadExcelFiles(officeSharedIds, accessToken, options);
 }
 
 function getOfficeShareId(sheet: string): string {
@@ -82,7 +82,7 @@ async function getAccessToken(auth: IAzureSecret) {
   return accessToken;
 }
 
-async function createExcelFile(officeSharedIds: string[], accessToken: string, options: any) {
+async function downloadExcelFiles(officeSharedIds: string[], accessToken: string, options: any) {
   const headers = {
     Authorization: `Bearer ${accessToken}`
   };
@@ -102,6 +102,15 @@ async function createExcelFile(officeSharedIds: string[], accessToken: string, o
     .flatten()
     .value();
 
+  await outputExcelFiles(options, metadataPromises);
+
+  const spreadsheets = _.get(options, "spreadsheets");
+  spreadsheets.push(OFFICE_PATH);
+
+  return buildFromLocalExcel({ ...options, spreadsheets });
+}
+
+async function outputExcelFiles(options: any, metadataPromises: Array<axios.AxiosPromise<any>>) {
   const files: any = await all(metadataPromises);
   await all(
     _.chain(files)
@@ -119,9 +128,4 @@ async function createExcelFile(officeSharedIds: string[], accessToken: string, o
       })
       .value()
   );
-
-  const spreadsheets = _.get(options, "spreadsheets");
-  spreadsheets.push(OFFICE_PATH);
-
-  return buildFromLocalExcel({ ...options, spreadsheets });
 }
