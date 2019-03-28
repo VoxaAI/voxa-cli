@@ -1,10 +1,8 @@
 import { expect } from "chai";
 import * as path from "path";
-import { configurationToExecute } from "./utils";
+import { configurations } from "./mocha.spec";
 
-const interactions = configurationToExecute();
-
-interactions.forEach(interactionFile => {
+configurations.forEach(interactionFile => {
   describe(`${interactionFile.name} Alexa`, () => {
     let interaction: any;
 
@@ -13,11 +11,13 @@ interactions.forEach(interactionFile => {
         return this.skip();
       }
 
-      interaction = await require(path.join(
+      const interactionPath = path.join(
         __dirname,
         interactionFile.speechPath,
         "alexa/en-US/production-interaction.json"
-      ));
+      );
+
+      interaction = await require(interactionPath);
     });
 
     describe("Interaction Model", () => {

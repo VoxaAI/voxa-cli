@@ -1,8 +1,10 @@
-import { all } from "bluebird";
+import { mapSeries } from "bluebird";
 import fs = require("fs-extra");
 import path = require("path");
 import { action } from "../src/commands/interaction";
 import { configurationToExecute } from "./utils";
+
+export let configurations: any[] = configurationToExecute();
 
 before(async function before() {
   this.timeout(20000);
@@ -23,13 +25,11 @@ before(async function before() {
   await fs.copy(original, destination);
 
   // run the actual command
-  const actionsToEvaluate = configurationToExecute().map(interaction => {
+  await mapSeries(configurations, interaction => {
     if (interaction.skip) {
       return;
     }
 
     return action({ path: __dirname, interactionFileName: interaction.interactionFileName });
   });
-
-  await all(actionsToEvaluate);
 });

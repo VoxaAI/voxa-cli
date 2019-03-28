@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fixed support for having multiple UTTERANCES tabs in the spreadsheet, Eg: UTTERANCES_MAIN, UTTERANCES_NUMBER, UTTERANCES_ETC
 
+### Added
+
+- Added support for OpenDocument spreadsheets in ods and fods format
+
 ## [2.1.0] - 2019-03-25
 
 ### Changed

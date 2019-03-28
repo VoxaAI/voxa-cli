@@ -1,0 +1,7 @@
+{
+  "platforms": ["dialogflow", "alexa"],
+  "spreadsheets": ["Voxa Cli Intents Utterances en-US.fods"],
+  "viewsPath": "out/opendocument/",
+  "speechPath": "out/opendocument/speech-assets",
+  "contentPath": "out/opendocument/content"
+}
