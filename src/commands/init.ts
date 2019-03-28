@@ -74,7 +74,7 @@ export async function action() {
 
       return noEmptyAnswer(input) && result
         ? true
-        : "Insert a proper google spreadsheet url, Office 365 sharepoint url, local file or local directory path. e.g. https://docs.google.com/spreadsheets/d/XXXXXXX/edit#gid=0, https://XXXXXX.sharepoint.com/:x:/g/personal/YYYYYY/ZZZZZZZ, /Users/local/file.xlsx or /Users/local/sheets/";
+        : "Insert a proper google spreadsheet url, Office 365 sharepoint url, local file or local folder path. e.g. https://docs.google.com/spreadsheets/d/XXXXXXX/edit#gid=0, https://XXXXXX.sharepoint.com/:x:/g/personal/YYYYYY/ZZZZZZZ, /Users/local/file.xlsx or /Users/local/sheets/";
     };
 
     const questions = [
