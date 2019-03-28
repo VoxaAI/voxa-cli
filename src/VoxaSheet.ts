@@ -21,6 +21,6 @@ export class SheetTypes {
   public static readonly VIEWS = "VIEWS_FILE";
 }
 
-export function getSheetType(voxaSheet: IVoxaSheet) {
+export function getSheetType(voxaSheet: IVoxaSheet): string {
   return (SheetTypes as any)[voxaSheet.type];
 }

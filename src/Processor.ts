@@ -148,9 +148,9 @@ export function intentUtterProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES
   const voxaSheetsIntent = voxaSheets.filter(voxaSheet =>
     _.includes([SheetTypes.INTENT], getSheetType(voxaSheet))
   );
-  let voxaSheetsUtter = voxaSheets.filter(voxaSheet =>
-    _.includes([SheetTypes.UTTERANCE], getSheetType(voxaSheet))
-  );
+  let voxaSheetsUtter = voxaSheets.filter(voxaSheet => {
+    return _.includes([SheetTypes.UTTERANCE], getSheetType(voxaSheet));
+  });
 
   voxaSheetsUtter = _.chain(voxaSheetsUtter)
     .reduce(
@@ -223,13 +223,15 @@ export function intentUtterProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES
               .map(_.toLower)
               .compact()
               .value() as string[];
+
             const canFulfillIntent = _.get(head, "canFulfillIntent", false) as boolean;
             const startIntent = _.get(head, "startIntent", false) as boolean;
             const endIntent = _.get(head, "endIntent", false) as boolean;
-            const samples = _.chain(voxaSheetsUtter)
+
+            const samples = _(voxaSheetsUtter)
               .filter({ spreadsheetId: voxaSheetIntent.spreadsheetId })
               .map(spreadSheet => spreadSheet.data[intentName] || [])
-              .head()
+              .flatten()
               .map("utterance")
               .compact()
               .uniq()
