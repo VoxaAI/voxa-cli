@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed support for having multiple UTTERANCES tabs in the spreadsheet, Eg: UTTERANCES_MAIN, UTTERANCES_NUMBER, UTTERANCES_ETC
+
 ## [2.1.0] - 2019-03-25
 
 ### Changed
