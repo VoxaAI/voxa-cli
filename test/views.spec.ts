@@ -1,10 +1,8 @@
 import { expect } from "chai";
 import * as path from "path";
-import { configurationToExecute } from "./utils";
+import { configurations } from "./mocha.spec";
 
-const interactions = configurationToExecute();
-
-interactions.forEach(interaction => {
+configurations.forEach(interaction => {
   describe(`${interaction.name} Views`, () => {
     let views: any;
     before(async function before() {

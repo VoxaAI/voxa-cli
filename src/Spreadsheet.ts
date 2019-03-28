@@ -19,7 +19,7 @@ function findLocalFiles(spreadsheet: string): string[] {
   if (fsStats.isDirectory()) {
     return fs
       .readdirSync(spreadsheet)
-      .filter(f => _.includes(f, "xlsx"))
+      .filter(f => _.endsWith(f, ".xlsx") || _.endsWith(f, ".ods") || _.endsWith(f, ".fods"))
       .map(f => path.join(spreadsheet, f));
   }
   return [spreadsheet];
@@ -37,8 +37,21 @@ function readFileCreateWorkbook(f: string) {
     spreadsheetTitle,
     sheetTitle: book.name,
     type: "none",
-    data: book.data
+    data: processBookData(book.data)
   }));
+}
+
+function processBookData(data: string[][]) {
+  // this is all because of a bug in node-xlsx where the first cell of the first tab get's a lot
+  // of garbage appended to it's content
+  const titleRow = data[0];
+  const firstColumnTitle = titleRow[0];
+  const split = firstColumnTitle.split("\n");
+  if (split.length > 1) {
+    titleRow[0] = split[split.length - 1];
+  }
+
+  return data;
 }
 
 function refactorExcelData(sheet: IVoxaSheet) {
@@ -164,7 +177,6 @@ export async function transformLocalExcel(options: any, authKeys: {}): Promise<I
     .map(findSheetType)
     .filter((sheet: IVoxaSheet) => _.get(sheet, "type") !== "none" && !_.isEmpty(sheet))
     .map(refactorExcelData)
-
     .value() as unknown) as IVoxaSheet[];
 
   return vsheet;

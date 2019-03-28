@@ -1,13 +1,11 @@
 import { expect, use } from "chai";
 import Chaifs = require("chai-fs");
 import path = require("path");
-import { configurationToExecute } from "./utils";
+import { configurations } from "./mocha.spec";
 
 use(Chaifs);
 
-const interactions = configurationToExecute();
-
-interactions.forEach(interactionFile => {
+configurations.forEach(interactionFile => {
   if (interactionFile.name === "Google") {
     describe("Media Assets", async () => {
       before(function before() {

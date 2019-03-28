@@ -1,10 +1,8 @@
 import { expect } from "chai";
 import * as path from "path";
-import { configurationToExecute } from "./utils";
+import { configurations } from "./mocha.spec";
 
-const interactions = configurationToExecute();
-
-interactions.forEach(interactionFile => {
+configurations.forEach(interactionFile => {
   describe(`${interactionFile.name} Dialogflow`, () => {
     let agent: any;
 
