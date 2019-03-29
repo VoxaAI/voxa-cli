@@ -1,6 +1,3 @@
-/// <reference types="node" />
-///
-
 import * as _Promise from "bluebird";
 import { auth, JWT } from "google-auth-library";
 import { google, sheets_v4 } from "googleapis";

@@ -1,6 +1,3 @@
-/// <reference types="node" />
-///
-
 import * as _Promise from "bluebird";
 import * as fs from "fs-extra";
 import * as _ from "lodash";
