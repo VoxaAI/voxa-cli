@@ -91,7 +91,7 @@ export function viewsProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES: stri
           option => pathLowerCase.includes(option)
         );
 
-        if (shouldBeArray) {
+        if (shouldBeArray && value) {
           const temp = (acc as any)[path] || [];
           temp.push(sanitizeView(value));
           value = temp;
