@@ -1,0 +1,9 @@
+{
+  "platforms": ["alexa", "dialogflow"],
+  "spreadsheets": [
+    "https://agencyrain-my.sharepoint.com/:x:/g/personal/rommelb_rain_agency/EeHb8cWB7r1MlEaPHFZakSQBDTs_ifYio1_vNvTu5s8Ykw?e=q8OF6t"
+  ],
+  "viewsPath": "out/office/",
+  "speechPath": "out/office/speech-assets",
+  "contentPath": "out/office/content"
+}

@@ -4,10 +4,10 @@ import * as fsExtra from "fs-extra";
 import * as _ from "lodash";
 import * as path from "path";
 import { AlexaSchema } from "./AlexaSchema";
+import { transform } from "./connectors/Spreadsheet";
 import { DialogflowSchema } from "./DialogflowSchema";
 import { downloadDirs } from "./Drive";
 import { IFileContent } from "./Schema";
-import { transform } from "./Spreadsheet";
 const fs = _Promise.promisifyAll(fsExtra);
 
 export type ISupportedPlatforms = "alexa" | "dialogflow";

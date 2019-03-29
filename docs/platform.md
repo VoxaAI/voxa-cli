@@ -10,9 +10,7 @@ You need to specify which platform you want to be generated.
 
 ```js
 {
-  "local-manifest": ...,
   "platform": ["alexa", "dialogflow"],
-  "content": ...,
   "spreadsheets": ...,
 }
 ```

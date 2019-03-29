@@ -8,3 +8,5 @@ interaction.json
 content
 *.xlsx
 test
+*_secret.json
+.voxa/

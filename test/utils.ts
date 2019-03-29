@@ -1,8 +1,7 @@
-import fs = require("fs-extra");
 import * as _ from "lodash";
-import path = require("path");
 
 let googleSecret: any;
+let officeSecret: any;
 try {
   // tslint:disable-next-line: no-var-requires
   googleSecret = require("./client_secret.json");
@@ -11,7 +10,15 @@ try {
   console.log("No client secret for google");
 }
 
-type interactionNames = "Google" | "Excel" | "OpenDocument";
+try {
+  // tslint:disable-next-line: no-var-requires
+  officeSecret = require("./azure_secret.json");
+} catch (e) {
+  // tslint:disable-next-line: no-console
+  console.log("No client secret for azure");
+}
+
+type interactionNames = "Google" | "Excel" | "Office365" | "OpenDocument";
 
 function loadInteraction(name: interactionNames) {
   try {
@@ -27,8 +34,14 @@ export function configurationToExecute() {
   const excelInteraction = loadInteraction("Excel");
   const openDocumentInteraction = loadInteraction("OpenDocument");
   const googleInteraction = loadInteraction("Google");
+  const Office365Interaction = loadInteraction("Office365");
+
   if (_.isEmpty(googleSecret)) {
     googleInteraction.skip = true;
   }
-  return [googleInteraction, excelInteraction, openDocumentInteraction];
+
+  if (_.isEmpty(officeSecret)) {
+    Office365Interaction.skip = true;
+  }
+  return [googleInteraction, excelInteraction, openDocumentInteraction, Office365Interaction];
 }

@@ -1,9 +1,11 @@
 # Project specifics
+.voxa/
 views.json
 views.map.json
 variables.map.json
 client-secret*
 client_secret*
+*_secret.json
 speech-content
 speech-assets
 speech
