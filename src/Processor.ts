@@ -82,7 +82,7 @@ export function invocationProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES:
 }
 
 export function viewsProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES: string[]) {
-  function sanitizeView(text: string) {
+  function sanitizeView(text: string = "") {
     return text
       .replace(/’/g, "'")
       .replace(/’/g, "'")
@@ -105,15 +105,15 @@ export function viewsProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES: stri
         if (_.isEmpty(path)) {
           return acc;
         }
-        const shouldBeArray = [".say", ".reprompt", ".tell", ".ask"].find(suffix =>
+        const shouldBeArray = [".text", ".say", ".reprompt", ".tell", ".ask"].find(suffix =>
           path.includes(suffix)
         );
         const isASuggestionChip = [".dialogflowsuggestions", ".facebooksuggestionchips"].find(
           option => pathLowerCase.includes(option)
         );
 
-        if (shouldBeArray && value) {
-          const temp = (acc as any)[path] || [];
+        if (shouldBeArray && _.isString(value) && !_.isEmpty(value)) {
+          const temp = _.get(acc, path, []) as string[];
           temp.push(sanitizeView(value));
           value = temp;
         }
