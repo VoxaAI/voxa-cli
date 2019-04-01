@@ -1,0 +1,7 @@
+{
+  "platforms": ["dialogflow", "alexa"],
+  "spreadsheets": ["Voxa Cli Intents Utterances en-US.fods"],
+  "viewsPath": "out/libreoffice/",
+  "speechPath": "out/libreoffice/speech-assets",
+  "contentPath": "out/libreoffice/content"
+}

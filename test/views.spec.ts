@@ -15,7 +15,7 @@ configurations.forEach(interaction => {
 
     it("should generate an en-US Launch.say", () => {
       expect(views["en-US"].translation.Launch).to.deep.equal({
-        say: ["Hello World!"]
+        say: ["Hello World!", "Hi World!"]
       });
     });
   });
