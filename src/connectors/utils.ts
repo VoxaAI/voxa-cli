@@ -50,7 +50,7 @@ export function rowFormatted(acc: any[], next: any, iindex: number, arr: any[]) 
   return acc;
 }
 
-function valueFormatted(val: any) {
+export function valueFormatted(val: any) {
   const valTemp = _.toLower(val);
 
   if (_.includes(["true", "yes"], valTemp)) {

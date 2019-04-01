@@ -27,6 +27,7 @@ import * as uuid from "uuid/v5";
 import { AGENT, BUILT_IN_INTENTS } from "./DialogflowDefault";
 import { IFileContent, IIntent, Schema } from "./Schema";
 import { IVoxaSheet } from "./VoxaSheet";
+import { formattedValue } from "./connectors/utils";
 
 const NAMESPACE = "dialogflow";
 const AVAILABLE_LOCALES = [
@@ -266,7 +267,7 @@ export class DialogflowSchema extends Schema {
     locale = locale.split("-")[0];
     this.builtIntents = intentsByPlatformAndEnvironments.map((rawIntent: IIntent) => {
       let { name, events } = rawIntent;
-      const { slotsDefinition } = rawIntent;
+      const { canFulfillIntent, slotsDefinition } = rawIntent;
       name = name.replace("AMAZON.", "");
       const fallbackIntent = name === "FallbackIntent";
       const action = fallbackIntent ? "input.unknown" : name;
@@ -301,7 +302,7 @@ export class DialogflowSchema extends Schema {
         ],
         priority: 500000,
         webhookUsed: true,
-        webhookForSlotFilling: false,
+        webhookForSlotFilling: formattedValue(canFulfillIntent),
         fallbackIntent,
         events
       };
