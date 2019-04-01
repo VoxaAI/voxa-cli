@@ -266,6 +266,7 @@ export class DialogflowSchema extends Schema {
     locale = locale.split("-")[0];
     this.builtIntents = intentsByPlatformAndEnvironments.map((rawIntent: IIntent) => {
       let { name, events } = rawIntent;
+      const { webhookForSlotFilling } = rawIntent;
       const { slotsDefinition } = rawIntent;
       name = name.replace("AMAZON.", "");
       const fallbackIntent = name === "FallbackIntent";
@@ -301,7 +302,7 @@ export class DialogflowSchema extends Schema {
         ],
         priority: 500000,
         webhookUsed: true,
-        webhookForSlotFilling: false,
+        webhookForSlotFilling,
         fallbackIntent,
         events
       };
