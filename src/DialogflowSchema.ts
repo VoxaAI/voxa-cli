@@ -24,10 +24,10 @@ import * as _Promise from "bluebird";
 import * as _ from "lodash";
 import * as path from "path";
 import * as uuid from "uuid/v5";
+import { valueFormatted } from "./connectors/utils";
 import { AGENT, BUILT_IN_INTENTS } from "./DialogflowDefault";
 import { IFileContent, IIntent, Schema } from "./Schema";
 import { IVoxaSheet } from "./VoxaSheet";
-import { valueFormatted } from "./connectors/utils";
 
 const NAMESPACE = "dialogflow";
 const AVAILABLE_LOCALES = [
