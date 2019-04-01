@@ -27,7 +27,7 @@ import * as uuid from "uuid/v5";
 import { AGENT, BUILT_IN_INTENTS } from "./DialogflowDefault";
 import { IFileContent, IIntent, Schema } from "./Schema";
 import { IVoxaSheet } from "./VoxaSheet";
-import { formattedValue } from "./connectors/utils";
+import { valueFormatted } from "./connectors/utils";
 
 const NAMESPACE = "dialogflow";
 const AVAILABLE_LOCALES = [
@@ -302,7 +302,7 @@ export class DialogflowSchema extends Schema {
         ],
         priority: 500000,
         webhookUsed: true,
-        webhookForSlotFilling: formattedValue(canFulfillIntent),
+        webhookForSlotFilling: valueFormatted(canFulfillIntent),
         fallbackIntent,
         events
       };
