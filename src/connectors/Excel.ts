@@ -45,13 +45,19 @@ function readFileCreateWorkbook(f: string) {
   if (!_.isString(spreadsheetTitle)) {
     return undefined;
   }
-  return workbook.map(book => ({
-    spreadsheetId,
-    spreadsheetTitle,
-    sheetTitle: book.name,
-    type: "none",
-    data: processBookData(book.data)
-  }));
+  return workbook.map(book => {
+    const data = _.chain(processBookData(book.data))
+      .filter(row => row.length)
+      .value();
+
+    return {
+      spreadsheetId,
+      spreadsheetTitle,
+      sheetTitle: book.name,
+      type: "none",
+      data
+    };
+  });
 }
 
 function refactorExcelData(sheet: IVoxaSheet) {
