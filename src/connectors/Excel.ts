@@ -50,7 +50,7 @@ function readFileCreateWorkbook(f: string) {
     spreadsheetTitle,
     sheetTitle: book.name,
     type: "none",
-    data: processBookData(book.data)
+    data: processBookData(book.data).filter(row => row.length)
   }));
 }
 
