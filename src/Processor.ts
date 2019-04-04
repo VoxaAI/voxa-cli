@@ -118,7 +118,7 @@ export function viewsProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES: stri
           value = temp;
         }
 
-        if (isASuggestionChip) {
+        if (!_.isEmpty(value) && isASuggestionChip) {
           value = value.split("\n").map((v: string) => v.trim());
         }
 
