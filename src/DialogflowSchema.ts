@@ -151,12 +151,16 @@ export class DialogflowSchema extends Schema {
 
     const language = locale.split("-")[0];
 
-    const agent = _.merge(AGENT, this.mergeManifest(environment), {
-      description: invocationName,
-      language,
-      supportedLanguages,
-      googleAssistant: { project: _.kebabCase(invocationName), startIntents, endIntentIds }
-    });
+    const agent = _.merge(
+      _.cloneDeep(AGENT),
+      _.cloneDeep(this.mergeManifest(environment)),
+      _.cloneDeep({
+        description: invocationName,
+        language,
+        supportedLanguages,
+        googleAssistant: { project: _.kebabCase(invocationName), startIntents, endIntentIds }
+      })
+    );
 
     const file: IFileContent = {
       path: path.join(
