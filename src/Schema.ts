@@ -295,6 +295,7 @@ export interface IIntent {
   samples: string[];
   slotsDefinition: ISlotDefinition[];
   canFulfillIntent: boolean;
+  webhookForSlotFilling: boolean;
   startIntent: boolean;
   signInRequired: boolean;
   endIntent: boolean;

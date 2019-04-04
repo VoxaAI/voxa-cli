@@ -35,6 +35,25 @@ configurations.forEach(interactionFile => {
       it("should set the GOOGLE_ASSISTANT_WELCOME intent as a startIntent", () => {
         expect(agent.googleAssistant.startIntents[0].intentId).to.equal(intent.id);
       });
+
+      it("should set webhookForSlotFilling to false", () => {
+        expect(intent.webhookForSlotFilling).to.be.false;
+      });
+    });
+
+    describe("NumberIntent", () => {
+      let intent: any;
+      before(async () => {
+        intent = await require(path.join(
+          __dirname,
+          interactionFile.speechPath,
+          "dialogflow/production/intents/NumberIntent.json"
+        ));
+      });
+
+      it("should set webhookForSlotFilling to true", () => {
+        expect(intent.webhookForSlotFilling).to.be.true;
+      });
     });
   });
 });

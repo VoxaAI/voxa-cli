@@ -210,7 +210,8 @@ export function intentUtterProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES
             "startIntent",
             "signInRequired",
             "endIntent",
-            "platformSlot"
+            "platformSlot",
+            "webhookForSlotFilling"
           ]);
           previousIntent = _.isEmpty(info.Intent) ? previousIntent : info.Intent;
           info.Intent = previousIntent;
@@ -245,6 +246,8 @@ export function intentUtterProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES
               .compact()
               .value() as string[];
 
+            const webhookForSlotFilling = (_.get(head, "webhookForSlotFilling", false) ||
+              _.get(head, "useWebhookForSlotFilling", false)) as boolean;
             const canFulfillIntent = _.get(head, "canFulfillIntent", false) as boolean;
             const startIntent = _.get(head, "startIntent", false) as boolean;
             const endIntent = _.get(head, "endIntent", false) as boolean;
@@ -273,6 +276,7 @@ export function intentUtterProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES
               name: intentName,
               samples,
               slotsDefinition,
+              webhookForSlotFilling,
               canFulfillIntent,
               startIntent,
               endIntent,
