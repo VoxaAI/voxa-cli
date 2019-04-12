@@ -166,16 +166,19 @@ export function slotProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES: strin
 }
 
 export function intentUtterProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES: string[]) {
-  const voxaSheetsIntent = _(voxaSheets)
-    .filter((voxaSheet: IVoxaSheet) => _.includes([SheetTypes.INTENT], getSheetType(voxaSheet)))
-    .value();
-  const voxaSheetsUtter = _(voxaSheets)
-    .filter((voxaSheet: IVoxaSheet) => _.includes([SheetTypes.UTTERANCE], getSheetType(voxaSheet)))
-    .reduce(reduceIntent("utterance"), [] as IVoxaSheet[]);
+  const voxaSheetsIntent = filterSheets(voxaSheets, [SheetTypes.INTENT]);
 
-  const voxaSheetResponses = _(voxaSheets)
-    .filter((voxaSheet: IVoxaSheet) => _.includes([SheetTypes.RESPONSES], getSheetType(voxaSheet)))
-    .reduce(reduceIntent("response"), [] as IVoxaSheet[]);
+  const voxaSheetsUtter = _.reduce(
+    filterSheets(voxaSheets, [SheetTypes.UTTERANCE]),
+    reduceIntent("utterance"),
+    [] as IVoxaSheet[]
+  );
+
+  const voxaSheetResponses = _.reduce(
+    filterSheets(voxaSheets, [SheetTypes.RESPONSES]),
+    reduceIntent("response"),
+    [] as IVoxaSheet[]
+  );
 
   const result = _.chain(voxaSheetsIntent)
     .map((voxaSheetIntent: IVoxaSheet) => {
@@ -333,6 +336,10 @@ export function publishingProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES:
     },
     [] as IPublishingInformation[]
   );
+}
+
+function filterSheets(voxaSheets: IVoxaSheet[], sheetTypes: string[]): IVoxaSheet[] {
+  return _.filter(voxaSheets, voxaSheet => _.includes(sheetTypes, getSheetType(voxaSheet)));
 }
 
 function reduceIntent(propName: string) {
