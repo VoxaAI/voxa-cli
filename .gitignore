@@ -1,4 +1,5 @@
 # Project specifics
+test/excel
 .voxa/
 views.json
 views.map.json

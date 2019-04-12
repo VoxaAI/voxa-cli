@@ -34,9 +34,13 @@ import {
 import { getSheetType, IVoxaSheet, SheetTypes } from "./VoxaSheet";
 
 export function sheetLocale(voxaSheet: IVoxaSheet, AVAILABLE_LOCALES: string[]) {
-  let locale = AVAILABLE_LOCALES.find((loc: string) =>
-    _.endsWith(_.toLower(voxaSheet.spreadsheetTitle), _.toLower(loc))
-  );
+  let locale = AVAILABLE_LOCALES.find((loc: string) => {
+    let lastDotIndex = _.lastIndexOf(voxaSheet.spreadsheetTitle, ".");
+    lastDotIndex = lastDotIndex === -1 ? voxaSheet.spreadsheetTitle.length : lastDotIndex;
+
+    const titleWithoutExtension = _.toLower(voxaSheet.spreadsheetTitle.slice(0, lastDotIndex));
+    return _.endsWith(titleWithoutExtension, _.toLower(loc));
+  });
   locale = locale || AVAILABLE_LOCALES[0];
 
   return locale;
