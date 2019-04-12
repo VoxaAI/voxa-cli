@@ -298,7 +298,7 @@ export class DialogflowSchema extends Schema {
       if (responses.length > 0) {
         messages.push({
           type: 0,
-          lang: "de",
+          lang: locale,
           speech: responses
         });
       }

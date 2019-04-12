@@ -55,5 +55,24 @@ configurations.forEach(interactionFile => {
         expect(intent.webhookForSlotFilling).to.be.true;
       });
     });
+
+    describe("JokeIntent", () => {
+      let intent: any;
+      before(async () => {
+        intent = await require(path.join(
+          __dirname,
+          interactionFile.speechPath,
+          "dialogflow/production/intents/JokeIntent.json"
+        ));
+      });
+      it("should set webhookUsed to false", () => {
+        expect(intent.webhookUsed).to.be.false;
+      });
+
+      it("should create a messages key with an array of the responses", () => {
+        expect(intent.responses[0].messages).to.have.lengthOf(1);
+        expect(intent.responses[0].messages[0].speech).to.have.lengthOf(3);
+      });
+    });
   });
 });
