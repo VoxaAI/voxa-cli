@@ -169,11 +169,8 @@ export function intentUtterProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES
   const voxaSheetsIntent = voxaSheets.filter(voxaSheet =>
     _.includes([SheetTypes.INTENT], getSheetType(voxaSheet))
   );
-  let voxaSheetsUtter = voxaSheets.filter(voxaSheet => {
-    return _.includes([SheetTypes.UTTERANCE], getSheetType(voxaSheet));
-  });
-
-  voxaSheetsUtter = _.chain(voxaSheetsUtter)
+  const voxaSheetsUtter = _(voxaSheets)
+    .filter(voxaSheet => _.includes([SheetTypes.UTTERANCE], getSheetType(voxaSheet)))
     .reduce(
       (acc, utter) => {
         utter.data = _.chain(utter.data)
@@ -190,8 +187,27 @@ export function intentUtterProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES
         return acc;
       },
       [] as IVoxaSheet[]
-    )
-    .value();
+    );
+
+  const voxaSheetResponses = voxaSheets
+    .filter(voxaSheet => _.includes([SheetTypes.RESPONSES], getSheetType(voxaSheet)))
+    .reduce(
+      (acc, utter) => {
+        utter.data = _.chain(utter.data)
+          .reduce((accData: Array<{}>, item: any) => {
+            _.map(item, (value, key) => {
+              accData.push({ intent: key, response: value });
+            });
+            return accData;
+          }, [])
+          .groupBy("intent")
+          .value();
+
+        acc.push(utter);
+        return acc;
+      },
+      [] as IVoxaSheet[]
+    );
 
   const result = _.chain(voxaSheetsIntent)
     .map(voxaSheetIntent => {
@@ -211,7 +227,8 @@ export function intentUtterProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES
             "signInRequired",
             "endIntent",
             "platformSlot",
-            "webhookForSlotFilling"
+            "webhookForSlotFilling",
+            "webhookUsed"
           ]);
           previousIntent = _.isEmpty(info.Intent) ? previousIntent : info.Intent;
           info.Intent = previousIntent;
@@ -248,6 +265,7 @@ export function intentUtterProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES
 
             const webhookForSlotFilling = (_.get(head, "webhookForSlotFilling", false) ||
               _.get(head, "useWebhookForSlotFilling", false)) as boolean;
+            const webhookUsed = _.get(head, "webhookUsed", true) as boolean;
             const canFulfillIntent = _.get(head, "canFulfillIntent", false) as boolean;
             const startIntent = _.get(head, "startIntent", false) as boolean;
             const endIntent = _.get(head, "endIntent", false) as boolean;
@@ -272,11 +290,22 @@ export function intentUtterProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES
               .uniq()
               .value();
 
+            const responses = _(voxaSheetResponses)
+              .filter({ spreadsheetId: voxaSheetIntent.spreadsheetId })
+              .map(spreadSheet => spreadSheet.data[intentName] || [])
+              .flatten()
+              .map("response")
+              .compact()
+              .uniq()
+              .value();
+
             const intent: IIntent = {
               name: intentName,
               samples,
+              responses,
               slotsDefinition,
               webhookForSlotFilling,
+              webhookUsed,
               canFulfillIntent,
               startIntent,
               endIntent,

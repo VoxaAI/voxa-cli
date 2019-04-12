@@ -293,8 +293,10 @@ export abstract class Schema {
 export interface IIntent {
   name: string;
   samples: string[];
+  responses: string[];
   slotsDefinition: ISlotDefinition[];
   canFulfillIntent: boolean;
+  webhookUsed: boolean;
   webhookForSlotFilling: boolean;
   startIntent: boolean;
   signInRequired: boolean;
