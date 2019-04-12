@@ -70,6 +70,12 @@ const AVAILABLE_LOCALES = [
   "sv-SE"
 ];
 
+export interface IDialogflowMessage {
+  type: number;
+  lang: string;
+  speech: string[];
+}
+
 export class DialogflowSchema extends Schema {
   public environment = "staging";
   public builtIntents = [] as any;
@@ -275,8 +281,7 @@ export class DialogflowSchema extends Schema {
     locale = this.getLocale(locale);
     this.builtIntents = intentsByPlatformAndEnvironments.map((rawIntent: IIntent) => {
       let { name, events } = rawIntent;
-      const { webhookForSlotFilling } = rawIntent;
-      const { slotsDefinition } = rawIntent;
+      const { webhookForSlotFilling, slotsDefinition, responses, webhookUsed } = rawIntent;
       name = name.replace("AMAZON.", "");
       const fallbackIntent = name === "FallbackIntent";
       const action = fallbackIntent ? "input.unknown" : name;
@@ -294,6 +299,15 @@ export class DialogflowSchema extends Schema {
         }))
         .value();
 
+      const messages = [];
+      if (responses.length > 0) {
+        messages.push({
+          type: 0,
+          lang: locale,
+          speech: responses
+        });
+      }
+
       const intent = {
         name,
         auto: true,
@@ -304,13 +318,13 @@ export class DialogflowSchema extends Schema {
             action,
             affectedContexts: [],
             parameters,
-            messages: [],
+            messages,
             defaultResponsePlatforms: {},
             speech: []
           }
         ],
         priority: 500000,
-        webhookUsed: true,
+        webhookUsed,
         webhookForSlotFilling,
         fallbackIntent,
         events

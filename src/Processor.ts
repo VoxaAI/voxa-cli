@@ -25,7 +25,7 @@ import * as _ from "lodash";
 import {
   IDownload,
   IIntent,
-  Invocation,
+  IInvocation,
   IPublishingInformation,
   ISlot,
   ISlotSynonymns,
@@ -81,7 +81,7 @@ export function invocationProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES:
 
       return acc;
     },
-    [] as Invocation[]
+    [] as IInvocation[]
   );
 }
 
@@ -170,35 +170,22 @@ export function slotProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES: strin
 }
 
 export function intentUtterProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES: string[]) {
-  const voxaSheetsIntent = voxaSheets.filter(voxaSheet =>
-    _.includes([SheetTypes.INTENT], getSheetType(voxaSheet))
+  const voxaSheetsIntent = filterSheets(voxaSheets, [SheetTypes.INTENT]);
+
+  const voxaSheetsUtter = _.reduce(
+    filterSheets(voxaSheets, [SheetTypes.UTTERANCE]),
+    reduceIntent("utterance"),
+    [] as IVoxaSheet[]
   );
-  let voxaSheetsUtter = voxaSheets.filter(voxaSheet => {
-    return _.includes([SheetTypes.UTTERANCE], getSheetType(voxaSheet));
-  });
 
-  voxaSheetsUtter = _.chain(voxaSheetsUtter)
-    .reduce(
-      (acc, utter) => {
-        utter.data = _.chain(utter.data)
-          .reduce((accData: Array<{}>, item: any) => {
-            _.map(item, (value, key) => {
-              accData.push({ intent: key, utterance: value });
-            });
-            return accData;
-          }, [])
-          .groupBy("intent")
-          .value();
-
-        acc.push(utter);
-        return acc;
-      },
-      [] as IVoxaSheet[]
-    )
-    .value();
+  const voxaSheetResponses = _.reduce(
+    filterSheets(voxaSheets, [SheetTypes.RESPONSES]),
+    reduceIntent("response"),
+    [] as IVoxaSheet[]
+  );
 
   const result = _.chain(voxaSheetsIntent)
-    .map(voxaSheetIntent => {
+    .map((voxaSheetIntent: IVoxaSheet) => {
       const locale = sheetLocale(voxaSheetIntent, AVAILABLE_LOCALES);
       let previousIntent: string;
       voxaSheetIntent.data = _.chain(voxaSheetIntent.data)
@@ -215,7 +202,8 @@ export function intentUtterProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES
             "signInRequired",
             "endIntent",
             "platformSlot",
-            "webhookForSlotFilling"
+            "webhookForSlotFilling",
+            "webhookUsed"
           ]);
           previousIntent = _.isEmpty(info.Intent) ? previousIntent : info.Intent;
           info.Intent = previousIntent;
@@ -226,7 +214,7 @@ export function intentUtterProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES
         .groupBy("Intent")
         .toPairs()
         .reduce(
-          (acc, item) => {
+          (acc: IIntent[], item: any) => {
             const intentName = item[0] as string;
             const head = _.head(item[1]);
             const events = _.chain(head)
@@ -252,22 +240,28 @@ export function intentUtterProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES
 
             const webhookForSlotFilling = (_.get(head, "webhookForSlotFilling", false) ||
               _.get(head, "useWebhookForSlotFilling", false)) as boolean;
+            const webhookUsed = _.get(head, "webhookUsed", true) as boolean;
             const canFulfillIntent = _.get(head, "canFulfillIntent", false) as boolean;
             const startIntent = _.get(head, "startIntent", false) as boolean;
             const endIntent = _.get(head, "endIntent", false) as boolean;
 
-            const samples = _(voxaSheetsUtter)
-              .filter({ spreadsheetId: voxaSheetIntent.spreadsheetId })
-              .map(spreadSheet => spreadSheet.data[intentName] || [])
-              .flatten()
-              .map("utterance")
-              .compact()
-              .uniq()
-              .value();
+            const samples = getIntentValueList(
+              voxaSheetsUtter,
+              voxaSheetIntent.spreadsheetId,
+              intentName,
+              "utterance"
+            );
+
+            const responses = getIntentValueList(
+              voxaSheetResponses,
+              voxaSheetIntent.spreadsheetId,
+              intentName,
+              "response"
+            );
 
             const slotsDefinition = _.chain(item[1])
               .filter("slotName")
-              .map(slot => ({
+              .map((slot: any) => ({
                 name: slot.slotName,
                 type: slot.slotType,
                 platform: slot.platformSlot
@@ -279,8 +273,10 @@ export function intentUtterProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES
             const intent: IIntent = {
               name: intentName,
               samples,
+              responses,
               slotsDefinition,
               webhookForSlotFilling,
+              webhookUsed,
               canFulfillIntent,
               startIntent,
               endIntent,
@@ -303,7 +299,6 @@ export function intentUtterProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES
     .flattenDeep()
     .value();
 
-  // console.log('result', result);
   return result as IIntent[];
 }
 
@@ -345,4 +340,43 @@ export function publishingProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES:
     },
     [] as IPublishingInformation[]
   );
+}
+
+function filterSheets(voxaSheets: IVoxaSheet[], sheetTypes: string[]): IVoxaSheet[] {
+  return _.filter(voxaSheets, voxaSheet => _.includes(sheetTypes, getSheetType(voxaSheet)));
+}
+
+function reduceIntent(propName: string) {
+  return (acc: any, row: any) => {
+    row.data = _.chain(row.data)
+      .reduce((accData: Array<{}>, item: any) => {
+        _.map(item, (value, key) => {
+          const obj: any = { intent: key };
+          obj[propName] = value;
+          accData.push(obj);
+        });
+        return accData;
+      }, [])
+      .groupBy("intent")
+      .value();
+
+    acc.push(row);
+    return acc;
+  };
+}
+
+function getIntentValueList(
+  voxaSheets: IVoxaSheet[],
+  spreadsheetId: string,
+  intentName: string,
+  key: string
+): string[] {
+  return _(voxaSheets)
+    .filter(sheet => sheet.spreadsheetId === spreadsheetId)
+    .map((spreadSheet: IVoxaSheet) => spreadSheet.data[intentName] || [])
+    .flatten()
+    .map(key)
+    .compact()
+    .uniq()
+    .value();
 }

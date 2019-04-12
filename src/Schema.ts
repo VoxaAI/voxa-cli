@@ -42,7 +42,7 @@ export abstract class Schema {
   public AVAILABLE_LOCALES: string[];
   public fileContent: IFileContent[] = [];
   public views: IView[] = [];
-  public invocations: Invocation[] = [];
+  public invocations: IInvocation[] = [];
   public publishing: IPublishingInformation[] = [];
 
   public NAMESPACE: string;
@@ -332,8 +332,10 @@ export abstract class Schema {
 export interface IIntent {
   name: string;
   samples: string[];
+  responses: string[];
   slotsDefinition: ISlotDefinition[];
   canFulfillIntent: boolean;
+  webhookUsed: boolean;
   webhookForSlotFilling: boolean;
   startIntent: boolean;
   signInRequired: boolean;
@@ -354,7 +356,7 @@ export interface IFileContent {
   // promise?: Promise<void>;
 }
 
-export interface Invocation {
+export interface IInvocation {
   locale: string;
   name: string;
   environment: string;
