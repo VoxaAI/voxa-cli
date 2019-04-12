@@ -40,7 +40,7 @@ function findLocalFiles(spreadsheet: string): string[] {
 
 function readFileCreateWorkbook(f: string) {
   const workbook = xlsx.parse(f);
-  const spreadsheetTitle = _.last(f.split("/"));
+  const spreadsheetTitle = _.last(f.split("/")) as string;
   const spreadsheetId = f;
   if (!_.isString(spreadsheetTitle)) {
     return undefined;

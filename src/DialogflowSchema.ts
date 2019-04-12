@@ -57,6 +57,7 @@ const AVAILABLE_LOCALES = [
   "ja-JP",
   "ko-KR",
   "es-ES",
+  "es-MX",
   "pt-BR",
   "it-IT",
   "ru-RU",
@@ -101,6 +102,10 @@ export class DialogflowSchema extends Schema {
       }
     };
     this.fileContent.push(file);
+  }
+
+  public getLocale(locale: string) {
+    return locale.split("-")[0];
   }
 
   public buildAgent(locale: string, environment: string) {
@@ -149,7 +154,7 @@ export class DialogflowSchema extends Schema {
       .uniq()
       .value();
 
-    const language = locale.split("-")[0];
+    const language = this.getLocale(locale);
 
     const agent = _.merge(
       _.cloneDeep(AGENT),
@@ -181,7 +186,7 @@ export class DialogflowSchema extends Schema {
       environment
     );
 
-    locale = locale.split("-")[0];
+    locale = this.getLocale(locale);
     const intents = intentsByPlatformAndEnvironments.map((rawIntent: IIntent) => {
       let { name, samples, events } = rawIntent;
       const { slotsDefinition } = rawIntent;
@@ -267,7 +272,7 @@ export class DialogflowSchema extends Schema {
       environment
     );
 
-    locale = locale.split("-")[0];
+    locale = this.getLocale(locale);
     this.builtIntents = intentsByPlatformAndEnvironments.map((rawIntent: IIntent) => {
       let { name, events } = rawIntent;
       const { webhookForSlotFilling } = rawIntent;
@@ -329,9 +334,9 @@ export class DialogflowSchema extends Schema {
   }
 
   public buildEntities(locale: string, environment: string) {
-    const localeEntity = locale.split("-")[0];
+    const localeEntity = this.getLocale(locale);
 
-    this.slots
+    this.getSlotsByIntentsDefinition(locale, environment)
       .filter(slot => !_.includes(slot.name, "@sys."))
       .forEach(rawSlot => {
         const { name, values } = rawSlot;

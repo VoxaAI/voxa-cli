@@ -243,6 +243,45 @@ export abstract class Schema {
     });
   }
 
+  public getIntentsDefinition(locale: string, environment: string) {
+    const intentsByPlatformAndEnvironments = this.intentsByPlatformAndEnvironments(
+      locale,
+      environment
+    );
+
+    const intents = intentsByPlatformAndEnvironments.map((rawIntent: IIntent) => {
+      const { name, samples } = rawIntent;
+      let { slotsDefinition } = rawIntent;
+      slotsDefinition = _(slotsDefinition)
+        .filter(slot => this.filterByPlatform(slot))
+        .map((slot: any) => {
+          return {
+            type: slot.type,
+            name: slot.name.replace("{", "").replace("}", "")
+          };
+        })
+        .value();
+
+      const intent = { name, samples, slots: slotsDefinition };
+      return intent;
+    });
+
+    return intents;
+  }
+
+  public getSlotsByIntentsDefinition(locale: string, environment: string): ISlot[] {
+    const intents = this.getIntentsDefinition(locale, environment);
+    const slotsDefinitionNames = _.chain(intents)
+      .map("slots")
+      .flatten()
+      .map("type")
+      .uniq()
+      .value();
+
+    return this.slots.filter(
+      slot => slot.locale === locale && _.includes(slotsDefinitionNames, slot.name)
+    );
+  }
   public mergeManifest(environment: string): any {
     const manifest = {};
     const NAMESPACE = this.NAMESPACE;
