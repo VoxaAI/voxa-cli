@@ -21,6 +21,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed empty suggestion chip on VUI
 - Fixed overlap on utterance and slots
 
+### Removed
+
+- Removed unused dependencies
+
 ## [2.1.1] - 2019-03-29
 
 ### Fixed

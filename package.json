@@ -1,6 +1,6 @@
 {
   "name": "voxa-cli",
-  "version": "2.1.2-alpha8",
+  "version": "2.1.2-alpha9",
   "description": "The Voxa CLI tools",
   "bin": {
     "voxa": "./bin/voxa.js"
@@ -50,7 +50,6 @@
     "@types/uuid": "^3.4.4",
     "axios": "^0.18.0",
     "bluebird": "^3.5.2",
-    "chai": "^4.2.0",
     "colors": "^1.3.3",
     "commander": "^2.19.0",
     "fs-extra": "^7.0.0",
@@ -62,7 +61,6 @@
     "node-xlsx": "^0.14.1",
     "pad": "^2.2.2",
     "path": "^0.12.7",
-    "pretty-error": "^2.1.1",
     "qs": "^6.7.0",
     "rxjs": "^6.4.0",
     "source-map-support": "^0.5.9",
@@ -73,6 +71,7 @@
     "@types/chai-fs": "^2.0.1",
     "@types/mocha": "^5.2.6",
     "@types/node": "^10.10.1",
+    "chai": "^4.2.0",
     "chai-fs": "^2.0.0",
     "husky": "^1.3.1",
     "mocha": "^6.0.2",
