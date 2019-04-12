@@ -238,14 +238,19 @@ export function intentUtterProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES
             const startIntent = _.get(head, "startIntent", false) as boolean;
             const endIntent = _.get(head, "endIntent", false) as boolean;
 
-            const samples = _(voxaSheetsUtter)
-              .filter(sheet => sheet.spreadsheetId === voxaSheetIntent.spreadsheetId)
-              .map((spreadSheet: IVoxaSheet) => spreadSheet.data[intentName] || [])
-              .flatten()
-              .map("utterance")
-              .compact()
-              .uniq()
-              .value();
+            const samples = getIntentValueList(
+              voxaSheetsUtter,
+              voxaSheetIntent.spreadsheetId,
+              intentName,
+              "utterance"
+            );
+
+            const responses = getIntentValueList(
+              voxaSheetResponses,
+              voxaSheetIntent.spreadsheetId,
+              intentName,
+              "response"
+            );
 
             const slotsDefinition = _.chain(item[1])
               .filter("slotName")
@@ -254,15 +259,6 @@ export function intentUtterProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES
                 type: slot.slotType,
                 platform: slot.platformSlot
               }))
-              .compact()
-              .uniq()
-              .value();
-
-            const responses = _(voxaSheetResponses)
-              .filter(sheet => sheet.spreadsheetId === voxaSheetIntent.spreadsheetId)
-              .map((spreadSheet: IVoxaSheet) => spreadSheet.data[intentName] || [])
-              .flatten()
-              .map("response")
               .compact()
               .uniq()
               .value();
@@ -356,4 +352,20 @@ function reduceIntent(propName: string) {
     acc.push(row);
     return acc;
   };
+}
+
+function getIntentValueList(
+  voxaSheets: IVoxaSheet[],
+  spreadsheetId: string,
+  intentName: string,
+  key: string
+): string[] {
+  return _(voxaSheets)
+    .filter(sheet => sheet.spreadsheetId === spreadsheetId)
+    .map((spreadSheet: IVoxaSheet) => spreadSheet.data[intentName] || [])
+    .flatten()
+    .map(key)
+    .compact()
+    .uniq()
+    .value();
 }
