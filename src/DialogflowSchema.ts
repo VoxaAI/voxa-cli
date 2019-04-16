@@ -213,7 +213,8 @@ export class DialogflowSchema extends Schema {
           dataType: _.includes(slot.type, "@sys.") ? slot.type : `@${slot.type}`,
           name: slot.name,
           value: `$${slot.name}`,
-          isList: false
+          isList: false,
+          required: slot.required
         }))
         .value();
 
@@ -295,7 +296,8 @@ export class DialogflowSchema extends Schema {
           dataType: _.includes(slot.type, "@sys.") ? slot.type : `@${_.kebabCase(slot.type)}`,
           name: slot.name.replace("{", "").replace("}", ""),
           value: `$${slot.name.replace("{", "").replace("}", "")}`,
-          isList: false
+          isList: false,
+          required: slot.required
         }))
         .value();
 
