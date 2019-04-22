@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added support for webhookForSlotFilling (dialogflow)
 - Added support for webhookUsed (dialogflow)
 - Added suppport for intent responses (dialogflow)
+- Added support for required slots
 
 ### Fixed
 
@@ -20,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Filter out empty rows when processing a local spreadsheet
 - Fixed empty suggestion chip on VUI
 - Fixed overlap on utterance and slots
+- Fixed views have an array path with object
 
 ### Removed
 

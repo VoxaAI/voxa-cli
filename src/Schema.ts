@@ -130,6 +130,7 @@ export abstract class Schema {
 
       if (_.isArray(value)) {
         variables = _.chain(value)
+          .filter(v => _.isString(v))
           .map(v => v.match(/{([\s\S]+?)}/g))
           .flatten()
           .compact()
