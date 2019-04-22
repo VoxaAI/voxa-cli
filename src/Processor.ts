@@ -194,6 +194,7 @@ export function intentUtterProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES
             "Intent",
             "slotType",
             "slotName",
+            "slotRequired",
             "environment",
             "platformIntent",
             "events",
@@ -264,7 +265,8 @@ export function intentUtterProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES
               .map((slot: any) => ({
                 name: slot.slotName,
                 type: slot.slotType,
-                platform: slot.platformSlot
+                platform: slot.platformSlot,
+                required: slot.slotRequired || false
               }))
               .compact()
               .uniq()

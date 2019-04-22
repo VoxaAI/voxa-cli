@@ -51,6 +51,11 @@ configurations.forEach(interactionFile => {
         ));
       });
 
+      it("should set slotRequired for the first slot to be false", () => {
+        expect(intent.responses[0].parameters).to.have.lengthOf(1);
+        expect(intent.responses[0].parameters[0].required).to.be.false;
+      });
+
       it("should set webhookForSlotFilling to true", () => {
         expect(intent.webhookForSlotFilling).to.be.true;
       });
@@ -72,6 +77,23 @@ configurations.forEach(interactionFile => {
       it("should create a messages key with an array of the responses", () => {
         expect(intent.responses[0].messages).to.have.lengthOf(1);
         expect(intent.responses[0].messages[0].speech).to.have.lengthOf(3);
+      });
+    });
+
+    describe("DateIntent", () => {
+      let intent: any;
+
+      before(async () => {
+        intent = await require(path.join(
+          __dirname,
+          interactionFile.speechPath,
+          "dialogflow/production/intents/DateIntent.json"
+        ));
+      });
+
+      it("should set slotRequired for the first slot to be true", () => {
+        expect(intent.responses[0].parameters).to.have.lengthOf(1);
+        expect(intent.responses[0].parameters[0].required).to.be.true;
       });
     });
   });

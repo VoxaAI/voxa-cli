@@ -366,6 +366,7 @@ export interface ISlotDefinition {
   name: string;
   type: string;
   platform?: string;
+  required?: boolean;
   // samples: string[];
 }
 
