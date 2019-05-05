@@ -20,7 +20,9 @@
     "report": "nyc report --reporter=json && nyc report --reporter html && nyc report --reporter=lcov && nyc report --reporter=cobertura",
     "lint": "tslint --config tslint.json --project tsconfig.json --exclude \"**/*.json\"",
     "lint-fix": "tslint --fix --config tslint.json --project tsconfig.json --exclude \"**/*.json\"",
-    "tsc": "rm -rf lib && tsc"
+    "tsc": "rm -rf lib && tsc",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "author": "Rain Agency <npm@rain.agency> (http://rain.agency)",
   "contributors": [
@@ -66,7 +68,8 @@
     "qs": "^6.7.0",
     "rxjs": "^6.4.0",
     "source-map-support": "^0.5.9",
-    "uuid": "^3.3.2"
+    "uuid": "^3.3.2",
+    "snyk": "^1.161.1"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
@@ -94,5 +97,6 @@
     "hooks": {
       "pre-commit": "pretty-quick --staged && yarn lint && yarn tsc && yarn test"
     }
-  }
+  },
+  "snyk": true
 }
