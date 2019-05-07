@@ -18,8 +18,8 @@
     "test": "mocha test/*.spec.* test/**/*.spec.*",
     "test-ci": "nyc mocha --colors --reporter mocha-jenkins-reporter test test/*.spec.* test/**/*.spec.*",
     "report": "nyc report --reporter=json && nyc report --reporter html && nyc report --reporter=lcov && nyc report --reporter=cobertura",
-    "lint": "tslint --config tslint.json --project tsconfig.json --exclude \"**/*.json\"",
-    "lint-fix": "tslint --fix --config tslint.json --project tsconfig.json --exclude \"**/*.json\"",
+    "lint": "tslint --config tslint.json --project tsconfig.json --exclude \"**/*.json\" --exclude \"templates/*\"",
+    "lint-fix": "tslint --fix --config tslint.json --project tsconfig.json --exclude \"**/*.json\" --exclude \"templates/*\"",
     "tsc": "rm -rf lib && tsc",
     "create": "npm run tsc && node bin/voxa.js create"
   },
