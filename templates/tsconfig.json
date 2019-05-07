@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "preserveConstEnums": true,
+    "strictNullChecks": true,
+    "sourceMap": true,
+    "target": "es5",
+    "allowJs": true,
+    "outDir": ".build",
+    "moduleResolution": "node",
+    "lib": ["es2015"],
+    "resolveJsonModule": true
+  },
+  "include": ["./src/", "./test/"]
+}

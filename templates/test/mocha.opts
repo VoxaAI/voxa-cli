@@ -1,0 +1,6 @@
+--require ts-node/register
+--watch-extensions ts,yml
+--recursive
+--report-dir reports/
+--reporter-options junit_report_path=./reports/test-results.xml
+--colors

@@ -1,0 +1,45 @@
+service: {{ service }}
+
+plugins:
+  - serverless-plugin-typescript
+
+custom:
+  config: ${file(src/config/index.js):asFunction}
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+
+  environment:
+    NODE_ENV: ${opt:stage}
+
+functions:
+  alexa:
+    timeout: 7
+    handler: src/handler.alexaLambda
+    events:
+      - alexaSkill: ${env:SKILL_ID}
+
+package:
+  include:
+    - src/config/*.json
+
+  exclude:
+    - scripts/**
+    - assets/**
+    - reports/**
+    - speech-assets/**
+
+resources:
+  Resources:
+    assets:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.config.s3.bucket}
+        AccessControl: PublicRead
+        CorsConfiguration:
+          CorsRules:
+            - AllowedOrigins:
+                - "*"
+              AllowedMethods:
+                - GET
