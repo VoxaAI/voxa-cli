@@ -20,7 +20,8 @@
     "report": "nyc report --reporter=json && nyc report --reporter html && nyc report --reporter=lcov && nyc report --reporter=cobertura",
     "lint": "tslint --config tslint.json --project tsconfig.json --exclude \"**/*.json\"",
     "lint-fix": "tslint --fix --config tslint.json --project tsconfig.json --exclude \"**/*.json\"",
-    "tsc": "rm -rf lib && tsc"
+    "tsc": "rm -rf lib && tsc",
+    "create": "npm run tsc && node bin/voxa.js create"
   },
   "author": "Rain Agency <npm@rain.agency> (http://rain.agency)",
   "contributors": [
@@ -56,6 +57,7 @@
     "google-auth-library": "^2.0.0",
     "google-spreadsheet": "^2.0.7",
     "googleapis": "^33.0.0",
+    "handlebars": "^4.1.2",
     "inquirer": "^6.2.2",
     "lodash": "^4.17.11",
     "node-xlsx": "^0.14.1",
