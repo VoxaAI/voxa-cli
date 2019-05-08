@@ -1,17 +1,15 @@
 const mime = require("alexa-mime");
-const _ = require("lodash");
 const nock = require("nock");
 const path = require("path");
 const simple = require("simple-mock");
 const skill = require("../src/app");
 const views = require("../src/app/views.json");
 
-
 const describeWrapper = {
   clear: () => {
     simple.restore();
     nock.cleanAll();
-  }
+  },
 };
 
 mime(

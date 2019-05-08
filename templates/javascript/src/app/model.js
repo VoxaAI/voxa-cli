@@ -1,14 +1,13 @@
 const _ = require("lodash");
 
 class Model {
-  static deserialize(data, voxaEvent) {
-    return new this(data);
+  constructor(data = {}) {
+    this.name = "World";
+    _.assign(this, data);
   }
 
-  name = "World";
-
-  constructor(data = {}) {
-    _.assign(this, data);
+  static deserialize(data) {
+    return new this(data);
   }
 
   serialize() {

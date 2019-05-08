@@ -1,1 +1,2 @@
-exports.module = { alexaLambda, handler } = require("./app");
+const { alexaLambda, handler } = require("./app");
+exports.module = { alexaLambda, handler };

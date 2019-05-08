@@ -5,4 +5,4 @@ function register(voxaApp) {
   });
 }
 
-module.exports = { register };
+module.exports = register;

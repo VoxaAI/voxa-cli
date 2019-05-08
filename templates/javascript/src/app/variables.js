@@ -1,3 +1,3 @@
-export function name(voxaEvent) {
+exports.name = function(voxaEvent) {
   return voxaEvent.model.name;
-}
+};

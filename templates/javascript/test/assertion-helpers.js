@@ -1,7 +1,7 @@
-const _ = require('lodash');
-const views = require('./src/app/views.json');
+const _ = require("lodash");
+const views = require("./src/app/views.json");
 
-export function getView(viewName, variables, locale) {
+function getView(viewName, variables, locale) {
   function getStatement(path) {
     const viewObject = _.get(views, `${locale}.translation.${path}`);
     if (!viewObject) {
@@ -52,3 +52,5 @@ export function getView(viewName, variables, locale) {
     return reply;
   }
 }
+
+module.exports = { getView };

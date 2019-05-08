@@ -1,15 +1,13 @@
 {
-  "extends": ["airbnb-base", "plugin:prettier/recommended"],
+  "extends": ["plugin:prettier/recommended"],
   "parserOptions": {
-    "sourceType": "script"
+    "sourceType": "script",
+    "ecmaVersion": 7,
+    "ecmaFeatures": {
+      "impliedStrict": false
+    }
   },
-  "installedESLint": true,
-  "ecmaFeatures": {
-    "impliedStrict": false
-  },
-  "plugins": [
-    "import"
-  ],
+  "plugins": [],
   "rules": {
     "consistent-return": "warn",
     "no-multi-assign": "warn",

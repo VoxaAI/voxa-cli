@@ -1,7 +1,7 @@
-const mainStates = require("./main.states").register;
+const mainStates = require("./main.states");
 
 function register(voxaApp) {
   mainStates(voxaApp);
 }
 
-module.exports = { register };
+module.exports = register;
