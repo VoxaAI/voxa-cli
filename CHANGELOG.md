@@ -7,11 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.1.2] - 2019-05-08
+
 ### Added
 
+- Added more locales to Alexa and Dialogflow
 - Added support for webhookForSlotFilling (dialogflow)
 - Added support for webhookUsed (dialogflow)
-- Added suppport for intent responses (dialogflow)
+- Added support for intent responses (dialogflow)
 - Added support for required slots
 
 ### Fixed
@@ -22,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed empty suggestion chip on VUI
 - Fixed overlap on utterance and slots
 - Fixed views have an array path with object
+- Fixed issue with pt-br is not attached to its parent
 
 ### Removed
 
@@ -98,7 +102,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add support for Alexa, Dialogflow
 - Add support to download other sheet
 
-[unreleased]: https://github.com/VoxaAI/voxa-cli/compare/2.1.1...staging
+[unreleased]: https://github.com/VoxaAI/voxa-cli/compare/2.1.2...staging
+[2.1.2]: https://github.com/VoxaAI/voxa-cli/compare/2.1.1...2.1.2
 [2.1.1]: https://github.com/VoxaAI/voxa-cli/compare/2.1.0...2.1.1
 [2.1.0]: https://github.com/VoxaAI/voxa-cli/compare/2.0.1...2.1.0
 [2.0.1]: https://github.com/VoxaAI/voxa-cli/compare/2.0.0...2.0.1
