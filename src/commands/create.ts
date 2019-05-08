@@ -44,9 +44,9 @@ export async function action() {
   async function executePrompt(): Promise<any> {
     return inquirer.prompt(observe).then(async (answers: any) => {
       try {
-        const { appName, serverless, canfulfill, language } = answers;
+        const { appName, serverless, canfulfill, language, author } = answers;
         const folderName = _.kebabCase(appName);
-        await copyPackageAndReadmeFiles(appName, serverless, folderName, language);
+        await copyPackageAndReadmeFiles(appName, serverless, folderName, author, language);
         if (serverless) {
           await copyServerless(folderName, language);
         }
@@ -63,7 +63,13 @@ export async function action() {
       {
         type: "input",
         name: "appName",
-        message: "What's the name of your Voxa app?"
+        message: "Please enter the name of your app"
+      },
+      {
+        type: "input",
+        name: "author",
+        message: "Please enter your name/company",
+        default: os.userInfo().username
       },
       {
         type: "list",
@@ -112,6 +118,7 @@ async function copyPackageAndReadmeFiles(
   appName: string,
   serverless: boolean,
   folderName: string,
+  author: string,
   language: string
 ) {
   const readmeContent = await getTemplateFile(language, "README.md");
@@ -126,7 +133,7 @@ async function copyPackageAndReadmeFiles(
   const nodePackageTemplate = Handlebars.compile(nodePackageContent);
   const nodePackageData = {
     name: folderName,
-    author: os.userInfo().username
+    author
   };
   const nodePackageResult = nodePackageTemplate(nodePackageData);
   const outputFilePromises = [
