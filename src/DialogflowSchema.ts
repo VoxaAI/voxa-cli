@@ -29,23 +29,9 @@ import { IFileContent, IIntent, Schema } from "./Schema";
 import { IVoxaSheet } from "./VoxaSheet";
 
 const NAMESPACE = "dialogflow";
-const AVAILABLE_LOCALES = [
-  "en",
-  "de",
-  "fr",
-  "ja",
-  "ko",
-  "es",
-  "pt",
-  "it",
-  "ru",
-  "hi",
-  "th",
-  "id",
-  "da",
-  "no",
-  "nl",
-  "sv",
+// https://developers.google.com/actions/localization/languages-locales
+
+const LOCALES = _.chain([
   "en-US",
   "en-AU",
   "en-CA",
@@ -57,6 +43,7 @@ const AVAILABLE_LOCALES = [
   "ja-JP",
   "ko-KR",
   "es-ES",
+  "es-US",
   "es-MX",
   "pt-BR",
   "it-IT",
@@ -67,8 +54,22 @@ const AVAILABLE_LOCALES = [
   "da-DK",
   "no-NO",
   "nl-NL",
-  "sv-SE"
-];
+  "sv-SE",
+  "ko-KR",
+  "ru-RU",
+  "hi-IN",
+  "th-TH",
+  "id-ID"
+])
+  .uniq()
+  .value();
+
+const LANG_BUT_LOCALE = _.chain(LOCALES)
+  .map(item => item.split("-")[0]) // es, en, du etc.
+  .uniq()
+  .value();
+
+const AVAILABLE_LOCALES = LANG_BUT_LOCALE.concat(LOCALES);
 
 export interface IDialogflowMessage {
   type: number;
@@ -111,6 +112,13 @@ export class DialogflowSchema extends Schema {
   }
 
   public getLocale(locale: string) {
+    locale = locale.toLowerCase();
+    const localesNotAttachedToParentLang = ["pt-br"];
+
+    if (localesNotAttachedToParentLang.find(item => locale === item)) {
+      return locale;
+    }
+
     return locale.split("-")[0];
   }
 

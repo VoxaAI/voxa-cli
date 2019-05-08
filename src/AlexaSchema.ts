@@ -37,6 +37,7 @@ const AVAILABLE_LOCALES = [
   "ja-JP",
   "es-ES",
   "es-MX",
+  "es-US",
   "fr-FR",
   "fr-CA",
   "it-IT",
