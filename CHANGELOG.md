@@ -25,7 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed empty suggestion chip on VUI
 - Fixed overlap on utterance and slots
 - Fixed views have an array path with object
-- Fixed issue with pt-br is not attached to it's parent
+- Fixed issue with pt-br is not attached to its parent
 
 ### Removed
 
