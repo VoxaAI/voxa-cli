@@ -42,7 +42,7 @@ export abstract class Schema {
   public AVAILABLE_LOCALES: string[];
   public fileContent: IFileContent[] = [];
   public views: IView[] = [];
-  public invocations: Invocation[] = [];
+  public invocations: IInvocation[] = [];
   public publishing: IPublishingInformation[] = [];
 
   public NAMESPACE: string;
@@ -130,6 +130,7 @@ export abstract class Schema {
 
       if (_.isArray(value)) {
         variables = _.chain(value)
+          .filter(v => _.isString(v))
           .map(v => v.match(/{([\s\S]+?)}/g))
           .flatten()
           .compact()
@@ -243,6 +244,45 @@ export abstract class Schema {
     });
   }
 
+  public getIntentsDefinition(locale: string, environment: string) {
+    const intentsByPlatformAndEnvironments = this.intentsByPlatformAndEnvironments(
+      locale,
+      environment
+    );
+
+    const intents = intentsByPlatformAndEnvironments.map((rawIntent: IIntent) => {
+      const { name, samples } = rawIntent;
+      let { slotsDefinition } = rawIntent;
+      slotsDefinition = _(slotsDefinition)
+        .filter(slot => this.filterByPlatform(slot))
+        .map((slot: any) => {
+          return {
+            type: slot.type,
+            name: slot.name.replace("{", "").replace("}", "")
+          };
+        })
+        .value();
+
+      const intent = { name, samples, slots: slotsDefinition };
+      return intent;
+    });
+
+    return intents;
+  }
+
+  public getSlotsByIntentsDefinition(locale: string, environment: string): ISlot[] {
+    const intents = this.getIntentsDefinition(locale, environment);
+    const slotsDefinitionNames = _.chain(intents)
+      .map("slots")
+      .flatten()
+      .map("type")
+      .uniq()
+      .value();
+
+    return this.slots.filter(
+      slot => slot.locale === locale && _.includes(slotsDefinitionNames, slot.name)
+    );
+  }
   public mergeManifest(environment: string): any {
     const manifest = {};
     const NAMESPACE = this.NAMESPACE;
@@ -293,8 +333,11 @@ export abstract class Schema {
 export interface IIntent {
   name: string;
   samples: string[];
+  responses: string[];
   slotsDefinition: ISlotDefinition[];
   canFulfillIntent: boolean;
+  webhookUsed: boolean;
+  webhookForSlotFilling: boolean;
   startIntent: boolean;
   signInRequired: boolean;
   endIntent: boolean;
@@ -314,7 +357,7 @@ export interface IFileContent {
   // promise?: Promise<void>;
 }
 
-export interface Invocation {
+export interface IInvocation {
   locale: string;
   name: string;
   environment: string;
@@ -324,6 +367,7 @@ export interface ISlotDefinition {
   name: string;
   type: string;
   platform?: string;
+  required?: boolean;
   // samples: string[];
 }
 

@@ -36,8 +36,12 @@ const AVAILABLE_LOCALES = [
   "de-DE",
   "ja-JP",
   "es-ES",
+  "es-MX",
+  "es-US",
   "fr-FR",
-  "it-IT"
+  "fr-CA",
+  "it-IT",
+  "pt-BR"
 ];
 
 export class AlexaSchema extends Schema {
@@ -68,38 +72,20 @@ export class AlexaSchema extends Schema {
       content: { manifest }
     });
   }
-
-  public buildLanguageModel(locale: string, environment: string) {
+  public contentLanguageModel(locale: string, environment: string) {
     const invocation = _.find(this.invocations, { locale, environment });
     const invocationName = _.get(invocation, "name", "Skill with no name");
-    const intentsByPlatformAndEnvironments = this.intentsByPlatformAndEnvironments(
-      locale,
-      environment
-    );
 
-    const intents = intentsByPlatformAndEnvironments.map((rawIntent: IIntent) => {
-      const { name, samples } = rawIntent;
-      let { slotsDefinition } = rawIntent;
-      slotsDefinition = _(slotsDefinition)
-        .filter(slot => this.filterByPlatform(slot))
-        .map((slot: any) => {
-          return {
-            type: slot.type,
-            name: slot.name.replace("{", "").replace("}", "")
-          };
-        })
-        .value();
-
-      const intent = { name, samples, slots: slotsDefinition };
-      return intent;
-    });
-
-    const types = this.slots.map(rawSlot => {
+    const intents = this.getIntentsDefinition(locale, environment);
+    const types = this.getSlotsByIntentsDefinition(locale, environment).map(rawSlot => {
       const { name, values } = rawSlot;
       const slot = { name, values: values.map(value => ({ name: value })) };
       return slot;
     });
 
+    return { interactionModel: { languageModel: { invocationName, intents, types } } };
+  }
+  public buildLanguageModel(locale: string, environment: string) {
     this.fileContent.push({
       path: path.join(
         this.interactionOptions.rootPath,
@@ -108,10 +94,10 @@ export class AlexaSchema extends Schema {
         locale,
         `${_.kebabCase(environment)}-interaction.json`
       ),
-      content: { interactionModel: { languageModel: { invocationName, intents, types } } }
+      content: this.contentLanguageModel(locale, environment)
     });
 
-    const canFulfillIntents = _.chain(intentsByPlatformAndEnvironments)
+    const canFulfillIntents = _.chain(this.intentsByPlatformAndEnvironments(locale, environment))
       .filter("canFulfillIntent")
       .map("name")
       .value();

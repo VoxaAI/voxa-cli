@@ -29,23 +29,9 @@ import { IFileContent, IIntent, Schema } from "./Schema";
 import { IVoxaSheet } from "./VoxaSheet";
 
 const NAMESPACE = "dialogflow";
-const AVAILABLE_LOCALES = [
-  "en",
-  "de",
-  "fr",
-  "ja",
-  "ko",
-  "es",
-  "pt",
-  "it",
-  "ru",
-  "hi",
-  "th",
-  "id",
-  "da",
-  "no",
-  "nl",
-  "sv",
+// https://developers.google.com/actions/localization/languages-locales
+
+const LOCALES = _.chain([
   "en-US",
   "en-AU",
   "en-CA",
@@ -57,6 +43,8 @@ const AVAILABLE_LOCALES = [
   "ja-JP",
   "ko-KR",
   "es-ES",
+  "es-US",
+  "es-MX",
   "pt-BR",
   "it-IT",
   "ru-RU",
@@ -66,8 +54,28 @@ const AVAILABLE_LOCALES = [
   "da-DK",
   "no-NO",
   "nl-NL",
-  "sv-SE"
-];
+  "sv-SE",
+  "ko-KR",
+  "ru-RU",
+  "hi-IN",
+  "th-TH",
+  "id-ID"
+])
+  .uniq()
+  .value();
+
+const LANG_BUT_LOCALE = _.chain(LOCALES)
+  .map(item => item.split("-")[0]) // es, en, du etc.
+  .uniq()
+  .value();
+
+const AVAILABLE_LOCALES = LANG_BUT_LOCALE.concat(LOCALES);
+
+export interface IDialogflowMessage {
+  type: number;
+  lang: string;
+  speech: string[];
+}
 
 export class DialogflowSchema extends Schema {
   public environment = "staging";
@@ -101,6 +109,17 @@ export class DialogflowSchema extends Schema {
       }
     };
     this.fileContent.push(file);
+  }
+
+  public getLocale(locale: string) {
+    locale = locale.toLowerCase();
+    const localesNotAttachedToParentLang = ["pt-br"];
+
+    if (localesNotAttachedToParentLang.find(item => locale === item)) {
+      return locale;
+    }
+
+    return locale.split("-")[0];
   }
 
   public buildAgent(locale: string, environment: string) {
@@ -149,14 +168,18 @@ export class DialogflowSchema extends Schema {
       .uniq()
       .value();
 
-    const language = locale.split("-")[0];
+    const language = this.getLocale(locale);
 
-    const agent = _.merge(AGENT, this.mergeManifest(environment), {
-      description: invocationName,
-      language,
-      supportedLanguages,
-      googleAssistant: { project: _.kebabCase(invocationName), startIntents, endIntentIds }
-    });
+    const agent = _.merge(
+      _.cloneDeep(AGENT),
+      _.cloneDeep(this.mergeManifest(environment)),
+      _.cloneDeep({
+        description: invocationName,
+        language,
+        supportedLanguages,
+        googleAssistant: { project: _.kebabCase(invocationName), startIntents, endIntentIds }
+      })
+    );
 
     const file: IFileContent = {
       path: path.join(
@@ -177,7 +200,7 @@ export class DialogflowSchema extends Schema {
       environment
     );
 
-    locale = locale.split("-")[0];
+    locale = this.getLocale(locale);
     const intents = intentsByPlatformAndEnvironments.map((rawIntent: IIntent) => {
       let { name, samples, events } = rawIntent;
       const { slotsDefinition } = rawIntent;
@@ -198,7 +221,8 @@ export class DialogflowSchema extends Schema {
           dataType: _.includes(slot.type, "@sys.") ? slot.type : `@${slot.type}`,
           name: slot.name,
           value: `$${slot.name}`,
-          isList: false
+          isList: false,
+          required: slot.required
         }))
         .value();
 
@@ -263,10 +287,10 @@ export class DialogflowSchema extends Schema {
       environment
     );
 
-    locale = locale.split("-")[0];
+    locale = this.getLocale(locale);
     this.builtIntents = intentsByPlatformAndEnvironments.map((rawIntent: IIntent) => {
       let { name, events } = rawIntent;
-      const { slotsDefinition } = rawIntent;
+      const { webhookForSlotFilling, slotsDefinition, responses, webhookUsed } = rawIntent;
       name = name.replace("AMAZON.", "");
       const fallbackIntent = name === "FallbackIntent";
       const action = fallbackIntent ? "input.unknown" : name;
@@ -280,9 +304,19 @@ export class DialogflowSchema extends Schema {
           dataType: _.includes(slot.type, "@sys.") ? slot.type : `@${_.kebabCase(slot.type)}`,
           name: slot.name.replace("{", "").replace("}", ""),
           value: `$${slot.name.replace("{", "").replace("}", "")}`,
-          isList: false
+          isList: false,
+          required: slot.required
         }))
         .value();
+
+      const messages = [];
+      if (responses.length > 0) {
+        messages.push({
+          type: 0,
+          lang: locale,
+          speech: responses
+        });
+      }
 
       const intent = {
         name,
@@ -294,14 +328,14 @@ export class DialogflowSchema extends Schema {
             action,
             affectedContexts: [],
             parameters,
-            messages: [],
+            messages,
             defaultResponsePlatforms: {},
             speech: []
           }
         ],
         priority: 500000,
-        webhookUsed: true,
-        webhookForSlotFilling: false,
+        webhookUsed,
+        webhookForSlotFilling,
         fallbackIntent,
         events
       };
@@ -324,9 +358,9 @@ export class DialogflowSchema extends Schema {
   }
 
   public buildEntities(locale: string, environment: string) {
-    const localeEntity = locale.split("-")[0];
+    const localeEntity = this.getLocale(locale);
 
-    this.slots
+    this.getSlotsByIntentsDefinition(locale, environment)
       .filter(slot => !_.includes(slot.name, "@sys."))
       .forEach(rawSlot => {
         const { name, values } = rawSlot;

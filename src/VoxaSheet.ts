@@ -33,6 +33,7 @@ export class SheetTypes {
   public static readonly SLOTS = "LIST_OF_";
   public static readonly INTENT = "INTENT";
   public static readonly UTTERANCE = "UTTERANCES_";
+  public static readonly RESPONSES = "RESPONSES_";
 
   public static readonly INVOCATION = "INVOCATION_NAMES";
   public static readonly SKILL_GENERAL_INFORMATION = "SKILL_GENERAL_INFORMATION";
