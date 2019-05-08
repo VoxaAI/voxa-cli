@@ -1,0 +1,4 @@
+User launches the skill:
+  - afterEach: clear
+  - LaunchIntent:
+      alexaResponse: Launch.StartResponse

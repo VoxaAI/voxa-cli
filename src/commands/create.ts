@@ -36,7 +36,7 @@ export const description = "Create a Voxa app";
 export const options = [
   {
     flags: "-r, --rain",
-    descriptionOption: "Set a RAIN"
+    descriptionOption: "Set a RAIN project"
   }
 ];
 
@@ -44,14 +44,14 @@ export async function action() {
   async function executePrompt(): Promise<any> {
     return inquirer.prompt(observe).then(async (answers: any) => {
       try {
-        const { appName, serverless, canfulfill } = answers;
+        const { appName, serverless, canfulfill, language } = answers;
         const folderName = _.kebabCase(appName);
-        await copyPackageAndReadmeFiles(appName, serverless, folderName);
+        await copyPackageAndReadmeFiles(appName, serverless, folderName, language);
         if (serverless) {
-          await copyServerless(folderName);
+          await copyServerless(folderName, language);
         }
-        await copySrcFiles(folderName, canfulfill);
-        await copyAllOtherFiles(folderName);
+        await copySrcFiles(folderName, canfulfill, language);
+        await copyAllOtherFiles(folderName, language);
       } catch (error) {
         console.log(error);
       }
@@ -69,7 +69,10 @@ export async function action() {
         type: "list",
         name: "language",
         message: "Choose a language",
-        choices: ["Javascript", "Typescript"],
+        choices: [
+          { name: "Javascript", value: "javascript" },
+          { name: "Typescript", value: "typescript" }
+        ],
         default: "Javascript"
       },
       {
@@ -93,17 +96,25 @@ export async function action() {
   await executePrompt();
 }
 
-function getTemplatePath(...args: any[]): string {
-  const fileDir = [__dirname, "..", "..", "..", "templates", ...args];
+function getTemplatePath(language: string, ...args: any[]): string {
+  const fileDir = [__dirname, "..", "..", "..", "templates", language, ...args];
   return path.join(...fileDir);
 }
 
-function getTemplateFile(...args: any[]) {
-  return fs.readFile(path.join(__dirname, "..", "..", "..", "templates", ...args), "utf8");
+function getTemplateFile(language: string, ...args: any[]) {
+  return fs.readFile(
+    path.join(__dirname, "..", "..", "..", "templates", language, ...args),
+    "utf8"
+  );
 }
 
-async function copyPackageAndReadmeFiles(appName: string, serverless: boolean, folderName: string) {
-  const readmeContent = await getTemplateFile("README.md");
+async function copyPackageAndReadmeFiles(
+  appName: string,
+  serverless: boolean,
+  folderName: string,
+  language: string
+) {
+  const readmeContent = await getTemplateFile(language, "README.md");
   const readmeTemplate = Handlebars.compile(readmeContent);
   const readmeData = {
     appName,
@@ -111,7 +122,7 @@ async function copyPackageAndReadmeFiles(appName: string, serverless: boolean, f
   };
   const readmeResult = readmeTemplate(readmeData);
 
-  const nodePackageContent = await getTemplateFile("package.json");
+  const nodePackageContent = await getTemplateFile(language, "package.json");
   const nodePackageTemplate = Handlebars.compile(nodePackageContent);
   const nodePackageData = {
     name: folderName,
@@ -125,8 +136,8 @@ async function copyPackageAndReadmeFiles(appName: string, serverless: boolean, f
   return Promise.all(outputFilePromises);
 }
 
-async function copyServerless(folderName: string) {
-  const content = await getTemplateFile("serverless.yml");
+async function copyServerless(folderName: string, language: string) {
+  const content = await getTemplateFile(language, "serverless.yml");
   const template = Handlebars.compile(content);
   const data = {
     service: folderName
@@ -135,31 +146,37 @@ async function copyServerless(folderName: string) {
   return fs.outputFile(path.join(process.cwd(), folderName, "serverless.yml"), result);
 }
 
-async function copySrcFiles(folderName: string, canfulfill: boolean) {
+async function copySrcFiles(folderName: string, canfulfill: boolean, language: string) {
   try {
-    const srcFolderPath = getTemplatePath("src");
+    const ext = language === "javascript" ? "js" : "ts";
+    const srcFolderPath = getTemplatePath(language, "src");
     const destinationPath = path.join(process.cwd(), folderName, "src");
     await fs.copy(srcFolderPath, destinationPath);
 
-    const content = await getTemplateFile("src", "app", "index.ts");
+    const content = await getTemplateFile(language, "src", "app", `index.${ext}`);
     const template = Handlebars.compile(content);
     const data = {
       canfulfill
     };
     const result = template(data);
-    return fs.outputFile(path.join(process.cwd(), folderName, "src", "app", "index.ts"), result);
+    return fs.outputFile(
+      path.join(process.cwd(), folderName, "src", "app", `index.${ext}`),
+      result
+    );
   } catch (error) {
     console.log(error);
   }
 }
 
-async function copyAllOtherFiles(folderName: string) {
+async function copyAllOtherFiles(folderName: string, language: string) {
   try {
-    const rootFiles = await fs.readdir(path.join(__dirname, "..", "..", "..", "templates"));
+    const rootFiles = await fs.readdir(
+      path.join(__dirname, "..", "..", "..", "templates", language)
+    );
     const unwantedFiles = ["README.md", "serverless.yml", "package.json", "src"];
     const filteredFiles = rootFiles.filter(file => !unwantedFiles.includes(file));
     return filteredFiles.map(file => {
-      fs.copy(getTemplatePath(file), path.join(process.cwd(), folderName, file));
+      fs.copy(getTemplatePath(language, file), path.join(process.cwd(), folderName, file));
     });
   } catch (error) {
     console.log(error);
