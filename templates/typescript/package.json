@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "main": "src/app/index.ts",
   "scripts": {
-    "test": "NODE_ENV=local.example mocha test/*.spec.* test/**/*.spec.*",
+    "test": "mocha test/*.spec.* test/**/*.spec.*",
     "watch": "nodemon --inspect -r ts-node/register server.ts",
     "lint": "tslint --config tslint.json --project tsconfig.json"
   },
