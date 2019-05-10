@@ -15,7 +15,7 @@
   "scripts": {
     "clean": "rm -rf lib/",
     "prepare": "npm run clean && tsc",
-    "test": "mocha test/*.spec.* test/**/*.spec.*",
+    "test": "mocha test/*.spec.* test/**/*.spec.* --exclude test/out/*.spec.* --exclude test/out/**/*.spec.*",
     "test-ci": "nyc mocha --colors --reporter mocha-jenkins-reporter test test/*.spec.* test/**/*.spec.*",
     "report": "nyc report --reporter=json && nyc report --reporter html && nyc report --reporter=lcov && nyc report --reporter=cobertura",
     "lint": "tslint --config tslint.json --project tsconfig.json --exclude \"**/*.json\" --exclude \"templates/*\"",
