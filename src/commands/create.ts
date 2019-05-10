@@ -103,11 +103,20 @@ export async function action() {
 }
 
 export function getTemplatePath(language: string, ...args: any[]): string {
-  const fileDir = [__dirname, "..", "..", "..", "templates", language, ...args];
+  let fileDir = [__dirname, "..", "..", "..", "templates", language, ...args];
+
+  if (path.basename(__filename) === "create.ts") {
+    fileDir = [__dirname, "..", "..", "templates", language, ...args];
+  }
+
   return path.join(...fileDir);
 }
 
 export function getTemplateFile(language: string, ...args: any[]): Promise<string> {
+  if (path.basename(__filename) === "create.ts") {
+    return fs.readFile(path.join(__dirname, "..", "..", "templates", language, ...args), "utf8");
+  }
+
   return fs.readFile(
     path.join(__dirname, "..", "..", "..", "templates", language, ...args),
     "utf8"
@@ -177,9 +186,7 @@ async function copySrcFiles(folderName: string, canfulfill: boolean, language: s
 
 async function copyAllOtherFiles(folderName: string, language: string) {
   try {
-    const rootFiles = await fs.readdir(
-      path.join(__dirname, "..", "..", "..", "templates", language)
-    );
+    const rootFiles = await fs.readdir(getTemplatePath(language));
     const unwantedFiles = ["README.md", "serverless.yml", "package.json", "src"];
     const filteredFiles = rootFiles.filter(file => !unwantedFiles.includes(file));
     return filteredFiles.map(file => {
