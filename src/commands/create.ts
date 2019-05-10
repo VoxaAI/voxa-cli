@@ -102,12 +102,12 @@ export async function action() {
   await executePrompt();
 }
 
-function getTemplatePath(language: string, ...args: any[]): string {
+export function getTemplatePath(language: string, ...args: any[]): string {
   const fileDir = [__dirname, "..", "..", "..", "templates", language, ...args];
   return path.join(...fileDir);
 }
 
-function getTemplateFile(language: string, ...args: any[]) {
+export function getTemplateFile(language: string, ...args: any[]): Promise<string> {
   return fs.readFile(
     path.join(__dirname, "..", "..", "..", "templates", language, ...args),
     "utf8"
