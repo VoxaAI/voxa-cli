@@ -2,5 +2,20 @@
 	"server": {
 		"port": 3000,
 		"hostSkill": true
-	}
+  }{{#if ga}},
+  "googleAnalytics": {
+    "trackingId": "UA-XXXX-X",
+    "appName": "{{ folderName }}",
+    "ignoreUsers": [],
+    "suppressSending": true
+  }{{/if}}{{#if dashbot}},
+  "dashbot": {
+    "suppressSending": true,
+    "alexa": "key"
+  }{{/if}}{{#if chatbase}},
+  "chatbase": {
+    "apiKey": "<chatbase apiKey>",
+    "ignoreUsers": [],
+    "suppressSending": true
+  }{{/if}}
 }
