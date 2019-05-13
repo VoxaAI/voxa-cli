@@ -26,7 +26,7 @@ describe("Javascript project generator", () => {
           appName: "my skill",
           author: "Rain",
           language: "javascript",
-          serverless: false,
+          voxaCli: false,
           canfulfill: true,
           analytics: []
         });
@@ -68,14 +68,14 @@ describe("Javascript project generator", () => {
     });
   });
 
-  describe("Generate a Javascript project without serverless", () => {
+  describe("Generate a Javascript project with voxa-cli", () => {
     before(async () => {
       simple.mock(inquirer, "prompt").callFn(() => {
         return Promise.resolve({
-          appName: "no serverless skill",
+          appName: "voxa cli skill",
           author: "Rain",
           language: "javascript",
-          serverless: false,
+          voxaCli: true,
           canfulfill: true,
           analytics: []
         });
@@ -83,10 +83,64 @@ describe("Javascript project generator", () => {
       await action();
     });
 
-    it("should not have a serverless file", async () => {
-      const filePath = getFilePath("no-serverless-skill", "serverless.yml");
+    it("should have the interaction.json file", async () => {
+      const filePath = getFilePath("voxa-cli-skill", "interaction.json");
+      const pathExists = await fs.pathExists(filePath);
+      expect(pathExists).to.be.true;
+    });
+
+    it("should have voxa-cli package in package.json", async () => {
+      const filePath = getFilePath("voxa-cli-skill", "package.json");
+      const fileContent = await fs.readFile(filePath, "utf8");
+      expect(fileContent).to.contain('"voxa-cli": "2.1.2"');
+      expect(fileContent).to.contain('"interaction": "voxa interaction"');
+    });
+
+    it("should have interaction usage in README file", async () => {
+      const filePath = getFilePath("voxa-cli-skill", "README.md");
+      const fileContent = await fs.readFile(filePath, "utf8");
+      expect(fileContent).to.contain("## Interaction Model and Publishing Information");
+      expect(fileContent).to.contain("$ yarn interaction");
+      expect(fileContent).to.contain("- [Intents and Utterances](#)");
+      expect(fileContent).to.contain("- [Publishing Information](#)");
+    });
+  });
+
+  describe("Generate a Javascript project without voxa-cli", () => {
+    before(async () => {
+      simple.mock(inquirer, "prompt").callFn(() => {
+        return Promise.resolve({
+          appName: "no voxa cli skill",
+          author: "Rain",
+          language: "javascript",
+          voxaCli: false,
+          canfulfill: true,
+          analytics: []
+        });
+      });
+      await action();
+    });
+
+    it("should not have the interaction.json file", async () => {
+      const filePath = getFilePath("no-voxa-cli-skill", "interaction.json");
       const pathExists = await fs.pathExists(filePath);
       expect(pathExists).to.not.be.true;
+    });
+
+    it("should not have voxa-cli package in package.json", async () => {
+      const filePath = getFilePath("no-voxa-cli-skill", "package.json");
+      const fileContent = await fs.readFile(filePath, "utf8");
+      expect(fileContent).to.not.contain('"voxa-cli": "2.1.2"');
+      expect(fileContent).to.not.contain('"interaction": "voxa interaction"');
+    });
+
+    it("should not have interaction usage in README file", async () => {
+      const filePath = getFilePath("no-voxa-cli-skill", "README.md");
+      const fileContent = await fs.readFile(filePath, "utf8");
+      expect(fileContent).to.not.contain("## Interaction Model and Publishing Information");
+      expect(fileContent).to.not.contain("$ yarn interaction");
+      expect(fileContent).to.not.contain("- [Intents and Utterances](#)");
+      expect(fileContent).to.not.contain("- [Publishing Information](#)");
     });
   });
 
@@ -97,7 +151,7 @@ describe("Javascript project generator", () => {
           appName: "can fulfill skill",
           author: "Rain",
           language: "javascript",
-          serverless: false,
+          voxaCli: false,
           canfulfill: true,
           analytics: []
         });
@@ -119,7 +173,7 @@ describe("Javascript project generator", () => {
           appName: "all analytics skill",
           author: "Rain",
           language: "javascript",
-          serverless: false,
+          voxaCli: false,
           canfulfill: true,
           analytics: ["all"]
         });
@@ -186,7 +240,7 @@ describe("Javascript project generator", () => {
           appName: "no analytics skill",
           author: "Rain",
           language: "javascript",
-          serverless: false,
+          voxaCli: false,
           canfulfill: true,
           analytics: ["none"]
         });
@@ -253,7 +307,7 @@ describe("Javascript project generator", () => {
           appName: "ga analytics skill",
           author: "Rain",
           language: "javascript",
-          serverless: false,
+          voxaCli: false,
           canfulfill: true,
           analytics: ["ga"]
         });
@@ -320,7 +374,7 @@ describe("Javascript project generator", () => {
           appName: "ga dashbot analytics skill",
           author: "Rain",
           language: "javascript",
-          serverless: false,
+          voxaCli: false,
           canfulfill: true,
           analytics: ["ga", "dashbot"]
         });
