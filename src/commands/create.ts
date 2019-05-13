@@ -44,13 +44,21 @@ export async function action() {
   async function executePrompt(): Promise<any> {
     return inquirer.prompt(observe).then(async (answers: any) => {
       try {
-        const { appName, serverless, canfulfill, language, author } = answers;
+        const { appName, serverless, canfulfill, language, author, analytics } = answers;
+
         const folderName = _.kebabCase(appName);
-        await copyPackageAndReadmeFiles(appName, serverless, folderName, author, language);
+        await copyPackageAndReadmeFiles(
+          appName,
+          serverless,
+          folderName,
+          author,
+          analytics,
+          language
+        );
         if (serverless) {
           await copyServerless(folderName, language);
         }
-        await copySrcFiles(folderName, canfulfill, language);
+        await copySrcFiles(folderName, canfulfill, analytics, language);
         await copyAllOtherFiles(folderName, language);
       } catch (error) {
         console.log(error);
@@ -92,6 +100,17 @@ export async function action() {
         name: "canfulfill",
         message: "Will you use the Canfulfill intent?",
         default: false
+      },
+      {
+        type: "checkbox",
+        name: "analytics",
+        choices: [
+          { name: "None", value: "none" },
+          { name: "All of them", value: "all" },
+          { name: "Google Analytics", value: "ga" },
+          { name: "Dashbot", value: "dashbot" },
+          { name: "Chatbase", value: "chatbase" }
+        ]
       }
     ];
     questions.map(q => obs.next(q));
@@ -128,6 +147,7 @@ async function copyPackageAndReadmeFiles(
   serverless: boolean,
   folderName: string,
   author: string,
+  analytics: string,
   language: string
 ) {
   const readmeContent = await getTemplateFile(language, "README.md");
@@ -138,11 +158,17 @@ async function copyPackageAndReadmeFiles(
   };
   const readmeResult = readmeTemplate(readmeData);
 
+  const ga = analytics.includes("ga") || analytics.includes("all");
+  const dashbot = analytics.includes("dashbot") || analytics.includes("all");
+  const chatbase = analytics.includes("chatbase") || analytics.includes("all");
   const nodePackageContent = await getTemplateFile(language, "package.json");
   const nodePackageTemplate = Handlebars.compile(nodePackageContent);
   const nodePackageData = {
     name: folderName,
-    author
+    author,
+    ga,
+    dashbot,
+    chatbase
   };
   const nodePackageResult = nodePackageTemplate(nodePackageData);
   const outputFilePromises = [
@@ -162,23 +188,74 @@ async function copyServerless(folderName: string, language: string) {
   return fs.outputFile(path.join(process.cwd(), folderName, "serverless.yml"), result);
 }
 
-async function copySrcFiles(folderName: string, canfulfill: boolean, language: string) {
+async function copySrcFiles(
+  folderName: string,
+  canfulfill: boolean,
+  analytics: string,
+  language: string
+) {
   try {
     const ext = language === "javascript" ? "js" : "ts";
     const srcFolderPath = getTemplatePath(language, "src");
     const destinationPath = path.join(process.cwd(), folderName, "src");
     await fs.copy(srcFolderPath, destinationPath);
 
-    const content = await getTemplateFile(language, "src", "app", `index.${ext}`);
-    const template = Handlebars.compile(content);
-    const data = {
-      canfulfill
-    };
-    const result = template(data);
-    return fs.outputFile(
-      path.join(process.cwd(), folderName, "src", "app", `index.${ext}`),
-      result
+    const ga = analytics.includes("ga") || analytics.includes("all");
+    const dashbot = analytics.includes("dashbot") || analytics.includes("all");
+    const chatbase = analytics.includes("chatbase") || analytics.includes("all");
+
+    const indexContent = await getTemplateFile(language, "src", "app", `index.${ext}`);
+    const localConfigContent = await getTemplateFile(
+      language,
+      "src",
+      "config",
+      "local.example.json"
     );
+    const stagingConfigContent = await getTemplateFile(language, "src", "config", "staging.json");
+    const prodConfigContent = await getTemplateFile(language, "src", "config", "production.json");
+
+    const indexTemplate = Handlebars.compile(indexContent);
+    const localConfigTemplate = Handlebars.compile(localConfigContent);
+    const stagingConfigTemplate = Handlebars.compile(stagingConfigContent);
+    const prodConfigTemplate = Handlebars.compile(prodConfigContent);
+
+    const indexData = {
+      canfulfill,
+      ga,
+      dashbot,
+      chatbase
+    };
+    const configData = {
+      folderName,
+      ga,
+      dashbot,
+      chatbase
+    };
+    const indexResult = indexTemplate(indexData);
+    const localConfigResult = localConfigTemplate(configData);
+    const stagingConfigResult = stagingConfigTemplate(configData);
+    const prodConfigResult = prodConfigTemplate(configData);
+
+    const outputFilePromises = [
+      fs.outputFile(
+        path.join(process.cwd(), folderName, "src", "app", `index.${ext}`),
+        indexResult
+      ),
+      fs.outputFile(
+        path.join(process.cwd(), folderName, "src", "config", "local.example.json"),
+        localConfigResult
+      ),
+      fs.outputFile(
+        path.join(process.cwd(), folderName, "src", "config", "staging.json"),
+        stagingConfigResult
+      ),
+      fs.outputFile(
+        path.join(process.cwd(), folderName, "src", "config", "production.json"),
+        prodConfigResult
+      )
+    ];
+
+    return Promise.all(outputFilePromises);
   } catch (error) {
     console.log(error);
   }
