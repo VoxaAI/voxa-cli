@@ -2,10 +2,6 @@
 
 This application is written using the [voxa3](https://github.com/mediarain/voxa) framework developed by RAIN.
 
-{{#if serverless }}
-It is hosted on AWS using the serverless platform
-{{/if}}
-
 ## Development setup
 
 - Install and use Node v8.10
@@ -23,6 +19,7 @@ This project has a test suite built using [mocha](https://mochajs.org/), [chai](
 $ yarn test --watch --bail
 ```
 
+{{#if voxaCli}}
 ## Interaction Model and Publishing Information
 
 The interaction model and publishing information are managed using the voxa-cli, provided you have configured access to the google spreadsheets updating it can be accomplished by running the following command
@@ -38,3 +35,4 @@ $ yarn interaction
 - [Publishing Information](#)
 - [Technical Architecture Document](#)
 - [Google Drive Directory](#)
+{{/if}}

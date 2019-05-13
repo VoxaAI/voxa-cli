@@ -5,7 +5,8 @@
   "scripts": {
     "test": "mocha test/*.spec.* test/**/*.spec.*",
     "watch": "nodemon --inspect server.js",
-    "lint": "eslint src/ test/ server.js"
+    "lint": "eslint src/ test/ server.js"{{#if voxaCli}},
+    "interaction": "voxa interaction"{{/if}}
   },
   "author": "{{ author }}",
   "license": "MIT",
@@ -18,8 +19,7 @@
     "lodash": "^4.17.11",
     "prettier": "^1.17.0",
     "voxa": "^3.1.0"{{#if chatbase}},
-    "voxa-chatbase": "0.1.1"{{/if}}{{#if voxaCli}},
-    "voxa-cli": "2.1.2"{{/if}}{{#if dashbot}},
+    "voxa-chatbase": "0.1.1"{{/if}}{{#if dashbot}},
     "voxa-dashbot": "2.0.0-alpha4"{{/if}}{{#if ga}},
     "voxa-ga": "2.0.0"{{/if}}
   },
@@ -37,7 +37,8 @@
     "nodemon": "^1.18.4",
     "nyc": "^13.0.1",
     "simple-mock": "^0.8.0",
-    "virtual-alexa": "^0.6.6"
+    "virtual-alexa": "^0.6.6"{{#if voxaCli}},
+    "voxa-cli": "2.1.2"{{/if}}
   },
   "directories": {
     "test": "test"
