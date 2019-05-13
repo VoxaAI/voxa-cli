@@ -44,20 +44,14 @@ export async function action() {
   async function executePrompt(): Promise<any> {
     return inquirer.prompt(observe).then(async (answers: any) => {
       try {
-        const { appName, serverless, canfulfill, language, author, analytics } = answers;
+        const { appName, canfulfill, language, author, analytics, voxaCli } = answers;
 
         const folderName = _.kebabCase(appName);
-        await copyPackageAndReadmeFiles(
-          appName,
-          serverless,
-          folderName,
-          author,
-          analytics,
-          language
-        );
-        if (serverless) {
-          await copyServerless(folderName, language);
+        await copyPackageAndReadmeFiles(appName, voxaCli, folderName, author, analytics, language);
+        if (voxaCli) {
+          copyInteractionFile(folderName, language);
         }
+        await copyServerless(folderName, language);
         await copySrcFiles(folderName, canfulfill, analytics, language);
         await copyAllOtherFiles(folderName, language);
       } catch (error) {
@@ -91,8 +85,9 @@ export async function action() {
       },
       {
         type: "confirm",
-        name: "serverless",
-        message: "Will you use Serverless to deploy?",
+        name: "voxaCli",
+        message:
+          "Will you use Voxa-CLI to generate the interacion model and publishing information?",
         default: true
       },
       {
@@ -145,7 +140,7 @@ export function getTemplateFile(language: string, ...args: any[]): Promise<strin
 
 async function copyPackageAndReadmeFiles(
   appName: string,
-  serverless: boolean,
+  voxaCli: boolean,
   folderName: string,
   author: string,
   analytics: string,
@@ -153,10 +148,7 @@ async function copyPackageAndReadmeFiles(
 ) {
   const readmeContent = await getTemplateFile(language, "README.md");
   const readmeTemplate = Handlebars.compile(readmeContent);
-  const readmeData = {
-    appName,
-    serverless
-  };
+  const readmeData = { appName, voxaCli };
   const readmeResult = readmeTemplate(readmeData);
 
   const ga = analytics.includes("ga") || analytics.includes("all");
@@ -169,7 +161,8 @@ async function copyPackageAndReadmeFiles(
     author,
     ga,
     dashbot,
-    chatbase
+    chatbase,
+    voxaCli
   };
   const nodePackageResult = nodePackageTemplate(nodePackageData);
   const outputFilePromises = [
@@ -177,6 +170,13 @@ async function copyPackageAndReadmeFiles(
     fs.outputFile(path.join(process.cwd(), folderName, "package.json"), nodePackageResult)
   ];
   return Promise.all(outputFilePromises);
+}
+
+function copyInteractionFile(folderName: string, language: string) {
+  return fs.copy(
+    getTemplatePath(language, "interaction.json"),
+    path.join(process.cwd(), folderName, "interaction.json")
+  );
 }
 
 async function copyServerless(folderName: string, language: string) {
@@ -265,7 +265,13 @@ async function copySrcFiles(
 async function copyAllOtherFiles(folderName: string, language: string) {
   try {
     const rootFiles = await fs.readdir(getTemplatePath(language));
-    const unwantedFiles = ["README.md", "serverless.yml", "package.json", "src"];
+    const unwantedFiles = [
+      "README.md",
+      "serverless.yml",
+      "package.json",
+      "src",
+      "interaction.json"
+    ];
     const filteredFiles = rootFiles.filter(file => !unwantedFiles.includes(file));
     return filteredFiles.map(file => {
       fs.copy(getTemplatePath(language, file), path.join(process.cwd(), folderName, file));
