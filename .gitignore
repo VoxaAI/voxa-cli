@@ -2,6 +2,7 @@
 test/excel
 .voxa/
 views.json
+!templates/**/views.json
 views.map.json
 variables.map.json
 client-secret*
@@ -14,6 +15,7 @@ synonyms/
 log.txt
 test.js
 interaction.json
+!templates/**/interaction.json
 local-skill.json
 content
 test/client_secret.json
