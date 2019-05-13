@@ -27,7 +27,8 @@ describe("Javascript project generator", () => {
           author: "Rain",
           language: "javascript",
           serverless: false,
-          canfulfill: true
+          canfulfill: true,
+          analytics: []
         });
       });
       await action();
@@ -75,7 +76,8 @@ describe("Javascript project generator", () => {
           author: "Rain",
           language: "javascript",
           serverless: false,
-          canfulfill: true
+          canfulfill: true,
+          analytics: []
         });
       });
       await action();
@@ -96,7 +98,8 @@ describe("Javascript project generator", () => {
           author: "Rain",
           language: "javascript",
           serverless: false,
-          canfulfill: true
+          canfulfill: true,
+          analytics: []
         });
       });
       await action();
@@ -106,6 +109,289 @@ describe("Javascript project generator", () => {
       const filePath = getFilePath("can-fulfill-skill", "src", "app", "index.js");
       const fileContent = await fs.readFile(filePath, "utf8");
       expect(fileContent).to.contain("defaultFulfillIntents");
+    });
+  });
+
+  describe("Generate a Javascript project that uses all analytics", () => {
+    before(async () => {
+      simple.mock(inquirer, "prompt").callFn(() => {
+        return Promise.resolve({
+          appName: "all analytics skill",
+          author: "Rain",
+          language: "javascript",
+          serverless: false,
+          canfulfill: true,
+          analytics: ["all"]
+        });
+      });
+      await action();
+    });
+
+    it("should have all analytics in index file", async () => {
+      const filePath = getFilePath("all-analytics-skill", "src", "app", "index.js");
+      const fileContent = await fs.readFile(filePath, "utf8");
+      expect(fileContent).to.contain('const voxaGA = require("voxa-ga");');
+      expect(fileContent).to.contain('const voxaDashbot = require("voxa-dashbot").register;');
+      expect(fileContent).to.contain('const voxaChatbase = require("voxa-chatbase");');
+      expect(fileContent).to.contain("voxaGA(voxaApp, config.googleAnalytics);");
+      expect(fileContent).to.contain("voxaDashbot(voxaApp, config.dashbot);");
+      expect(fileContent).to.contain("voxaChatbase(voxaApp, config.chatbase);");
+    });
+
+    it("should have all analytics in the package.json file", async () => {
+      const filePath = getFilePath("all-analytics-skill", "package.json");
+      const fileContent = await fs.readFile(filePath, "utf8");
+      expect(fileContent).to.contain('"voxa-chatbase": "0.1.1"');
+      expect(fileContent).to.contain('"voxa-dashbot": "2.0.0-alpha4"');
+      expect(fileContent).to.contain('"voxa-ga": "2.0.0"');
+    });
+
+    it("should have all analytics basic configurations in the config files", async () => {
+      const localPath = getFilePath("all-analytics-skill", "src", "config", "local.example.json");
+      const stagingPath = getFilePath("all-analytics-skill", "src", "config", "staging.json");
+      const prodPath = getFilePath("all-analytics-skill", "src", "config", "production.json");
+
+      const localContent = JSON.parse(await fs.readFile(localPath, "utf8"));
+      const stagingContent = JSON.parse(await fs.readFile(stagingPath, "utf8"));
+      const prodContent = JSON.parse(await fs.readFile(prodPath, "utf8"));
+
+      const ga =
+        '"googleAnalytics":{"trackingId":"UA-XXXX-X","appName":"all-analytics-skill","ignoreUsers":[],"suppressSending":true}';
+      const chatbase = '"dashbot":{"suppressSending":true,"alexa":"key"}';
+      const dashbot =
+        '"chatbase":{"apiKey":"<chatbase apiKey>","ignoreUsers":[],"suppressSending":true}';
+
+      const prodGa =
+        '"googleAnalytics":{"trackingId":"UA-XXXX-X","appName":"all-analytics-skill","ignoreUsers":[],"suppressSending":false}';
+      const prodChatbase = '"dashbot":{"suppressSending":false,"alexa":"key"}';
+      const prodDashbot =
+        '"chatbase":{"apiKey":"<chatbase apiKey>","ignoreUsers":[],"suppressSending":false}';
+
+      expect(JSON.stringify(localContent)).to.contain(ga);
+      expect(JSON.stringify(localContent)).to.contain(chatbase);
+      expect(JSON.stringify(localContent)).to.contain(dashbot);
+      expect(JSON.stringify(stagingContent)).to.contain(ga);
+      expect(JSON.stringify(stagingContent)).to.contain(chatbase);
+      expect(JSON.stringify(stagingContent)).to.contain(dashbot);
+      expect(JSON.stringify(prodContent)).to.contain(prodGa);
+      expect(JSON.stringify(prodContent)).to.contain(prodChatbase);
+      expect(JSON.stringify(prodContent)).to.contain(prodDashbot);
+    });
+  });
+
+  describe("Generate a Javascript project doesn't use any analytics", () => {
+    before(async () => {
+      simple.mock(inquirer, "prompt").callFn(() => {
+        return Promise.resolve({
+          appName: "no analytics skill",
+          author: "Rain",
+          language: "javascript",
+          serverless: false,
+          canfulfill: true,
+          analytics: ["none"]
+        });
+      });
+      await action();
+    });
+
+    it("should not have analytics references in index file", async () => {
+      const filePath = getFilePath("no-analytics-skill", "src", "app", "index.js");
+      const fileContent = await fs.readFile(filePath, "utf8");
+      expect(fileContent).to.not.contain('const voxaGA = require("voxa-ga");');
+      expect(fileContent).to.not.contain('const voxaDashbot = require("voxa-dashbot").register;');
+      expect(fileContent).to.not.contain('const voxaChatbase = require("voxa-chatbase");');
+      expect(fileContent).to.not.contain("voxaGA(voxaApp, config.googleAnalytics);");
+      expect(fileContent).to.not.contain("voxaDashbot(voxaApp, config.dashbot);");
+      expect(fileContent).to.not.contain("voxaChatbase(voxaApp, config.chatbase);");
+    });
+
+    it("should not have analytics packages in the package.json file", async () => {
+      const filePath = getFilePath("no-analytics-skill", "package.json");
+      const fileContent = await fs.readFile(filePath, "utf8");
+      expect(fileContent).to.not.contain('"voxa-chatbase": "0.1.1"');
+      expect(fileContent).to.not.contain('"voxa-dashbot": "2.0.0-alpha4"');
+      expect(fileContent).to.not.contain('"voxa-ga": "2.0.0"');
+    });
+
+    it("should not have analytics basic configurations in the config files", async () => {
+      const localPath = getFilePath("no-analytics-skill", "src", "config", "local.example.json");
+      const stagingPath = getFilePath("no-analytics-skill", "src", "config", "staging.json");
+      const prodPath = getFilePath("no-analytics-skill", "src", "config", "production.json");
+
+      const localContent = JSON.parse(await fs.readFile(localPath, "utf8"));
+      const stagingContent = JSON.parse(await fs.readFile(stagingPath, "utf8"));
+      const prodContent = JSON.parse(await fs.readFile(prodPath, "utf8"));
+
+      const ga =
+        '"googleAnalytics":{"trackingId":"UA-XXXX-X","appName":"no-analytics-skill","ignoreUsers":[],"suppressSending":true}';
+      const chatbase = '"dashbot":{"suppressSending":true,"alexa":"key"}';
+      const dashbot =
+        '"chatbase":{"apiKey":"<chatbase apiKey>","ignoreUsers":[],"suppressSending":true}';
+
+      const prodGa =
+        '"googleAnalytics":{"trackingId":"UA-XXXX-X","appName":"no-analytics-skill","ignoreUsers":[],"suppressSending":false}';
+      const prodChatbase = '"dashbot":{"suppressSending":false,"alexa":"key"}';
+      const prodDashbot =
+        '"chatbase":{"apiKey":"<chatbase apiKey>","ignoreUsers":[],"suppressSending":false}';
+
+      expect(JSON.stringify(localContent)).to.not.contain(ga);
+      expect(JSON.stringify(localContent)).to.not.contain(chatbase);
+      expect(JSON.stringify(localContent)).to.not.contain(dashbot);
+      expect(JSON.stringify(stagingContent)).to.not.contain(ga);
+      expect(JSON.stringify(stagingContent)).to.not.contain(chatbase);
+      expect(JSON.stringify(stagingContent)).to.not.contain(dashbot);
+      expect(JSON.stringify(prodContent)).to.not.contain(prodGa);
+      expect(JSON.stringify(prodContent)).to.not.contain(prodChatbase);
+      expect(JSON.stringify(prodContent)).to.not.contain(prodDashbot);
+    });
+  });
+
+  describe("Generate a Javascript project that uses only Google Analytics", () => {
+    before(async () => {
+      simple.mock(inquirer, "prompt").callFn(() => {
+        return Promise.resolve({
+          appName: "ga analytics skill",
+          author: "Rain",
+          language: "javascript",
+          serverless: false,
+          canfulfill: true,
+          analytics: ["ga"]
+        });
+      });
+      await action();
+    });
+
+    it("should have only google analytics references in index file", async () => {
+      const filePath = getFilePath("ga-analytics-skill", "src", "app", "index.js");
+      const fileContent = await fs.readFile(filePath, "utf8");
+      expect(fileContent).to.contain('const voxaGA = require("voxa-ga");');
+      expect(fileContent).to.not.contain('const voxaDashbot = require("voxa-dashbot").register;');
+      expect(fileContent).to.not.contain('const voxaChatbase = require("voxa-chatbase");');
+      expect(fileContent).to.contain("voxaGA(voxaApp, config.googleAnalytics);");
+      expect(fileContent).to.not.contain("voxaDashbot(voxaApp, config.dashbot);");
+      expect(fileContent).to.not.contain("voxaChatbase(voxaApp, config.chatbase);");
+    });
+
+    it("should have only the voxa-ga package in the package.json file", async () => {
+      const filePath = getFilePath("ga-analytics-skill", "package.json");
+      const fileContent = await fs.readFile(filePath, "utf8");
+      expect(fileContent).to.not.contain('"voxa-chatbase": "0.1.1"');
+      expect(fileContent).to.not.contain('"voxa-dashbot": "2.0.0-alpha4"');
+      expect(fileContent).to.contain('"voxa-ga": "2.0.0"');
+    });
+
+    it("should have only the google analytics basic configuration in the config files", async () => {
+      const localPath = getFilePath("ga-analytics-skill", "src", "config", "local.example.json");
+      const stagingPath = getFilePath("ga-analytics-skill", "src", "config", "staging.json");
+      const prodPath = getFilePath("ga-analytics-skill", "src", "config", "production.json");
+
+      const localContent = JSON.parse(await fs.readFile(localPath, "utf8"));
+      const stagingContent = JSON.parse(await fs.readFile(stagingPath, "utf8"));
+      const prodContent = JSON.parse(await fs.readFile(prodPath, "utf8"));
+
+      const ga =
+        '"googleAnalytics":{"trackingId":"UA-XXXX-X","appName":"ga-analytics-skill","ignoreUsers":[],"suppressSending":true}';
+      const chatbase = '"dashbot":{"suppressSending":true,"alexa":"key"}';
+      const dashbot =
+        '"chatbase":{"apiKey":"<chatbase apiKey>","ignoreUsers":[],"suppressSending":true}';
+
+      const prodGa =
+        '"googleAnalytics":{"trackingId":"UA-XXXX-X","appName":"ga-analytics-skill","ignoreUsers":[],"suppressSending":false}';
+      const prodChatbase = '"dashbot":{"suppressSending":false,"alexa":"key"}';
+      const prodDashbot =
+        '"chatbase":{"apiKey":"<chatbase apiKey>","ignoreUsers":[],"suppressSending":false}';
+
+      expect(JSON.stringify(localContent)).to.contain(ga);
+      expect(JSON.stringify(localContent)).to.not.contain(chatbase);
+      expect(JSON.stringify(localContent)).to.not.contain(dashbot);
+      expect(JSON.stringify(stagingContent)).to.contain(ga);
+      expect(JSON.stringify(stagingContent)).to.not.contain(chatbase);
+      expect(JSON.stringify(stagingContent)).to.not.contain(dashbot);
+      expect(JSON.stringify(prodContent)).to.contain(prodGa);
+      expect(JSON.stringify(prodContent)).to.not.contain(prodChatbase);
+      expect(JSON.stringify(prodContent)).to.not.contain(prodDashbot);
+    });
+  });
+
+  describe("Generate a Javascript project that uses only Google Analytics and Dashbot", () => {
+    before(async () => {
+      simple.mock(inquirer, "prompt").callFn(() => {
+        return Promise.resolve({
+          appName: "ga dashbot analytics skill",
+          author: "Rain",
+          language: "javascript",
+          serverless: false,
+          canfulfill: true,
+          analytics: ["ga", "dashbot"]
+        });
+      });
+      await action();
+    });
+
+    it("should have only google analytics and dashbot references in index file", async () => {
+      const filePath = getFilePath("ga-dashbot-analytics-skill", "src", "app", "index.js");
+      const fileContent = await fs.readFile(filePath, "utf8");
+      expect(fileContent).to.contain('const voxaGA = require("voxa-ga");');
+      expect(fileContent).to.contain('const voxaDashbot = require("voxa-dashbot").register;');
+      expect(fileContent).to.not.contain('const voxaChatbase = require("voxa-chatbase");');
+      expect(fileContent).to.contain("voxaGA(voxaApp, config.googleAnalytics);");
+      expect(fileContent).to.contain("voxaDashbot(voxaApp, config.dashbot);");
+      expect(fileContent).to.not.contain("voxaChatbase(voxaApp, config.chatbase);");
+    });
+
+    it("should have only the voxa-ga and the voxa-dashbot packages in the package.json file", async () => {
+      const filePath = getFilePath("ga-dashbot-analytics-skill", "package.json");
+      const fileContent = await fs.readFile(filePath, "utf8");
+      expect(fileContent).to.not.contain('"voxa-chatbase": "0.1.1"');
+      expect(fileContent).to.contain('"voxa-dashbot": "2.0.0-alpha4"');
+      expect(fileContent).to.contain('"voxa-ga": "2.0.0"');
+    });
+
+    it("should have only the google analytics and dashbot basic configuration in the config files", async () => {
+      const localPath = getFilePath(
+        "ga-dashbot-analytics-skill",
+        "src",
+        "config",
+        "local.example.json"
+      );
+      const stagingPath = getFilePath(
+        "ga-dashbot-analytics-skill",
+        "src",
+        "config",
+        "staging.json"
+      );
+      const prodPath = getFilePath(
+        "ga-dashbot-analytics-skill",
+        "src",
+        "config",
+        "production.json"
+      );
+
+      const localContent = JSON.parse(await fs.readFile(localPath, "utf8"));
+      const stagingContent = JSON.parse(await fs.readFile(stagingPath, "utf8"));
+      const prodContent = JSON.parse(await fs.readFile(prodPath, "utf8"));
+
+      const ga =
+        '"googleAnalytics":{"trackingId":"UA-XXXX-X","appName":"ga-dashbot-analytics-skill","ignoreUsers":[],"suppressSending":true}';
+      const dashbot = '"dashbot":{"suppressSending":true,"alexa":"key"}';
+      const chatbase =
+        '"chatbase":{"apiKey":"<chatbase apiKey>","ignoreUsers":[],"suppressSending":true}';
+
+      const prodGa =
+        '"googleAnalytics":{"trackingId":"UA-XXXX-X","appName":"ga-dashbot-analytics-skill","ignoreUsers":[],"suppressSending":false}';
+      const prodDashbot = '"dashbot":{"suppressSending":false,"alexa":"key"}';
+      const prodChatbase =
+        '"chatbase":{"apiKey":"<chatbase apiKey>","ignoreUsers":[],"suppressSending":false}';
+
+      expect(JSON.stringify(localContent)).to.contain(ga);
+      expect(JSON.stringify(localContent)).to.not.contain(chatbase);
+      expect(JSON.stringify(localContent)).to.contain(dashbot);
+      expect(JSON.stringify(stagingContent)).to.contain(ga);
+      expect(JSON.stringify(stagingContent)).to.not.contain(chatbase);
+      expect(JSON.stringify(stagingContent)).to.contain(dashbot);
+      expect(JSON.stringify(prodContent)).to.contain(prodGa);
+      expect(JSON.stringify(prodContent)).to.not.contain(prodChatbase);
+      expect(JSON.stringify(prodContent)).to.contain(prodDashbot);
     });
   });
 });
