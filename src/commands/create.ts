@@ -104,6 +104,7 @@ export async function action() {
       {
         type: "checkbox",
         name: "analytics",
+        message: "What analytics will you be using for this app?",
         choices: [
           { name: "None", value: "none" },
           { name: "All of them", value: "all" },
