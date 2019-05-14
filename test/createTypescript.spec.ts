@@ -448,4 +448,110 @@ describe("Typescript project generator", () => {
       expect(JSON.stringify(prodContent)).to.contain(prodDashbot);
     });
   });
+
+  describe("Generate a Typescript project that store user information in DynamoDB", () => {
+    before(async () => {
+      simple.mock(inquirer, "prompt").callFn(() => {
+        return Promise.resolve({
+          appName: "user skill",
+          author: "Rain",
+          language: "typescript",
+          voxaCli: false,
+          canfulfill: true,
+          analytics: ["none"],
+          saveUserInfo: true
+        });
+      });
+      await action();
+    });
+
+    it("should have a User service file", async () => {
+      const filePath = getFilePath("user-skill", "src", "services", "User.ts");
+      const pathExists = await fs.pathExists(filePath);
+      expect(pathExists).to.be.true;
+    });
+
+    it("should have a dynamoDB table presets in the config files", async () => {
+      const localFilePath = getFilePath("user-skill", "src", "config", "local.example.json");
+      const stagingFilePath = getFilePath("user-skill", "src", "config", "staging.json");
+      const prodFilePath = getFilePath("user-skill", "src", "config", "production.json");
+
+      const localFileContent = JSON.parse(await fs.readFile(localFilePath, "utf8"));
+      const stagingFileContent = JSON.parse(await fs.readFile(stagingFilePath, "utf8"));
+      const prodFileContent = JSON.parse(await fs.readFile(prodFilePath, "utf8"));
+
+      expect(JSON.stringify(localFileContent)).to.contain(
+        '"dynamoDB":{"tables":{"users":"users"}}'
+      );
+      expect(JSON.stringify(stagingFileContent)).to.contain(
+        '"dynamoDB":{"tables":{"users":"users"}}'
+      );
+      expect(JSON.stringify(prodFileContent)).to.contain('"dynamoDB":{"tables":{"users":"users"}}');
+    });
+
+    it("should have lifecycle methods to retrieve and save user info in the session", async () => {
+      const filePath = getFilePath("user-skill", "src", "app", "index.ts");
+      const fileContent = await fs.readFile(filePath, "utf8");
+      expect(fileContent).to.contain('import { User } from "../services/User";');
+      expect(fileContent).to.contain(
+        "const model = voxaEvent.model as Model;\n  model.user = user;"
+      );
+      expect(fileContent).to.contain("user.newSession();");
+      expect(fileContent).to.contain("await user.save({ userId: voxaEvent.user.userId });");
+    });
+  });
+
+  describe("Generate a Typescript project that doesn't store user information in DynamoDB", () => {
+    before(async () => {
+      simple.mock(inquirer, "prompt").callFn(() => {
+        return Promise.resolve({
+          appName: "no user skill",
+          author: "Rain",
+          language: "typescript",
+          voxaCli: false,
+          canfulfill: true,
+          analytics: ["none"],
+          saveUserInfo: false
+        });
+      });
+      await action();
+    });
+
+    it("should not have a User service file", async () => {
+      const filePath = getFilePath("no-user-skill", "src", "services", "User.ts");
+      const pathExists = await fs.pathExists(filePath);
+      expect(pathExists).to.be.false;
+    });
+
+    it("should not have a dynamoDB table presets in the config files", async () => {
+      const localFilePath = getFilePath("no-user-skill", "src", "config", "local.example.json");
+      const stagingFilePath = getFilePath("no-user-skill", "src", "config", "staging.json");
+      const prodFilePath = getFilePath("no-user-skill", "src", "config", "production.json");
+
+      const localFileContent = JSON.parse(await fs.readFile(localFilePath, "utf8"));
+      const stagingFileContent = JSON.parse(await fs.readFile(stagingFilePath, "utf8"));
+      const prodFileContent = JSON.parse(await fs.readFile(prodFilePath, "utf8"));
+
+      expect(JSON.stringify(localFileContent)).to.not.contain(
+        '"dynamoDB":{"tables":{"users":"users"}}'
+      );
+      expect(JSON.stringify(stagingFileContent)).to.not.contain(
+        '"dynamoDB":{"tables":{"users":"users"}}'
+      );
+      expect(JSON.stringify(prodFileContent)).to.not.contain(
+        '"dynamoDB":{"tables":{"users":"users"}}'
+      );
+    });
+
+    it("should not have lifecycle methods to retrieve and save user info in the session", async () => {
+      const filePath = getFilePath("no-user-skill", "src", "app", "index.ts");
+      const fileContent = await fs.readFile(filePath, "utf8");
+      expect(fileContent).to.not.contain('import { User } from "../services/User";');
+      expect(fileContent).to.not.contain(
+        "const model = voxaEvent.model as Model;\n  model.user = user;"
+      );
+      expect(fileContent).to.not.contain("user.newSession();");
+      expect(fileContent).to.not.contain("await user.save({ userId: voxaEvent.user.userId });");
+    });
+  });
 });
