@@ -1,4 +1,19 @@
-const { AlexaPlatform, plugins, VoxaApp } = require("voxa");
+const {
+  {{#if usesAlexa}}
+  AlexaPlatform,
+  {{/if}}
+  {{#if usesTelegram}}
+  DialogflowPlatform,
+  {{/if}}
+  {{#if usesFacebook}}
+  FacebookPlatform,
+  {{/if}}
+  {{#if usesGoogleAssistant}}
+  GoogleAssistantPlatform,
+  {{/if}}
+  plugins,
+  VoxaApp
+} = require("voxa");
 {{#if ga }}
 const voxaGA = require("voxa-ga");
 {{/if}}
@@ -21,11 +36,20 @@ const variables = require("./variables");
 const views = require("./views.json");
 
 const voxaApp = new VoxaApp({ Model, views, variables{{#if canfulfill }}, defaultFulfillIntents{{/if}} });
-const alexa = new AlexaPlatform(voxaApp);
-const alexaLambda = alexa.lambda();
-const handler = alexa.lambda();
-
 states(voxaApp);
+
+{{#if usesAlexa}}
+exports.alexaSkill = new AlexaPlatform(voxaApp);
+{{/if}}
+{{#if usesTelegram}}
+exports.telegramBot = new DialogflowPlatform(voxaApp);
+{{/if}}
+{{#if usesFacebook}}
+exports.facebookBot = new FacebookPlatform(voxaApp);
+{{/if}}
+{{#if usesGoogleAssistant}}
+exports.assistantAction = new GoogleAssistantPlatform(voxaApp);
+{{/if}}
 
 plugins.replaceIntent(voxaApp);
 {{#if ga }}
@@ -67,9 +91,4 @@ voxaApp.onBeforeReplySent(async (voxaEvent) => {
 );
 {{/if}}
 
-module.exports = {
-  voxaApp,
-  alexa,
-  alexaLambda,
-  handler,
-};
+exports.voxaApp = voxaApp;

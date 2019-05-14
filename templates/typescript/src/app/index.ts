@@ -1,5 +1,16 @@
 import {
+  {{#if usesAlexa}}
   AlexaPlatform,
+  {{/if}}
+  {{#if usesTelegram}}
+  DialogflowPlatform,
+  {{/if}}
+  {{#if usesFacebook}}
+  FacebookPlatform,
+  {{/if}}
+  {{#if usesGoogleAssistant}}
+  GoogleAssistantPlatform,
+  {{/if}}
   plugins,
   VoxaApp
 } from "voxa";
@@ -25,11 +36,20 @@ import * as variables from "./variables";
 import * as views from "./views.json";
 
 export const voxaApp = new VoxaApp({ Model, views, variables{{#if canfulfill }}, defaultFulfillIntents{{/if}} });
-export const alexa = new AlexaPlatform(voxaApp);
-export const alexaLambda = alexa.lambda();
-export const handler = alexa.lambda();
-
 states(voxaApp);
+
+{{#if usesAlexa}}
+export const alexaSkill = new AlexaPlatform(voxaApp);
+{{/if}}
+{{#if usesTelegram}}
+export const telegramBot = new DialogflowPlatform(voxaApp);
+{{/if}}
+{{#if usesFacebook}}
+export const facebookBot = new FacebookPlatform(voxaApp);
+{{/if}}
+{{#if usesGoogleAssistant}}
+export const assistantAction = new GoogleAssistantPlatform(voxaApp);
+{{/if}}
 
 plugins.replaceIntent(voxaApp);
 {{#if ga }}

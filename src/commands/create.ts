@@ -33,26 +33,30 @@ import { Observable } from "rxjs";
 export const name = "create";
 export const alias = "";
 export const description = "Create a Voxa app";
-export const options = [
-  {
-    flags: "-r, --rain",
-    descriptionOption: "Set a RAIN project"
-  }
-];
 
 export async function action() {
   async function executePrompt(): Promise<any> {
     return inquirer.prompt(observe).then(async (answers: any) => {
       try {
-        const { appName, canfulfill, language, author, analytics, voxaCli, saveUserInfo } = answers;
+        const {
+          appName,
+          canfulfill,
+          language,
+          author,
+          analytics,
+          voxaCli,
+          saveUserInfo,
+          platform
+        } = answers;
 
         const folderName = _.kebabCase(appName);
         await copyPackageAndReadmeFiles(appName, voxaCli, folderName, author, analytics, language);
         if (voxaCli) {
           copyInteractionFile(folderName, language);
         }
-        await copyServerless(folderName, saveUserInfo, language);
-        await copySrcFiles(folderName, canfulfill, analytics, saveUserInfo, language);
+        await copyServerless(folderName, saveUserInfo, platform, language);
+        await copyServer(folderName, platform, language);
+        await copySrcFiles(folderName, canfulfill, analytics, saveUserInfo, platform, language);
         await copyAllOtherFiles(folderName, language);
       } catch (error) {
         console.log(error);
@@ -72,6 +76,18 @@ export async function action() {
         name: "author",
         message: "Please enter your name/company",
         default: os.userInfo().username
+      },
+      {
+        type: "checkbox",
+        name: "platform",
+        message: "Which platform will the app use?",
+        choices: [
+          { name: "All of them", value: "all" },
+          { name: "Amazon Alexa", value: "alexa", default: true },
+          { name: "Google Assistant", value: "google" },
+          { name: "Telegram", value: "telegram" },
+          { name: "Facebook Messenger", value: "facebook" }
+        ]
       },
       {
         type: "list",
@@ -185,15 +201,48 @@ function copyInteractionFile(folderName: string, language: string) {
   );
 }
 
-async function copyServerless(folderName: string, saveUserInfo: boolean, language: string) {
+async function copyServerless(
+  folderName: string,
+  saveUserInfo: boolean,
+  platform: string[],
+  language: string
+) {
+  const usesAlexa = platform.includes("alexa") || platform.includes("all");
+  const usesGoogleAssistant = platform.includes("google") || platform.includes("all");
+  const usesFacebook = platform.includes("facebook") || platform.includes("all");
+  const usesTelegram = platform.includes("telegram") || platform.includes("all");
+
   const content = await getTemplateFile(language, "serverless.yml");
   const template = Handlebars.compile(content);
   const data = {
     service: folderName,
-    saveUserInfo
+    saveUserInfo,
+    usesAlexa,
+    usesGoogleAssistant,
+    usesFacebook,
+    usesTelegram
   };
   const result = template(data);
   return fs.outputFile(path.join(process.cwd(), folderName, "serverless.yml"), result);
+}
+
+async function copyServer(folderName: string, platform: string[], language: string) {
+  const ext = language === "javascript" ? "js" : "ts";
+  const content = await getTemplateFile(language, `server.${ext}`);
+  const template = Handlebars.compile(content);
+  const usesAlexa = platform.includes("alexa") || platform.includes("all");
+  const usesGoogleAssistant = platform.includes("google") || platform.includes("all");
+  const usesFacebook = platform.includes("facebook") || platform.includes("all");
+  const usesTelegram = platform.includes("telegram") || platform.includes("all");
+
+  const data = {
+    usesAlexa,
+    usesGoogleAssistant,
+    usesFacebook,
+    usesTelegram
+  };
+  const result = template(data);
+  return fs.outputFile(path.join(process.cwd(), folderName, `server.${ext}`), result);
 }
 
 async function copySrcFiles(
@@ -201,9 +250,14 @@ async function copySrcFiles(
   canfulfill: boolean,
   analytics: string,
   saveUserInfo: boolean,
+  platform: string[],
   language: string
 ) {
   try {
+    const usesAlexa = platform.includes("alexa") || platform.includes("all");
+    const usesGoogleAssistant = platform.includes("google") || platform.includes("all");
+    const usesFacebook = platform.includes("facebook") || platform.includes("all");
+    const usesTelegram = platform.includes("telegram") || platform.includes("all");
     const ext = language === "javascript" ? "js" : "ts";
     const srcFolderPath = getTemplatePath(language, "src");
     const destinationPath = path.join(process.cwd(), folderName, "src");
@@ -218,6 +272,7 @@ async function copySrcFiles(
     const chatbase = analytics.includes("chatbase") || analytics.includes("all");
 
     const indexContent = await getTemplateFile(language, "src", "app", `index.${ext}`);
+    const handlerContent = await getTemplateFile(language, "src", `handler.${ext}`);
     const localConfigContent = await getTemplateFile(
       language,
       "src",
@@ -228,6 +283,7 @@ async function copySrcFiles(
     const prodConfigContent = await getTemplateFile(language, "src", "config", "production.json");
 
     const indexTemplate = Handlebars.compile(indexContent);
+    const handlerTemplate = Handlebars.compile(handlerContent);
     const localConfigTemplate = Handlebars.compile(localConfigContent);
     const stagingConfigTemplate = Handlebars.compile(stagingConfigContent);
     const prodConfigTemplate = Handlebars.compile(prodConfigContent);
@@ -237,7 +293,17 @@ async function copySrcFiles(
       ga,
       dashbot,
       chatbase,
-      saveUserInfo
+      saveUserInfo,
+      usesAlexa,
+      usesGoogleAssistant,
+      usesFacebook,
+      usesTelegram
+    };
+    const handlerData = {
+      usesAlexa,
+      usesGoogleAssistant,
+      usesFacebook,
+      usesTelegram
     };
     const configData = {
       folderName,
@@ -247,6 +313,7 @@ async function copySrcFiles(
       saveUserInfo
     };
     const indexResult = indexTemplate(indexData);
+    const handlerResult = handlerTemplate(handlerData);
     const localConfigResult = localConfigTemplate(configData);
     const stagingConfigResult = stagingConfigTemplate(configData);
     const prodConfigResult = prodConfigTemplate(configData);
@@ -256,6 +323,7 @@ async function copySrcFiles(
         path.join(process.cwd(), folderName, "src", "app", `index.${ext}`),
         indexResult
       ),
+      fs.outputFile(path.join(process.cwd(), folderName, "src", `handler.${ext}`), handlerResult),
       fs.outputFile(
         path.join(process.cwd(), folderName, "src", "config", "local.example.json"),
         localConfigResult
@@ -278,13 +346,15 @@ async function copySrcFiles(
 
 async function copyAllOtherFiles(folderName: string, language: string) {
   try {
+    const ext = language === "javascript" ? "js" : "ts";
     const rootFiles = await fs.readdir(getTemplatePath(language));
     const unwantedFiles = [
       "README.md",
       "serverless.yml",
       "package.json",
       "src",
-      "interaction.json"
+      "interaction.json",
+      `server.${ext}`
     ];
     const filteredFiles = rootFiles.filter(file => !unwantedFiles.includes(file));
     return filteredFiles.map(file => {
