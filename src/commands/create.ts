@@ -44,7 +44,7 @@ export async function action() {
   async function executePrompt(): Promise<any> {
     return inquirer.prompt(observe).then(async (answers: any) => {
       try {
-        const { appName, canfulfill, language, author, analytics, voxaCli } = answers;
+        const { appName, canfulfill, language, author, analytics, voxaCli, saveUserInfo } = answers;
 
         const folderName = _.kebabCase(appName);
         await copyPackageAndReadmeFiles(appName, voxaCli, folderName, author, analytics, language);
@@ -52,7 +52,7 @@ export async function action() {
           copyInteractionFile(folderName, language);
         }
         await copyServerless(folderName, language);
-        await copySrcFiles(folderName, canfulfill, analytics, language);
+        await copySrcFiles(folderName, canfulfill, analytics, saveUserInfo, language);
         await copyAllOtherFiles(folderName, language);
       } catch (error) {
         console.log(error);
@@ -94,6 +94,12 @@ export async function action() {
         type: "confirm",
         name: "canfulfill",
         message: "Will you use the Canfulfill intent?",
+        default: false
+      },
+      {
+        type: "confirm",
+        name: "saveUserInfo",
+        message: "Will you use DynamoDB to save user's info?",
         default: false
       },
       {
@@ -193,6 +199,7 @@ async function copySrcFiles(
   folderName: string,
   canfulfill: boolean,
   analytics: string,
+  saveUserInfo: boolean,
   language: string
 ) {
   try {
@@ -200,6 +207,10 @@ async function copySrcFiles(
     const srcFolderPath = getTemplatePath(language, "src");
     const destinationPath = path.join(process.cwd(), folderName, "src");
     await fs.copy(srcFolderPath, destinationPath);
+
+    if (!saveUserInfo) {
+      await fs.remove(path.join(process.cwd(), folderName, "src", "services", `User.${ext}`));
+    }
 
     const ga = analytics.includes("ga") || analytics.includes("all");
     const dashbot = analytics.includes("dashbot") || analytics.includes("all");
@@ -224,13 +235,15 @@ async function copySrcFiles(
       canfulfill,
       ga,
       dashbot,
-      chatbase
+      chatbase,
+      saveUserInfo
     };
     const configData = {
       folderName,
       ga,
       dashbot,
-      chatbase
+      chatbase,
+      saveUserInfo
     };
     const indexResult = indexTemplate(indexData);
     const localConfigResult = localConfigTemplate(configData);
