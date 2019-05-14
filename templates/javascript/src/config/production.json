@@ -2,7 +2,12 @@
 	"server": {
 		"port": 3000,
 		"hostSkill": true
-	}{{#if ga}},
+	}{{#if saveUserInfo}},
+  "dynamoDB": {
+    "tables": {
+      "users": "users"
+    }
+  }{{/if}}{{#if ga}},
   "googleAnalytics": {
     "trackingId": "UA-XXXX-X",
     "appName": "{{ folderName }}",

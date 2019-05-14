@@ -17,6 +17,9 @@ import * as config from "../config";
 import * as defaultFulfillIntents from "../../content/en-US/canfulfill-intent.json";
 {{/if}}
 import Model from "./model";
+{{#if saveUserInfo }}
+import { User } from "../services/User";
+{{/if}}
 import { register as states } from "./states";
 import * as variables from "./variables";
 import * as views from "./views.json";
@@ -37,4 +40,34 @@ voxaDashbot(voxaApp, config.dashbot);
 {{/if}}
 {{#if chatbase }}
 voxaChatbase(voxaApp, config.chatbase);
+{{/if}}
+{{#if saveUserInfo }}
+
+/**
+ * Load User into the model
+ */
+voxaApp.onRequestStarted(async (voxaEvent: IVoxaEvent) => {
+  const user = await User.get(voxaEvent);
+
+  const model = voxaEvent.model as Model;
+  model.user = user;
+});
+
+/**
+ * Update the session count
+ */
+voxaApp.onSessionStarted(async (voxaEvent: IVoxaEvent) => {
+  const user: User = voxaEvent.model.user;
+  user.newSession();
+});
+
+/**
+ * Save the user
+ */
+voxaApp.onBeforeReplySent(async (voxaEvent: IVoxaEvent) => {
+    const user: User = voxaEvent.model.user;
+
+    await user.save({ userId: voxaEvent.user.userId });
+  }
+);
 {{/if}}
