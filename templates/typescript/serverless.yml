@@ -5,22 +5,42 @@ plugins:
 
 custom:
   config: ${file(src/config/index.js):asFunction}
+  {{#if saveUserInfo}}
+
+  DynamoDBBillingMode:
+    production: PAY_PER_REQUEST
+    staging: PROVISIONED
+
+  DynamoDBCapacity:
+    production: !Ref AWS::NoValue
+    staging:
+      ReadCapacityUnits: 1
+      WriteCapacityUnits: 1
+  {{/if}}
 
 provider:
   name: aws
   runtime: nodejs8.10
-
+  {{#if saveUserInfo}}
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "dynamodb:*"
+      Resource: !GetAtt TableUsers.Arn
+  {{/if}}
   environment:
     NODE_ENV: ${opt:stage}
 
 functions:
   alexa:
     timeout: 7
-    handler: src/handler.alexaLambda
+    handler: src/handler.alexaHandler
+    memorySize: 512
     events:
       - alexaSkill: ${env:SKILL_ID}
 
 package:
+  excludeDevDependencies: true
   include:
     - src/config/*.json
 
@@ -43,3 +63,18 @@ resources:
                 - "*"
               AllowedMethods:
                 - GET
+    {{#if saveUserInfo}}
+
+    TableUsers:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.config.dynamodb.tables.users}
+        BillingMode: ${self:custom.DynamoDBBillingMode.${env:NODE_ENV}}
+        ProvisionedThroughput: ${self:custom.DynamoDBCapacity.${env:NODE_ENV}}
+        AttributeDefinitions:
+          - AttributeName: userId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: userId
+            KeyType: HASH
+    {{/if}}

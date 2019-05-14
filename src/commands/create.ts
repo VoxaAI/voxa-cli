@@ -51,7 +51,7 @@ export async function action() {
         if (voxaCli) {
           copyInteractionFile(folderName, language);
         }
-        await copyServerless(folderName, language);
+        await copyServerless(folderName, saveUserInfo, language);
         await copySrcFiles(folderName, canfulfill, analytics, saveUserInfo, language);
         await copyAllOtherFiles(folderName, language);
       } catch (error) {
@@ -185,11 +185,12 @@ function copyInteractionFile(folderName: string, language: string) {
   );
 }
 
-async function copyServerless(folderName: string, language: string) {
+async function copyServerless(folderName: string, saveUserInfo: boolean, language: string) {
   const content = await getTemplateFile(language, "serverless.yml");
   const template = Handlebars.compile(content);
   const data = {
-    service: folderName
+    service: folderName,
+    saveUserInfo
   };
   const result = template(data);
   return fs.outputFile(path.join(process.cwd(), folderName, "serverless.yml"), result);

@@ -499,6 +499,16 @@ describe("Typescript project generator", () => {
       expect(fileContent).to.contain("user.newSession();");
       expect(fileContent).to.contain("await user.save({ userId: voxaEvent.user.userId });");
     });
+
+    it("should have DynamoDB configurations for the user table in serverless file", async () => {
+      const filePath = getFilePath("user-skill", "serverless.yml");
+      const fileContent = await fs.readFile(filePath, "utf8");
+      expect(fileContent).to.contain("DynamoDBCapacity:");
+      expect(fileContent).to.contain("Resource: !GetAtt TableUsers.Arn");
+      expect(fileContent).to.contain("TableUsers:");
+      // tslint:disable-next-line:no-invalid-template-strings
+      expect(fileContent).to.contain("TableName: ${self:custom.config.dynamodb.tables.users}");
+    });
   });
 
   describe("Generate a Typescript project that doesn't store user information in DynamoDB", () => {
@@ -552,6 +562,16 @@ describe("Typescript project generator", () => {
       );
       expect(fileContent).to.not.contain("user.newSession();");
       expect(fileContent).to.not.contain("await user.save({ userId: voxaEvent.user.userId });");
+    });
+
+    it("should not have DynamoDB configurations for the user table in serverless file", async () => {
+      const filePath = getFilePath("no-user-skill", "serverless.yml");
+      const fileContent = await fs.readFile(filePath, "utf8");
+      expect(fileContent).to.not.contain("DynamoDBCapacity:");
+      expect(fileContent).to.not.contain("Resource: !GetAtt TableUsers.Arn");
+      expect(fileContent).to.not.contain("TableUsers:");
+      // tslint:disable-next-line:no-invalid-template-strings
+      expect(fileContent).to.not.contain("TableName: ${self:custom.config.dynamodb.tables.users}");
     });
   });
 });
