@@ -307,12 +307,10 @@ export abstract class Schema {
         key = keySplitByArray[0];
         const subKey = keySplitByArray[1];
 
-        const arrayOnPublishingInformation = _.get(manifest, key, []);
+        const arrayOnPublishingInformation = _.get(manifest, key, _.isEmpty(subKey) ? [] : {});
 
         if (!_.isEmpty(subKey)) {
-          const subObject = {};
-          _.set(subObject, subKey, value);
-          arrayOnPublishingInformation.push(subObject);
+          _.set(arrayOnPublishingInformation, subKey, value);
         } else {
           arrayOnPublishingInformation.push(value);
         }
