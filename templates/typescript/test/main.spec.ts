@@ -3,7 +3,7 @@ import * as _ from "lodash";
 import * as nock from "nock";
 import * as path from "path";
 import * as simple from "simple-mock";
-import * as skill from "../src/app";
+import { alexaSkill } from "../src/app";
 import * as views from "../src/app/views.json";
 
 
@@ -15,7 +15,7 @@ const describeWrapper = {
 };
 
 mime(
-  skill,
+  { handler: alexaSkill.lambda() },
   views.en.translation,
   path.join(__dirname, "use-cases"),
   path.join(__dirname, "..", "reports", "simulate"),
