@@ -83,7 +83,7 @@ export async function action() {
         message: "Which platform will the app use?",
         choices: [
           { name: "All of them", value: "all" },
-          { name: "Amazon Alexa", value: "alexa", default: true },
+          { name: "Amazon Alexa", value: "alexa", checked: true },
           { name: "Google Assistant", value: "google" },
           { name: "Telegram", value: "telegram" },
           { name: "Facebook Messenger", value: "facebook" }
