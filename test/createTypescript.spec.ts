@@ -28,7 +28,8 @@ describe("Typescript project generator", () => {
           language: "typescript",
           voxaCli: false,
           canfulfill: true,
-          analytics: []
+          analytics: [],
+          platform: ["all"]
         });
       });
       await action();
@@ -77,7 +78,8 @@ describe("Typescript project generator", () => {
           language: "typescript",
           voxaCli: true,
           canfulfill: true,
-          analytics: []
+          analytics: [],
+          platform: ["all"]
         });
       });
       await action();
@@ -115,7 +117,8 @@ describe("Typescript project generator", () => {
           language: "typescript",
           voxaCli: false,
           canfulfill: true,
-          analytics: []
+          analytics: [],
+          platform: ["all"]
         });
       });
       await action();
@@ -153,7 +156,8 @@ describe("Typescript project generator", () => {
           language: "typescript",
           voxaCli: false,
           canfulfill: true,
-          analytics: []
+          analytics: [],
+          platform: ["all"]
         });
       });
       await action();
@@ -175,7 +179,8 @@ describe("Typescript project generator", () => {
           language: "typescript",
           voxaCli: false,
           canfulfill: true,
-          analytics: ["all"]
+          analytics: ["all"],
+          platform: ["all"]
         });
       });
       await action();
@@ -242,7 +247,8 @@ describe("Typescript project generator", () => {
           language: "typescript",
           voxaCli: false,
           canfulfill: true,
-          analytics: ["none"]
+          analytics: ["none"],
+          platform: ["all"]
         });
       });
       await action();
@@ -309,7 +315,8 @@ describe("Typescript project generator", () => {
           language: "typescript",
           voxaCli: false,
           canfulfill: true,
-          analytics: ["ga"]
+          analytics: ["ga"],
+          platform: ["all"]
         });
       });
       await action();
@@ -376,7 +383,8 @@ describe("Typescript project generator", () => {
           language: "typescript",
           voxaCli: false,
           canfulfill: true,
-          analytics: ["ga", "dashbot"]
+          analytics: ["ga", "dashbot"],
+          platform: ["all"]
         });
       });
       await action();
@@ -459,7 +467,8 @@ describe("Typescript project generator", () => {
           voxaCli: false,
           canfulfill: true,
           analytics: ["none"],
-          saveUserInfo: true
+          saveUserInfo: true,
+          platform: ["all"]
         });
       });
       await action();
@@ -521,7 +530,8 @@ describe("Typescript project generator", () => {
           voxaCli: false,
           canfulfill: true,
           analytics: ["none"],
-          saveUserInfo: false
+          saveUserInfo: false,
+          platform: ["all"]
         });
       });
       await action();
@@ -572,6 +582,302 @@ describe("Typescript project generator", () => {
       expect(fileContent).to.not.contain("TableUsers:");
       // tslint:disable-next-line:no-invalid-template-strings
       expect(fileContent).to.not.contain("TableName: ${self:custom.config.dynamodb.tables.users}");
+    });
+  });
+
+  describe("Generate a Typescript project only for Alexa", () => {
+    before(async () => {
+      simple.mock(inquirer, "prompt").callFn(() => {
+        return Promise.resolve({
+          appName: "my alexa skill",
+          author: "Rain",
+          language: "typescript",
+          voxaCli: false,
+          canfulfill: false,
+          analytics: [],
+          platform: ["alexa"]
+        });
+      });
+      await action();
+    });
+
+    it("should have support only for Alexa platform in the index file", async () => {
+      const filePath = getFilePath("my-alexa-skill", "src", "app", "index.ts");
+      const fileContent = await fs.readFile(filePath, "utf8");
+      expect(fileContent).to.contain("AlexaPlatform,");
+      expect(fileContent).to.contain("export const alexaSkill = new AlexaPlatform(voxaApp);");
+      expect(fileContent).to.not.contain("DialogflowPlatform,");
+      expect(fileContent).to.not.contain(
+        "export const telegramBot = new DialogflowPlatform(voxaApp);"
+      );
+      expect(fileContent).to.not.contain("FacebookPlatform,");
+      expect(fileContent).to.not.contain(
+        "export const facebookBot = new FacebookPlatform(voxaApp);"
+      );
+      expect(fileContent).to.not.contain("GoogleAssistantPlatform,");
+      expect(fileContent).to.not.contain(
+        "export const assistantAction = new GoogleAssistantPlatform(voxaApp);"
+      );
+    });
+
+    it("should have an endpoint only for Alexa in the server file", async () => {
+      const filePath = getFilePath("my-alexa-skill", "server.ts");
+      const fileContent = await fs.readFile(filePath, "utf8");
+      expect(fileContent).to.contain("alexaSkill,");
+      expect(fileContent).to.contain('"/alexa": alexaSkill,');
+      expect(fileContent).to.not.contain("assistantAction,");
+      expect(fileContent).to.not.contain('"/googleAction": assistantAction,');
+      expect(fileContent).to.not.contain("facebookBot,");
+      expect(fileContent).to.not.contain('"/facebook": facebookBot,');
+      expect(fileContent).to.not.contain("telegramBot,");
+      expect(fileContent).to.not.contain('"/telegram": telegramBot,');
+    });
+
+    it("should have function configuration only for Alexa in serverless file", async () => {
+      const filePath = getFilePath("my-alexa-skill", "serverless.yml");
+      const fileContent = await fs.readFile(filePath, "utf8");
+      expect(fileContent).to.contain("handler: src/handler.alexaHandler");
+      expect(fileContent).to.not.contain("handler: src/handler.assistantHandler");
+      expect(fileContent).to.not.contain("handler: src/handler.facebookHandler");
+      expect(fileContent).to.not.contain("handler: src/handler.telegramHandler");
+    });
+
+    it("should export only the Alexa lambda handler in the handler file", async () => {
+      const filePath = getFilePath("my-alexa-skill", "src", "handler.ts");
+      const fileContent = await fs.readFile(filePath, "utf8");
+      expect(fileContent).to.contain("alexaSkill,");
+      expect(fileContent).to.contain("export const alexaHandler = alexaSkill.lambda();");
+      expect(fileContent).to.not.contain("assistantAction,");
+      expect(fileContent).to.not.contain(
+        "export const assistantHandler = assistantAction.lambdaHTTP();"
+      );
+      expect(fileContent).to.not.contain("facebookBot,");
+      expect(fileContent).to.not.contain(
+        "export const facebookHandler = facebookBot.lambdaHTTP();"
+      );
+      expect(fileContent).to.not.contain("telegramBot,");
+      expect(fileContent).to.not.contain(
+        "export const telegramHandler = telegramBot.lambdaHTTP();"
+      );
+    });
+  });
+
+  describe("Generate a Typescript project only for Alexa and Google Assistant", () => {
+    before(async () => {
+      simple.mock(inquirer, "prompt").callFn(() => {
+        return Promise.resolve({
+          appName: "my alexa ga skill",
+          author: "Rain",
+          language: "typescript",
+          voxaCli: false,
+          canfulfill: false,
+          analytics: [],
+          platform: ["alexa", "google"]
+        });
+      });
+      await action();
+    });
+
+    it("should have support only for Alexa platform in the index file", async () => {
+      const filePath = getFilePath("my-alexa-ga-skill", "src", "app", "index.ts");
+      const fileContent = await fs.readFile(filePath, "utf8");
+      expect(fileContent).to.contain("AlexaPlatform,");
+      expect(fileContent).to.contain("export const alexaSkill = new AlexaPlatform(voxaApp);");
+      expect(fileContent).to.not.contain("DialogflowPlatform,");
+      expect(fileContent).to.not.contain(
+        "export const telegramBot = new DialogflowPlatform(voxaApp);"
+      );
+      expect(fileContent).to.not.contain("FacebookPlatform,");
+      expect(fileContent).to.not.contain(
+        "export const facebookBot = new FacebookPlatform(voxaApp);"
+      );
+      expect(fileContent).to.contain("GoogleAssistantPlatform,");
+      expect(fileContent).to.contain(
+        "export const assistantAction = new GoogleAssistantPlatform(voxaApp);"
+      );
+    });
+
+    it("should have an endpoint only for Alexa in the server file", async () => {
+      const filePath = getFilePath("my-alexa-ga-skill", "server.ts");
+      const fileContent = await fs.readFile(filePath, "utf8");
+      expect(fileContent).to.contain("alexaSkill,");
+      expect(fileContent).to.contain('"/alexa": alexaSkill,');
+      expect(fileContent).to.contain("assistantAction,");
+      expect(fileContent).to.contain('"/googleAction": assistantAction,');
+      expect(fileContent).to.not.contain("facebookBot,");
+      expect(fileContent).to.not.contain('"/facebook": facebookBot,');
+      expect(fileContent).to.not.contain("telegramBot,");
+      expect(fileContent).to.not.contain('"/telegram": telegramBot,');
+    });
+
+    it("should have function configuration only for Alexa in serverless file", async () => {
+      const filePath = getFilePath("my-alexa-ga-skill", "serverless.yml");
+      const fileContent = await fs.readFile(filePath, "utf8");
+      expect(fileContent).to.contain("handler: src/handler.alexaHandler");
+      expect(fileContent).to.contain("handler: src/handler.assistantHandler");
+      expect(fileContent).to.not.contain("handler: src/handler.facebookHandler");
+      expect(fileContent).to.not.contain("handler: src/handler.telegramHandler");
+    });
+
+    it("should export only the Alexa lambda handler in the handler file", async () => {
+      const filePath = getFilePath("my-alexa-ga-skill", "src", "handler.ts");
+      const fileContent = await fs.readFile(filePath, "utf8");
+      expect(fileContent).to.contain("alexaSkill,");
+      expect(fileContent).to.contain("export const alexaHandler = alexaSkill.lambda();");
+      expect(fileContent).to.contain("assistantAction,");
+      expect(fileContent).to.contain(
+        "export const assistantHandler = assistantAction.lambdaHTTP();"
+      );
+      expect(fileContent).to.not.contain("facebookBot,");
+      expect(fileContent).to.not.contain(
+        "export const facebookHandler = facebookBot.lambdaHTTP();"
+      );
+      expect(fileContent).to.not.contain("telegramBot,");
+      expect(fileContent).to.not.contain(
+        "export const telegramHandler = telegramBot.lambdaHTTP();"
+      );
+    });
+  });
+
+  describe("Generate a Typescript project only for Alexa, Google Assistant and Facebook Messenger", () => {
+    before(async () => {
+      simple.mock(inquirer, "prompt").callFn(() => {
+        return Promise.resolve({
+          appName: "my alexa ga fb skill",
+          author: "Rain",
+          language: "typescript",
+          voxaCli: false,
+          canfulfill: false,
+          analytics: [],
+          platform: ["alexa", "google", "facebook"]
+        });
+      });
+      await action();
+    });
+
+    it("should have support only for Alexa platform in the index file", async () => {
+      const filePath = getFilePath("my-alexa-ga-fb-skill", "src", "app", "index.ts");
+      const fileContent = await fs.readFile(filePath, "utf8");
+      expect(fileContent).to.contain("AlexaPlatform,");
+      expect(fileContent).to.contain("export const alexaSkill = new AlexaPlatform(voxaApp);");
+      expect(fileContent).to.not.contain("DialogflowPlatform,");
+      expect(fileContent).to.not.contain(
+        "export const telegramBot = new DialogflowPlatform(voxaApp);"
+      );
+      expect(fileContent).to.contain("FacebookPlatform,");
+      expect(fileContent).to.contain("export const facebookBot = new FacebookPlatform(voxaApp);");
+      expect(fileContent).to.contain("GoogleAssistantPlatform,");
+      expect(fileContent).to.contain(
+        "export const assistantAction = new GoogleAssistantPlatform(voxaApp);"
+      );
+    });
+
+    it("should have an endpoint only for Alexa in the server file", async () => {
+      const filePath = getFilePath("my-alexa-ga-fb-skill", "server.ts");
+      const fileContent = await fs.readFile(filePath, "utf8");
+      expect(fileContent).to.contain("alexaSkill,");
+      expect(fileContent).to.contain('"/alexa": alexaSkill,');
+      expect(fileContent).to.contain("assistantAction,");
+      expect(fileContent).to.contain('"/googleAction": assistantAction,');
+      expect(fileContent).to.contain("facebookBot,");
+      expect(fileContent).to.contain('"/facebook": facebookBot,');
+      expect(fileContent).to.not.contain("telegramBot,");
+      expect(fileContent).to.not.contain('"/telegram": telegramBot,');
+    });
+
+    it("should have function configuration only for Alexa in serverless file", async () => {
+      const filePath = getFilePath("my-alexa-ga-fb-skill", "serverless.yml");
+      const fileContent = await fs.readFile(filePath, "utf8");
+      expect(fileContent).to.contain("handler: src/handler.alexaHandler");
+      expect(fileContent).to.contain("handler: src/handler.assistantHandler");
+      expect(fileContent).to.contain("handler: src/handler.facebookHandler");
+      expect(fileContent).to.not.contain("handler: src/handler.telegramHandler");
+    });
+
+    it("should export only the Alexa lambda handler in the handler file", async () => {
+      const filePath = getFilePath("my-alexa-ga-fb-skill", "src", "handler.ts");
+      const fileContent = await fs.readFile(filePath, "utf8");
+      expect(fileContent).to.contain("alexaSkill,");
+      expect(fileContent).to.contain("export const alexaHandler = alexaSkill.lambda();");
+      expect(fileContent).to.contain("assistantAction,");
+      expect(fileContent).to.contain(
+        "export const assistantHandler = assistantAction.lambdaHTTP();"
+      );
+      expect(fileContent).to.contain("facebookBot,");
+      expect(fileContent).to.contain("export const facebookHandler = facebookBot.lambdaHTTP();");
+      expect(fileContent).to.not.contain("telegramBot,");
+      expect(fileContent).to.not.contain(
+        "export const telegramHandler = telegramBot.lambdaHTTP();"
+      );
+    });
+  });
+
+  describe("Generate a Typescript project for all platforms available", () => {
+    before(async () => {
+      simple.mock(inquirer, "prompt").callFn(() => {
+        return Promise.resolve({
+          appName: "my all platforms skill",
+          author: "Rain",
+          language: "typescript",
+          voxaCli: false,
+          canfulfill: false,
+          analytics: [],
+          platform: ["all"]
+        });
+      });
+      await action();
+    });
+
+    it("should have support only for Alexa platform in the index file", async () => {
+      const filePath = getFilePath("my-all-platforms-skill", "src", "app", "index.ts");
+      const fileContent = await fs.readFile(filePath, "utf8");
+      expect(fileContent).to.contain("AlexaPlatform,");
+      expect(fileContent).to.contain("export const alexaSkill = new AlexaPlatform(voxaApp);");
+      expect(fileContent).to.contain("DialogflowPlatform,");
+      expect(fileContent).to.contain("export const telegramBot = new DialogflowPlatform(voxaApp);");
+      expect(fileContent).to.contain("FacebookPlatform,");
+      expect(fileContent).to.contain("export const facebookBot = new FacebookPlatform(voxaApp);");
+      expect(fileContent).to.contain("GoogleAssistantPlatform,");
+      expect(fileContent).to.contain(
+        "export const assistantAction = new GoogleAssistantPlatform(voxaApp);"
+      );
+    });
+
+    it("should have an endpoint only for Alexa in the server file", async () => {
+      const filePath = getFilePath("my-all-platforms-skill", "server.ts");
+      const fileContent = await fs.readFile(filePath, "utf8");
+      expect(fileContent).to.contain("alexaSkill,");
+      expect(fileContent).to.contain('"/alexa": alexaSkill,');
+      expect(fileContent).to.contain("assistantAction,");
+      expect(fileContent).to.contain('"/googleAction": assistantAction,');
+      expect(fileContent).to.contain("facebookBot,");
+      expect(fileContent).to.contain('"/facebook": facebookBot,');
+      expect(fileContent).to.contain("telegramBot,");
+      expect(fileContent).to.contain('"/telegram": telegramBot,');
+    });
+
+    it("should have function configuration only for Alexa in serverless file", async () => {
+      const filePath = getFilePath("my-all-platforms-skill", "serverless.yml");
+      const fileContent = await fs.readFile(filePath, "utf8");
+      expect(fileContent).to.contain("handler: src/handler.alexaHandler");
+      expect(fileContent).to.contain("handler: src/handler.assistantHandler");
+      expect(fileContent).to.contain("handler: src/handler.facebookHandler");
+      expect(fileContent).to.contain("handler: src/handler.telegramHandler");
+    });
+
+    it("should export only the Alexa lambda handler in the handler file", async () => {
+      const filePath = getFilePath("my-all-platforms-skill", "src", "handler.ts");
+      const fileContent = await fs.readFile(filePath, "utf8");
+      expect(fileContent).to.contain("alexaSkill,");
+      expect(fileContent).to.contain("export const alexaHandler = alexaSkill.lambda();");
+      expect(fileContent).to.contain("assistantAction,");
+      expect(fileContent).to.contain(
+        "export const assistantHandler = assistantAction.lambdaHTTP();"
+      );
+      expect(fileContent).to.contain("facebookBot,");
+      expect(fileContent).to.contain("export const facebookHandler = facebookBot.lambdaHTTP();");
+      expect(fileContent).to.contain("telegramBot,");
+      expect(fileContent).to.contain("export const telegramHandler = telegramBot.lambdaHTTP();");
     });
   });
 });

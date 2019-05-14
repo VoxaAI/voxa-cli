@@ -28,7 +28,8 @@ describe("Javascript project generator", () => {
           language: "javascript",
           voxaCli: false,
           canfulfill: true,
-          analytics: []
+          analytics: [],
+          platform: ["all"]
         });
       });
       await action();
@@ -77,7 +78,8 @@ describe("Javascript project generator", () => {
           language: "javascript",
           voxaCli: true,
           canfulfill: true,
-          analytics: []
+          analytics: [],
+          platform: ["all"]
         });
       });
       await action();
@@ -115,7 +117,8 @@ describe("Javascript project generator", () => {
           language: "javascript",
           voxaCli: false,
           canfulfill: true,
-          analytics: []
+          analytics: [],
+          platform: ["all"]
         });
       });
       await action();
@@ -153,7 +156,8 @@ describe("Javascript project generator", () => {
           language: "javascript",
           voxaCli: false,
           canfulfill: true,
-          analytics: []
+          analytics: [],
+          platform: ["all"]
         });
       });
       await action();
@@ -175,7 +179,8 @@ describe("Javascript project generator", () => {
           language: "javascript",
           voxaCli: false,
           canfulfill: true,
-          analytics: ["all"]
+          analytics: ["all"],
+          platform: ["all"]
         });
       });
       await action();
@@ -242,7 +247,8 @@ describe("Javascript project generator", () => {
           language: "javascript",
           voxaCli: false,
           canfulfill: true,
-          analytics: ["none"]
+          analytics: ["none"],
+          platform: ["all"]
         });
       });
       await action();
@@ -309,7 +315,8 @@ describe("Javascript project generator", () => {
           language: "javascript",
           voxaCli: false,
           canfulfill: true,
-          analytics: ["ga"]
+          analytics: ["ga"],
+          platform: ["all"]
         });
       });
       await action();
@@ -376,7 +383,8 @@ describe("Javascript project generator", () => {
           language: "javascript",
           voxaCli: false,
           canfulfill: true,
-          analytics: ["ga", "dashbot"]
+          analytics: ["ga", "dashbot"],
+          platform: ["all"]
         });
       });
       await action();
@@ -459,7 +467,8 @@ describe("Javascript project generator", () => {
           voxaCli: false,
           canfulfill: true,
           analytics: ["none"],
-          saveUserInfo: true
+          saveUserInfo: true,
+          platform: ["all"]
         });
       });
       await action();
@@ -519,7 +528,8 @@ describe("Javascript project generator", () => {
           voxaCli: false,
           canfulfill: true,
           analytics: ["none"],
-          saveUserInfo: false
+          saveUserInfo: false,
+          platform: ["all"]
         });
       });
       await action();
@@ -568,6 +578,75 @@ describe("Javascript project generator", () => {
       expect(fileContent).to.not.contain("TableUsers:");
       // tslint:disable-next-line:no-invalid-template-strings
       expect(fileContent).to.not.contain("TableName: ${self:custom.config.dynamodb.tables.users}");
+    });
+  });
+
+  describe("Generate a Javascript project only for Alexa", () => {
+    before(async () => {
+      simple.mock(inquirer, "prompt").callFn(() => {
+        return Promise.resolve({
+          appName: "my alexa skill",
+          author: "Rain",
+          language: "javascript",
+          voxaCli: false,
+          canfulfill: false,
+          analytics: [],
+          platform: ["alexa"]
+        });
+      });
+      await action();
+    });
+
+    it("should have support only for Alexa platform in the index file", async () => {
+      const filePath = getFilePath("my-alexa-skill", "src", "app", "index.js");
+      const fileContent = await fs.readFile(filePath, "utf8");
+      expect(fileContent).to.contain("AlexaPlatform,");
+      expect(fileContent).to.contain("exports.alexaSkill = new AlexaPlatform(voxaApp);");
+      expect(fileContent).to.not.contain("DialogflowPlatform,");
+      expect(fileContent).to.not.contain("exports.telegramBot = new DialogflowPlatform(voxaApp);");
+      expect(fileContent).to.not.contain("FacebookPlatform,");
+      expect(fileContent).to.not.contain("exports.facebookBot = new FacebookPlatform(voxaApp);");
+      expect(fileContent).to.not.contain("GoogleAssistantPlatform,");
+      expect(fileContent).to.not.contain(
+        "exports.assistantAction = new GoogleAssistantPlatform(voxaApp);"
+      );
+    });
+
+    it("should have an endpoint only for Alexa in the server file", async () => {
+      const filePath = getFilePath("my-alexa-skill", "server.js");
+      const fileContent = await fs.readFile(filePath, "utf8");
+      expect(fileContent).to.contain("alexaSkill,");
+      expect(fileContent).to.contain('"/alexa": alexaSkill,');
+      expect(fileContent).to.not.contain("assistantAction,");
+      expect(fileContent).to.not.contain('"/googleAction": assistantAction,');
+      expect(fileContent).to.not.contain("facebookBot,");
+      expect(fileContent).to.not.contain('"/facebook": facebookBot,');
+      expect(fileContent).to.not.contain("telegramBot,");
+      expect(fileContent).to.not.contain('"/telegram": telegramBot,');
+    });
+
+    it("should have function configuration only for Alexa in serverless file", async () => {
+      const filePath = getFilePath("my-alexa-skill", "serverless.yml");
+      const fileContent = await fs.readFile(filePath, "utf8");
+      expect(fileContent).to.contain("handler: src/handler.alexaHandler");
+      expect(fileContent).to.not.contain("handler: src/handler.assistantHandler");
+      expect(fileContent).to.not.contain("handler: src/handler.facebookHandler");
+      expect(fileContent).to.not.contain("handler: src/handler.telegramHandler");
+    });
+
+    it("should export only the Alexa lambda handler in the handler file", async () => {
+      const filePath = getFilePath("my-alexa-skill", "src", "handler.js");
+      const fileContent = await fs.readFile(filePath, "utf8");
+      expect(fileContent).to.contain("alexaSkill,");
+      expect(fileContent).to.contain("exports.alexaHandler = alexaSkill.lambda();");
+      expect(fileContent).to.not.contain("assistantAction,");
+      expect(fileContent).to.not.contain(
+        "exports.assistantHandler = assistantAction.lambdaHTTP();"
+      );
+      expect(fileContent).to.not.contain("facebookBot,");
+      expect(fileContent).to.not.contain("exports.facebookHandler = facebookBot.lambdaHTTP();");
+      expect(fileContent).to.not.contain("telegramBot,");
+      expect(fileContent).to.not.contain("exports.telegramHandler = telegramBot.lambdaHTTP();");
     });
   });
 });
