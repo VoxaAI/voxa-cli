@@ -59,11 +59,13 @@ export async function action() {
         await copyServer(folderName, platform, language);
         await copySrcFiles(folderName, canfulfill, analytics, saveUserInfo, platform, language);
         await copyAllOtherFiles(folderName, language);
-        console.log("✅ All finish!");
-        console.log("📁 cd into", colors.bold.white(folderName));
-        console.log("⌨️  Run", colors.bold.white("yarn"), "to install dependencies");
-        console.log("⌨️  Run", colors.bold.white("yarn watch"), "to start the development server");
-        console.log("😀 Happy coding");
+        console.log("Let's get started!");
+        console.log("");
+        console.log(`cd ${folderName}`);
+        console.log("yarn install");
+        console.log("yarn watch");
+        console.log("");
+        console.log("Happy coding! 😀");
       } catch (error) {
         console.log(error);
       }
