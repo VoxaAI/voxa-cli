@@ -127,9 +127,9 @@ export async function action() {
       {
         type: "checkbox",
         name: "analytics",
+        suffix: "(Hit Enter to skip this)",
         message: "What analytics will you be using for this app?",
         choices: [
-          { name: "None", value: "none" },
           { name: "All of them", value: "all" },
           { name: "Google Analytics", value: "ga" },
           { name: "Dashbot", value: "dashbot" },
