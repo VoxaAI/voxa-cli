@@ -41,12 +41,6 @@ describe("Typescript project generator", () => {
       expect(pathExists).to.be.true;
     });
 
-    it("should have a test folder", async () => {
-      const filePath = getFilePath("my-skill", "test");
-      const pathExists = await fs.pathExists(filePath);
-      expect(pathExists).to.be.true;
-    });
-
     it("should have a server.ts file", async () => {
       const filePath = getFilePath("my-skill", "server.ts");
       const pathExists = await fs.pathExists(filePath);
@@ -66,6 +60,12 @@ describe("Typescript project generator", () => {
       const fileContent = await fs.readFile(filePath, "utf8");
       expect(fileContent).to.contain('"name": "my-skill",');
       expect(fileContent).to.contain('"author": "Rain",');
+    });
+
+    it("should have a test folder", async () => {
+      const filePath = getFilePath("my-skill", "test");
+      const pathExists = await fs.pathExists(filePath);
+      expect(pathExists).to.be.true;
     });
   });
 
@@ -201,8 +201,8 @@ describe("Typescript project generator", () => {
       const filePath = getFilePath("all-analytics-skill", "package.json");
       const fileContent = await fs.readFile(filePath, "utf8");
       expect(fileContent).to.contain('"voxa-chatbase": "0.1.1"');
-      expect(fileContent).to.contain('"voxa-dashbot": "2.0.0-alpha3"');
-      expect(fileContent).to.contain('"voxa-ga": "2.0.0"');
+      expect(fileContent).to.contain('"voxa-dashbot": "2.0.3"');
+      expect(fileContent).to.contain('"voxa-ga": "2.0.1"');
     });
 
     it("should have all analytics basic configurations in the config files", async () => {
@@ -269,8 +269,8 @@ describe("Typescript project generator", () => {
       const filePath = getFilePath("no-analytics-skill", "package.json");
       const fileContent = await fs.readFile(filePath, "utf8");
       expect(fileContent).to.not.contain('"voxa-chatbase": "0.1.1"');
-      expect(fileContent).to.not.contain('"voxa-dashbot": "2.0.0-alpha3"');
-      expect(fileContent).to.not.contain('"voxa-ga": "2.0.0"');
+      expect(fileContent).to.not.contain('"voxa-dashbot": "2.0.3"');
+      expect(fileContent).to.not.contain('"voxa-ga": "2.0.1"');
     });
 
     it("should not have analytics basic configurations in the config files", async () => {
@@ -337,8 +337,8 @@ describe("Typescript project generator", () => {
       const filePath = getFilePath("ga-analytics-skill", "package.json");
       const fileContent = await fs.readFile(filePath, "utf8");
       expect(fileContent).to.not.contain('"voxa-chatbase": "0.1.1"');
-      expect(fileContent).to.not.contain('"voxa-dashbot": "2.0.0-alpha3"');
-      expect(fileContent).to.contain('"voxa-ga": "2.0.0"');
+      expect(fileContent).to.not.contain('"voxa-dashbot": "2.0.3"');
+      expect(fileContent).to.contain('"voxa-ga": "2.0.1"');
     });
 
     it("should have only the google analytics basic configuration in the config files", async () => {
@@ -405,8 +405,8 @@ describe("Typescript project generator", () => {
       const filePath = getFilePath("ga-dashbot-analytics-skill", "package.json");
       const fileContent = await fs.readFile(filePath, "utf8");
       expect(fileContent).to.not.contain('"voxa-chatbase": "0.1.1"');
-      expect(fileContent).to.contain('"voxa-dashbot": "2.0.0-alpha3"');
-      expect(fileContent).to.contain('"voxa-ga": "2.0.0"');
+      expect(fileContent).to.contain('"voxa-dashbot": "2.0.3"');
+      expect(fileContent).to.contain('"voxa-ga": "2.0.1"');
     });
 
     it("should have only the google analytics and dashbot basic configuration in the config files", async () => {
