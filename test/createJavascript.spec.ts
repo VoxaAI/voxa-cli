@@ -201,7 +201,7 @@ describe("Javascript project generator", () => {
       const filePath = getFilePath("all-analytics-skill", "package.json");
       const fileContent = await fs.readFile(filePath, "utf8");
       expect(fileContent).to.contain('"voxa-chatbase": "0.1.1"');
-      expect(fileContent).to.contain('"voxa-dashbot": "2.0.0-alpha4"');
+      expect(fileContent).to.contain('"voxa-dashbot": "2.0.0-alpha3"');
       expect(fileContent).to.contain('"voxa-ga": "2.0.0"');
     });
 
@@ -269,7 +269,7 @@ describe("Javascript project generator", () => {
       const filePath = getFilePath("no-analytics-skill", "package.json");
       const fileContent = await fs.readFile(filePath, "utf8");
       expect(fileContent).to.not.contain('"voxa-chatbase": "0.1.1"');
-      expect(fileContent).to.not.contain('"voxa-dashbot": "2.0.0-alpha4"');
+      expect(fileContent).to.not.contain('"voxa-dashbot": "2.0.0-alpha3"');
       expect(fileContent).to.not.contain('"voxa-ga": "2.0.0"');
     });
 
@@ -337,7 +337,7 @@ describe("Javascript project generator", () => {
       const filePath = getFilePath("ga-analytics-skill", "package.json");
       const fileContent = await fs.readFile(filePath, "utf8");
       expect(fileContent).to.not.contain('"voxa-chatbase": "0.1.1"');
-      expect(fileContent).to.not.contain('"voxa-dashbot": "2.0.0-alpha4"');
+      expect(fileContent).to.not.contain('"voxa-dashbot": "2.0.0-alpha3"');
       expect(fileContent).to.contain('"voxa-ga": "2.0.0"');
     });
 
@@ -405,7 +405,7 @@ describe("Javascript project generator", () => {
       const filePath = getFilePath("ga-dashbot-analytics-skill", "package.json");
       const fileContent = await fs.readFile(filePath, "utf8");
       expect(fileContent).to.not.contain('"voxa-chatbase": "0.1.1"');
-      expect(fileContent).to.contain('"voxa-dashbot": "2.0.0-alpha4"');
+      expect(fileContent).to.contain('"voxa-dashbot": "2.0.0-alpha3"');
       expect(fileContent).to.contain('"voxa-ga": "2.0.0"');
     });
 

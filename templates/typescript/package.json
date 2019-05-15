@@ -27,7 +27,7 @@
     "source-map-support": "^0.5.9",
     "voxa": "^3.1.0"{{#if chatbase}},
     "voxa-chatbase": "0.1.1"{{/if}}{{#if dashbot}},
-    "voxa-dashbot": "2.0.0-alpha4"{{/if}}{{#if ga}},
+    "voxa-dashbot": "2.0.0-alpha3"{{/if}}{{#if ga}},
     "voxa-ga": "2.0.0"{{/if}}
   },
   "devDependencies": {
