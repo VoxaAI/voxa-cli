@@ -5,7 +5,7 @@ This application is written using the [voxa3](https://github.com/mediarain/voxa)
 ## Development setup
 
 - Install and use Node v8.10
-- Run`yarn`
+- Run `yarn`
 - Create a `src/config/local.json` file and customize it for your local setup, you can use `src/config/local.example.json`
 - Start the development server with `yarn watch`
 
