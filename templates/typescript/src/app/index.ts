@@ -11,6 +11,9 @@ import {
   {{#if usesGoogleAssistant}}
   GoogleAssistantPlatform,
   {{/if}}
+  {{#if saveUserInfo }}
+  IVoxaEvent
+  {{/if}}
   plugins,
   VoxaApp
 } from "voxa";

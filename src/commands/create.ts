@@ -280,6 +280,7 @@ async function copySrcFiles(
     const chatbase = analytics.includes("chatbase") || analytics.includes("all");
 
     const indexContent = await getTemplateFile(language, "src", "app", `index.${ext}`);
+    const modelContent = await getTemplateFile(language, "src", "app", `model.${ext}`);
     const handlerContent = await getTemplateFile(language, "src", `handler.${ext}`);
     const localConfigContent = await getTemplateFile(
       language,
@@ -291,6 +292,7 @@ async function copySrcFiles(
     const prodConfigContent = await getTemplateFile(language, "src", "config", "production.json");
 
     const indexTemplate = Handlebars.compile(indexContent);
+    const modelTemplate = Handlebars.compile(modelContent);
     const handlerTemplate = Handlebars.compile(handlerContent);
     const localConfigTemplate = Handlebars.compile(localConfigContent);
     const stagingConfigTemplate = Handlebars.compile(stagingConfigContent);
@@ -321,6 +323,7 @@ async function copySrcFiles(
       saveUserInfo
     };
     const indexResult = indexTemplate(indexData);
+    const modelResult = modelTemplate({ saveUserInfo });
     const handlerResult = handlerTemplate(handlerData);
     const localConfigResult = localConfigTemplate(configData);
     const stagingConfigResult = stagingConfigTemplate(configData);
@@ -330,6 +333,10 @@ async function copySrcFiles(
       fs.outputFile(
         path.join(process.cwd(), folderName, "src", "app", `index.${ext}`),
         indexResult
+      ),
+      fs.outputFile(
+        path.join(process.cwd(), folderName, "src", "app", `model.${ext}`),
+        modelResult
       ),
       fs.outputFile(path.join(process.cwd(), folderName, "src", `handler.${ext}`), handlerResult),
       fs.outputFile(

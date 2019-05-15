@@ -518,6 +518,13 @@ describe("Typescript project generator", () => {
       // tslint:disable-next-line:no-invalid-template-strings
       expect(fileContent).to.contain("TableName: ${self:custom.config.dynamodb.tables.users}");
     });
+
+    it("should add a user attribute to the model", async () => {
+      const filePath = getFilePath("user-skill", "src", "app", "model.ts");
+      const fileContent = await fs.readFile(filePath, "utf8");
+      expect(fileContent).to.contain('import { User } from "../services/User";');
+      expect(fileContent).to.contain("public user: User;");
+    });
   });
 
   describe("Generate a Typescript project that doesn't store user information in DynamoDB", () => {
@@ -582,6 +589,13 @@ describe("Typescript project generator", () => {
       expect(fileContent).to.not.contain("TableUsers:");
       // tslint:disable-next-line:no-invalid-template-strings
       expect(fileContent).to.not.contain("TableName: ${self:custom.config.dynamodb.tables.users}");
+    });
+
+    it("should not add a user attribute to the model", async () => {
+      const filePath = getFilePath("no-user-skill", "src", "app", "model.ts");
+      const fileContent = await fs.readFile(filePath, "utf8");
+      expect(fileContent).to.not.contain('import { User } from "../services/User";');
+      expect(fileContent).to.not.contain("public user: User;");
     });
   });
 
