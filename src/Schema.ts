@@ -258,13 +258,13 @@ export abstract class Schema {
         .map((slot: any) => {
           return {
             type: slot.type,
-            name: slot.name.replace("{", "").replace("}", "")
+            name: slot.name.replace("{", "").replace("}", ""),
+            samples: slot.samples.length > 0 ? slot.samples : undefined
           };
         })
         .value();
 
-      const intent = { name, samples, slots: slotsDefinition };
-      return intent;
+      return { name, samples, slots: slotsDefinition };
     });
 
     return intents;

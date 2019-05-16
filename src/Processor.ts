@@ -266,7 +266,13 @@ export function intentUtterProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES
                 name: slot.slotName,
                 type: slot.slotType,
                 platform: slot.platformSlot,
-                required: slot.slotRequired || false
+                required: slot.slotRequired || false,
+                samples: getIntentValueList(
+                  voxaSheetsUtter,
+                  voxaSheetIntent.spreadsheetId,
+                  `${intentName}/${slot.slotName}`,
+                  "utterance"
+                )
               }))
               .compact()
               .uniq()
@@ -349,7 +355,7 @@ function filterSheets(voxaSheets: IVoxaSheet[], sheetTypes: string[]): IVoxaShee
 }
 
 function reduceIntent(propName: string) {
-  return (acc: any, row: any) => {
+  return (acc: any[], row: any) => {
     row.data = _.chain(row.data)
       .reduce((accData: Array<{}>, item: any) => {
         _.map(item, (value, key) => {
