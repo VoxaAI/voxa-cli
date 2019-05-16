@@ -36,7 +36,14 @@ const questions = [
   {
     type: "input",
     name: "appName",
-    message: "Please enter the name of your app"
+    message: "Please enter the name of your app",
+    validate: (answer: any) => {
+      if (!answer.length) {
+        return "You must set a name for your app.";
+      }
+
+      return true;
+    }
   },
   {
     type: "input",
@@ -54,7 +61,14 @@ const questions = [
       { name: "Google Assistant", value: "google" },
       { name: "Telegram", value: "telegram" },
       { name: "Facebook Messenger", value: "facebook" }
-    ]
+    ],
+    validate: (answer: []) => {
+      if (answer.length < 1) {
+        return "You must choose at least a platform.";
+      }
+
+      return true;
+    }
   },
   {
     type: "list",
