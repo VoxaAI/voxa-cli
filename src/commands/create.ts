@@ -119,13 +119,7 @@ export async function action() {
         const voxaGenerator = new VoxaGenerator(answers);
         const success = await voxaGenerator.generateProject();
         if (success) {
-          console.log("Let's get started!");
-          console.log("");
-          console.log(`cd ${_.kebabCase(answers.appName)}`);
-          console.log("yarn install");
-          console.log("yarn watch");
-          console.log("");
-          console.log("Happy coding! 😀");
+          showInstructionsToGetStarted(_.kebabCase(answers.appName));
         } else {
           console.log("Something went wrong, try again");
         }
@@ -141,4 +135,14 @@ export async function action() {
   });
 
   await executePrompt();
+}
+
+function showInstructionsToGetStarted(folderName: string) {
+  console.log("Let's get started!");
+  console.log("");
+  console.log(`cd ${folderName}`);
+  console.log("yarn install");
+  console.log("yarn watch");
+  console.log("");
+  console.log("Happy coding! 😀");
 }
