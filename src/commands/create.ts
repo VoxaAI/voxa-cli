@@ -137,7 +137,6 @@ export async function action() {
 
   const observe = Observable.create((obs: any) => {
     questions.map(q => obs.next(q));
-
     obs.complete();
   });
 
