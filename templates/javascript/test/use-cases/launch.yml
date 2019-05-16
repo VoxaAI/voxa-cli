@@ -1,0 +1,7 @@
+User launches the skill:
+  - afterEach: clear
+  - LaunchIntent:
+      alexaVariable:
+        name: World
+      alexaResponse: Launch.StartResponse
+      shouldEndSession: true

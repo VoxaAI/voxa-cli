@@ -1,0 +1,26 @@
+{
+	"server": {
+		"port": 3000,
+		"hostSkill": true
+	}{{#if saveUserInfo}},
+  "dynamoDB": {
+    "tables": {
+      "users": "users"
+    }
+  }{{/if}}{{#if ga}},
+  "googleAnalytics": {
+    "trackingId": "UA-XXXX-X",
+    "appName": "{{ folderName }}",
+    "ignoreUsers": [],
+    "suppressSending": false
+  }{{/if}}{{#if dashbot}},
+  "dashbot": {
+    "suppressSending": false,
+    "alexa": "key"
+  }{{/if}}{{#if chatbase}},
+  "chatbase": {
+    "apiKey": "<chatbase apiKey>",
+    "ignoreUsers": [],
+    "suppressSending": false
+  }{{/if}}
+}
