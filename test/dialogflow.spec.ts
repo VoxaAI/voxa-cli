@@ -1,4 +1,5 @@
 import { expect } from "chai";
+import * as _ from "lodash";
 import * as path from "path";
 import { configurations } from "./mocha.spec";
 
@@ -43,11 +44,17 @@ configurations.forEach(interactionFile => {
 
     describe("NumberIntent", () => {
       let intent: any;
+      let intentUtterance: any;
       before(async () => {
         intent = await require(path.join(
           __dirname,
           interactionFile.speechPath,
           "dialogflow/production/intents/NumberIntent.json"
+        ));
+        intentUtterance = await require(path.join(
+          __dirname,
+          interactionFile.speechPath,
+          "dialogflow/production/intents/NumberIntent_usersays_en.json"
         ));
       });
 
@@ -58,6 +65,19 @@ configurations.forEach(interactionFile => {
 
       it("should set webhookForSlotFilling to true", () => {
         expect(intent.webhookForSlotFilling).to.be.true;
+      });
+
+      it("should have @sys slot for numbers", () => {
+        intentUtterance.forEach((utterance: any) => {
+          const numberMetaPhrase = utterance.data.find((item: any) => item.meta === "@sys.number");
+          expect(numberMetaPhrase).to.be.ok;
+
+          expect(_.pick(numberMetaPhrase, ["meta", "alias", "text"])).to.be.eql({
+            meta: "@sys.number",
+            alias: "number",
+            text: "{number}"
+          });
+        });
       });
     });
 
