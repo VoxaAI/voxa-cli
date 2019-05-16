@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Now alexa spec is splitted into smaller units testing specific functionality
+- Fixed @sys. slots on dialogflow were converted into a different type
 
 ## [2.1.2] - 2019-05-08
 
