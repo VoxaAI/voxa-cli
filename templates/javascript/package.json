@@ -1,5 +1,5 @@
 {
-  "name": "{{ name }}",
+  "name": "{{ folderName }}",
   "version": "0.0.1",
   "main": "src/app/index.js",
   "scripts": {

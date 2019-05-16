@@ -1,4 +1,4 @@
-service: {{ service }}
+service: {{ folderName }}
 
 custom:
   config: ${file(src/config/index.js):asFunction}
