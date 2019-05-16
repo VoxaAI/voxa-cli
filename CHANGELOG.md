@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- Added support for per slot utterances in alexa (this is the beginning of dialog support)
+
+### Fixed
+
+- Now alexa spec is splitted into smaller units testing specific functionality
+
 ## [2.1.2] - 2019-05-08
 
 ### Added
