@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <office:document xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0" xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:meta="urn:oasis:names:tc:opendocument:xmlns:meta:1.0" xmlns:number="urn:oasis:names:tc:opendocument:xmlns:datastyle:1.0" xmlns:presentation="urn:oasis:names:tc:opendocument:xmlns:presentation:1.0" xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" xmlns:chart="urn:oasis:names:tc:opendocument:xmlns:chart:1.0" xmlns:dr3d="urn:oasis:names:tc:opendocument:xmlns:dr3d:1.0" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns:form="urn:oasis:names:tc:opendocument:xmlns:form:1.0" xmlns:script="urn:oasis:names:tc:opendocument:xmlns:script:1.0" xmlns:config="urn:oasis:names:tc:opendocument:xmlns:config:1.0" xmlns:ooo="http://openoffice.org/2004/office" xmlns:ooow="http://openoffice.org/2004/writer" xmlns:oooc="http://openoffice.org/2004/calc" xmlns:dom="http://www.w3.org/2001/xml-events" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rpt="http://openoffice.org/2005/report" xmlns:of="urn:oasis:names:tc:opendocument:xmlns:of:1.2" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:grddl="http://www.w3.org/2003/g/data-view#" xmlns:tableooo="http://openoffice.org/2009/table" xmlns:drawooo="http://openoffice.org/2010/draw" xmlns:calcext="urn:org:documentfoundation:names:experimental:calc:xmlns:calcext:1.0" xmlns:loext="urn:org:documentfoundation:names:experimental:office:xmlns:loext:1.0" xmlns:field="urn:openoffice:names:experimental:ooo-ms-interop:xmlns:field:1.0" xmlns:formx="urn:openoffice:names:experimental:ooxml-odf-interop:xmlns:form:1.0" xmlns:css3t="http://www.w3.org/TR/css3-text/" office:version="1.2" office:mimetype="application/vnd.oasis.opendocument.spreadsheet">
- <office:meta><meta:generator>LibreOffice/6.2.3.2$Linux_X86_64 LibreOffice_project/20$Build-2</meta:generator><dc:creator>Andres Reyes Monge</dc:creator><dc:date>2019-05-15T10:57:33.461543313</dc:date><meta:editing-cycles>13</meta:editing-cycles><meta:editing-duration>PT1H12M55S</meta:editing-duration><meta:document-statistic meta:table-count="7" meta:cell-count="101" meta:object-count="0"/></office:meta>
+ <office:meta><meta:generator>LibreOffice/6.2.3.2$Linux_X86_64 LibreOffice_project/20$Build-2</meta:generator><dc:creator>Andres Reyes Monge</dc:creator><dc:date>2019-05-17T09:04:09.198633248</dc:date><meta:editing-cycles>19</meta:editing-cycles><meta:editing-duration>P1DT15H41M2S</meta:editing-duration><meta:document-statistic meta:table-count="9" meta:cell-count="141" meta:object-count="0"/></office:meta>
  <office:settings>
   <config:config-item-set config:name="ooo:view-settings">
    <config:config-item config:name="VisibleAreaTop" config:type="int">0</config:config-item>
    <config:config-item config:name="VisibleAreaLeft" config:type="int">0</config:config-item>
-   <config:config-item config:name="VisibleAreaWidth" config:type="int">53546</config:config-item>
-   <config:config-item config:name="VisibleAreaHeight" config:type="int">5970</config:config-item>
+   <config:config-item config:name="VisibleAreaWidth" config:type="int">78948</config:config-item>
+   <config:config-item config:name="VisibleAreaHeight" config:type="int">6422</config:config-item>
    <config:config-item-map-indexed config:name="Views">
     <config:config-item-map-entry>
      <config:config-item config:name="ViewId" config:type="string">view1</config:config-item>
      <config:config-item-map-named config:name="Tables">
       <config:config-item-map-entry config:name="INTENT">
-       <config:config-item config:name="CursorPositionX" config:type="int">7</config:config-item>
-       <config:config-item config:name="CursorPositionY" config:type="int">9</config:config-item>
+       <config:config-item config:name="CursorPositionX" config:type="int">3</config:config-item>
+       <config:config-item config:name="CursorPositionY" config:type="int">6</config:config-item>
        <config:config-item config:name="HorizontalSplitMode" config:type="short">2</config:config-item>
        <config:config-item config:name="VerticalSplitMode" config:type="short">2</config:config-item>
        <config:config-item config:name="HorizontalSplitPosition" config:type="int">1</config:config-item>
        <config:config-item config:name="VerticalSplitPosition" config:type="int">1</config:config-item>
        <config:config-item config:name="ActiveSplitRange" config:type="short">3</config:config-item>
        <config:config-item config:name="PositionLeft" config:type="int">0</config:config-item>
-       <config:config-item config:name="PositionRight" config:type="int">3</config:config-item>
+       <config:config-item config:name="PositionRight" config:type="int">1</config:config-item>
        <config:config-item config:name="PositionTop" config:type="int">0</config:config-item>
        <config:config-item config:name="PositionBottom" config:type="int">1</config:config-item>
        <config:config-item config:name="ZoomType" config:type="short">0</config:config-item>
@@ -33,6 +33,42 @@
       <config:config-item-map-entry config:name="INVOCATION_NAMES">
        <config:config-item config:name="CursorPositionX" config:type="int">4</config:config-item>
        <config:config-item config:name="CursorPositionY" config:type="int">20</config:config-item>
+       <config:config-item config:name="HorizontalSplitMode" config:type="short">0</config:config-item>
+       <config:config-item config:name="VerticalSplitMode" config:type="short">2</config:config-item>
+       <config:config-item config:name="HorizontalSplitPosition" config:type="int">0</config:config-item>
+       <config:config-item config:name="VerticalSplitPosition" config:type="int">1</config:config-item>
+       <config:config-item config:name="ActiveSplitRange" config:type="short">2</config:config-item>
+       <config:config-item config:name="PositionLeft" config:type="int">12</config:config-item>
+       <config:config-item config:name="PositionRight" config:type="int">0</config:config-item>
+       <config:config-item config:name="PositionTop" config:type="int">0</config:config-item>
+       <config:config-item config:name="PositionBottom" config:type="int">1</config:config-item>
+       <config:config-item config:name="ZoomType" config:type="short">0</config:config-item>
+       <config:config-item config:name="ZoomValue" config:type="int">100</config:config-item>
+       <config:config-item config:name="PageViewZoomValue" config:type="int">60</config:config-item>
+       <config:config-item config:name="ShowGrid" config:type="boolean">true</config:config-item>
+       <config:config-item config:name="AnchoredTextOverflowLegacy" config:type="boolean">false</config:config-item>
+      </config:config-item-map-entry>
+      <config:config-item-map-entry config:name="LIST_OF_BEARS">
+       <config:config-item config:name="CursorPositionX" config:type="int">0</config:config-item>
+       <config:config-item config:name="CursorPositionY" config:type="int">5</config:config-item>
+       <config:config-item config:name="HorizontalSplitMode" config:type="short">0</config:config-item>
+       <config:config-item config:name="VerticalSplitMode" config:type="short">2</config:config-item>
+       <config:config-item config:name="HorizontalSplitPosition" config:type="int">0</config:config-item>
+       <config:config-item config:name="VerticalSplitPosition" config:type="int">1</config:config-item>
+       <config:config-item config:name="ActiveSplitRange" config:type="short">2</config:config-item>
+       <config:config-item config:name="PositionLeft" config:type="int">0</config:config-item>
+       <config:config-item config:name="PositionRight" config:type="int">0</config:config-item>
+       <config:config-item config:name="PositionTop" config:type="int">0</config:config-item>
+       <config:config-item config:name="PositionBottom" config:type="int">1</config:config-item>
+       <config:config-item config:name="ZoomType" config:type="short">0</config:config-item>
+       <config:config-item config:name="ZoomValue" config:type="int">100</config:config-item>
+       <config:config-item config:name="PageViewZoomValue" config:type="int">60</config:config-item>
+       <config:config-item config:name="ShowGrid" config:type="boolean">true</config:config-item>
+       <config:config-item config:name="AnchoredTextOverflowLegacy" config:type="boolean">false</config:config-item>
+      </config:config-item-map-entry>
+      <config:config-item-map-entry config:name="PROMPTS_TRAVEL">
+       <config:config-item config:name="CursorPositionX" config:type="int">1</config:config-item>
+       <config:config-item config:name="CursorPositionY" config:type="int">1</config:config-item>
        <config:config-item config:name="HorizontalSplitMode" config:type="short">0</config:config-item>
        <config:config-item config:name="VerticalSplitMode" config:type="short">2</config:config-item>
        <config:config-item config:name="HorizontalSplitPosition" config:type="int">0</config:config-item>
@@ -68,7 +104,7 @@
       </config:config-item-map-entry>
       <config:config-item-map-entry config:name="UTTERANCES_MAIN">
        <config:config-item config:name="CursorPositionX" config:type="int">3</config:config-item>
-       <config:config-item config:name="CursorPositionY" config:type="int">1</config:config-item>
+       <config:config-item config:name="CursorPositionY" config:type="int">10</config:config-item>
        <config:config-item config:name="HorizontalSplitMode" config:type="short">0</config:config-item>
        <config:config-item config:name="VerticalSplitMode" config:type="short">2</config:config-item>
        <config:config-item config:name="HorizontalSplitPosition" config:type="int">0</config:config-item>
@@ -103,8 +139,8 @@
        <config:config-item config:name="AnchoredTextOverflowLegacy" config:type="boolean">false</config:config-item>
       </config:config-item-map-entry>
       <config:config-item-map-entry config:name="UTTERANCES_TRAVEL">
-       <config:config-item config:name="CursorPositionX" config:type="int">2</config:config-item>
-       <config:config-item config:name="CursorPositionY" config:type="int">25</config:config-item>
+       <config:config-item config:name="CursorPositionX" config:type="int">0</config:config-item>
+       <config:config-item config:name="CursorPositionY" config:type="int">1</config:config-item>
        <config:config-item config:name="HorizontalSplitMode" config:type="short">0</config:config-item>
        <config:config-item config:name="VerticalSplitMode" config:type="short">2</config:config-item>
        <config:config-item config:name="HorizontalSplitPosition" config:type="int">0</config:config-item>
@@ -139,7 +175,7 @@
        <config:config-item config:name="AnchoredTextOverflowLegacy" config:type="boolean">false</config:config-item>
       </config:config-item-map-entry>
      </config:config-item-map-named>
-     <config:config-item config:name="ActiveTable" config:type="string">UTTERANCES_TRAVEL</config:config-item>
+     <config:config-item config:name="ActiveTable" config:type="string">INTENT</config:config-item>
      <config:config-item config:name="HorizontalScrollbarWidth" config:type="int">1511</config:config-item>
      <config:config-item config:name="ZoomType" config:type="short">0</config:config-item>
      <config:config-item config:name="ZoomValue" config:type="int">100</config:config-item>
@@ -197,9 +233,9 @@
      <config:config-item config:name="EndLine" config:type="string"/>
     </config:config-item-map-entry>
    </config:config-item-map-indexed>
-   <config:config-item config:name="PrinterName" config:type="string"/>
+   <config:config-item config:name="PrinterName" config:type="string">HP_ColorLaserJet_MFP_M278-M281</config:config-item>
    <config:config-item config:name="PrinterPaperFromSetup" config:type="boolean">false</config:config-item>
-   <config:config-item config:name="PrinterSetup" config:type="base64Binary"/>
+   <config:config-item config:name="PrinterSetup" config:type="base64Binary">wgH+/0hQX0NvbG9yTGFzZXJKZXRfTUZQX00yNzgtTTI4MQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQ1VQUzpIUF9Db2xvckxhc2VySmV0X01GUF9NMjc4LQAWAAMA4wAAAAAAAQAIAFZUAAAkbQAASm9iRGF0YSAxCnByaW50ZXI9SFBfQ29sb3JMYXNlckpldF9NRlBfTTI3OC1NMjgxCm9yaWVudGF0aW9uPVBvcnRyYWl0CmNvcGllcz0xCmNvbGxhdGU9ZmFsc2UKbWFyZ2luZGFqdXN0bWVudD0wLDAsMCwwCmNvbG9yZGVwdGg9MjQKcHNsZXZlbD0wCnBkZmRldmljZT0xCmNvbG9yZGV2aWNlPTAKUFBEQ29udGV4RGF0YQpEdXBsZXg6Tm9uZQBJbnB1dFNsb3Q6VHJheTEAUGFnZVNpemU6TGV0dGVyAAASAENPTVBBVF9EVVBMRVhfTU9ERQ8ARHVwbGV4TW9kZTo6T2Zm</config:config-item>
    <config:config-item config:name="EmbedOnlyUsedFonts" config:type="boolean">false</config:config-item>
    <config:config-item config:name="ApplyUserData" config:type="boolean">true</config:config-item>
    <config:config-item config:name="EmbedComplexScriptFonts" config:type="boolean">true</config:config-item>
@@ -220,14 +256,7 @@
   </office:script>
  </office:scripts>
  <office:font-face-decls>
-  <style:font-face style:name="&quot;Roboto Mono&quot;" svg:font-family="&apos;&quot;Roboto Mono&quot;&apos;"/>
   <style:font-face style:name="Arial" svg:font-family="Arial"/>
-  <style:font-face style:name="Calibri" svg:font-family="Calibri"/>
-  <style:font-face style:name="Cambria" svg:font-family="Cambria"/>
-  <style:font-face style:name="Cambria1" svg:font-family="Cambria" style:font-family-generic="roman"/>
-  <style:font-face style:name="Arial1" svg:font-family="Arial" style:font-adornments="Italic" style:font-family-generic="swiss"/>
-  <style:font-face style:name="Ubuntu Mono" svg:font-family="&apos;Ubuntu Mono&apos;" style:font-pitch="fixed"/>
-  <style:font-face style:name="Ubuntu Mono1" svg:font-family="&apos;Ubuntu Mono&apos;" style:font-adornments="Bold" style:font-pitch="fixed"/>
   <style:font-face style:name="DejaVu Sans Mono" svg:font-family="&apos;DejaVu Sans Mono&apos;" style:font-adornments="Bold" style:font-family-generic="modern" style:font-pitch="fixed"/>
   <style:font-face style:name="DejaVu Sans" svg:font-family="&apos;DejaVu Sans&apos;" style:font-adornments="Bold" style:font-family-generic="swiss" style:font-pitch="variable"/>
   <style:font-face style:name="Liberation Sans" svg:font-family="&apos;Liberation Sans&apos;" style:font-family-generic="swiss" style:font-pitch="variable"/>
@@ -328,61 +357,97 @@
    <style:table-column-properties fo:break-before="auto" style:column-width="80.25pt"/>
   </style:style>
   <style:style style:name="co5" style:family="table-column">
-   <style:table-column-properties fo:break-before="auto" style:column-width="94.51pt"/>
+   <style:table-column-properties fo:break-before="auto" style:column-width="94.34pt"/>
   </style:style>
   <style:style style:name="co6" style:family="table-column">
-   <style:table-column-properties fo:break-before="auto" style:column-width="155.99pt"/>
+   <style:table-column-properties fo:break-before="auto" style:column-width="108.65pt"/>
   </style:style>
   <style:style style:name="co7" style:family="table-column">
-   <style:table-column-properties fo:break-before="auto" style:column-width="156.39pt"/>
+   <style:table-column-properties fo:break-before="auto" style:column-width="109.39pt"/>
   </style:style>
   <style:style style:name="co8" style:family="table-column">
-   <style:table-column-properties fo:break-before="auto" style:column-width="102.19pt"/>
+   <style:table-column-properties fo:break-before="auto" style:column-width="141pt"/>
   </style:style>
   <style:style style:name="co9" style:family="table-column">
-   <style:table-column-properties fo:break-before="auto" style:column-width="56.24pt"/>
+   <style:table-column-properties fo:break-before="auto" style:column-width="158.29pt"/>
   </style:style>
   <style:style style:name="co10" style:family="table-column">
-   <style:table-column-properties fo:break-before="auto" style:column-width="147pt"/>
+   <style:table-column-properties fo:break-before="auto" style:column-width="103.41pt"/>
   </style:style>
   <style:style style:name="co11" style:family="table-column">
-   <style:table-column-properties fo:break-before="auto" style:column-width="91.81pt"/>
+   <style:table-column-properties fo:break-before="auto" style:column-width="148.14pt"/>
   </style:style>
   <style:style style:name="co12" style:family="table-column">
-   <style:table-column-properties fo:break-before="auto" style:column-width="97.74pt"/>
+   <style:table-column-properties fo:break-before="auto" style:column-width="154.54pt"/>
   </style:style>
   <style:style style:name="co13" style:family="table-column">
-   <style:table-column-properties fo:break-before="auto" style:column-width="394.84pt"/>
+   <style:table-column-properties fo:break-before="auto" style:column-width="182.35pt"/>
   </style:style>
   <style:style style:name="co14" style:family="table-column">
-   <style:table-column-properties fo:break-before="auto" style:column-width="528.55pt"/>
+   <style:table-column-properties fo:break-before="auto" style:column-width="161.29pt"/>
   </style:style>
   <style:style style:name="co15" style:family="table-column">
-   <style:table-column-properties fo:break-before="auto" style:column-width="157.89pt"/>
+   <style:table-column-properties fo:break-before="auto" style:column-width="56.24pt"/>
   </style:style>
   <style:style style:name="co16" style:family="table-column">
-   <style:table-column-properties fo:break-before="auto" style:column-width="63.75pt"/>
+   <style:table-column-properties fo:break-before="auto" style:column-width="147pt"/>
   </style:style>
   <style:style style:name="co17" style:family="table-column">
-   <style:table-column-properties fo:break-before="auto" style:column-width="253.7pt"/>
+   <style:table-column-properties fo:break-before="auto" style:column-width="91.81pt"/>
   </style:style>
   <style:style style:name="co18" style:family="table-column">
-   <style:table-column-properties fo:break-before="auto" style:column-width="89.09pt"/>
+   <style:table-column-properties fo:break-before="auto" style:column-width="97.74pt"/>
   </style:style>
   <style:style style:name="co19" style:family="table-column">
-   <style:table-column-properties fo:break-before="auto" style:column-width="127.45pt"/>
+   <style:table-column-properties fo:break-before="auto" style:column-width="394.84pt"/>
   </style:style>
   <style:style style:name="co20" style:family="table-column">
-   <style:table-column-properties fo:break-before="auto" style:column-width="192.81pt"/>
+   <style:table-column-properties fo:break-before="auto" style:column-width="122.94pt"/>
   </style:style>
   <style:style style:name="co21" style:family="table-column">
-   <style:table-column-properties fo:break-before="auto" style:column-width="210.64pt"/>
+   <style:table-column-properties fo:break-before="auto" style:column-width="113.16pt"/>
   </style:style>
   <style:style style:name="co22" style:family="table-column">
-   <style:table-column-properties fo:break-before="auto" style:column-width="157.15pt"/>
+   <style:table-column-properties fo:break-before="auto" style:column-width="64.01pt"/>
   </style:style>
   <style:style style:name="co23" style:family="table-column">
-   <style:table-column-properties fo:break-before="auto" style:column-width="64.01pt"/>
+   <style:table-column-properties fo:break-before="auto" style:column-width="528.55pt"/>
+  </style:style>
+  <style:style style:name="co24" style:family="table-column">
+   <style:table-column-properties fo:break-before="auto" style:column-width="157.89pt"/>
+  </style:style>
+  <style:style style:name="co25" style:family="table-column">
+   <style:table-column-properties fo:break-before="auto" style:column-width="63.75pt"/>
+  </style:style>
+  <style:style style:name="co26" style:family="table-column">
+   <style:table-column-properties fo:break-before="auto" style:column-width="253.7pt"/>
+  </style:style>
+  <style:style style:name="co27" style:family="table-column">
+   <style:table-column-properties fo:break-before="auto" style:column-width="89.09pt"/>
+  </style:style>
+  <style:style style:name="co28" style:family="table-column">
+   <style:table-column-properties fo:break-before="auto" style:column-width="127.45pt"/>
+  </style:style>
+  <style:style style:name="co29" style:family="table-column">
+   <style:table-column-properties fo:break-before="auto" style:column-width="192.81pt"/>
+  </style:style>
+  <style:style style:name="co30" style:family="table-column">
+   <style:table-column-properties fo:break-before="auto" style:column-width="210.64pt"/>
+  </style:style>
+  <style:style style:name="co31" style:family="table-column">
+   <style:table-column-properties fo:break-before="auto" style:column-width="157.15pt"/>
+  </style:style>
+  <style:style style:name="co32" style:family="table-column">
+   <style:table-column-properties fo:break-before="auto" style:column-width="255.71pt"/>
+  </style:style>
+  <style:style style:name="co33" style:family="table-column">
+   <style:table-column-properties fo:break-before="auto" style:column-width="286.16pt"/>
+  </style:style>
+  <style:style style:name="co34" style:family="table-column">
+   <style:table-column-properties fo:break-before="auto" style:column-width="304.95pt"/>
+  </style:style>
+  <style:style style:name="co35" style:family="table-column">
+   <style:table-column-properties fo:break-before="auto" style:column-width="213.96pt"/>
   </style:style>
   <style:style style:name="ro1" style:family="table-row">
    <style:table-row-properties style:row-height="15.65pt" fo:break-before="auto" style:use-optimal-row-height="true"/>
@@ -402,10 +467,10 @@
   <style:style style:name="ta1" style:family="table" style:master-page-name="mp1">
    <style:table-properties table:display="true" style:writing-mode="lr-tb"/>
   </style:style>
-  <style:style style:name="ta2" style:family="table" style:master-page-name="mp2">
+  <style:style style:name="ta2" style:family="table" style:master-page-name="Default">
    <style:table-properties table:display="true" style:writing-mode="lr-tb"/>
   </style:style>
-  <style:style style:name="ta3" style:family="table" style:master-page-name="Default">
+  <style:style style:name="ta3" style:family="table" style:master-page-name="mp2">
    <style:table-properties table:display="true" style:writing-mode="lr-tb"/>
   </style:style>
   <number:number-style style:name="N2">
@@ -414,15 +479,19 @@
   <number:boolean-style style:name="N99">
    <number:boolean/>
   </number:boolean-style>
-  <style:style style:name="ce1" style:family="table-cell" style:parent-style-name="Default" style:data-style-name="N0"/>
   <style:style style:name="ce17" style:family="table-cell" style:parent-style-name="Heading_20_1">
    <style:table-cell-properties fo:wrap-option="wrap"/>
   </style:style>
   <style:style style:name="ce18" style:family="table-cell" style:parent-style-name="Default" style:data-style-name="N99"/>
+  <style:style style:name="ce4" style:family="table-cell" style:parent-style-name="Heading_20_1">
+   <style:table-cell-properties fo:wrap-option="wrap"/>
+   <style:text-properties style:text-outline="false" style:text-line-through-style="none" style:text-line-through-type="none" fo:language="en" fo:country="US" fo:text-shadow="none" style:text-underline-style="none" style:text-underline-mode="continuous" style:text-overline-mode="continuous" style:text-line-through-mode="continuous" style:language-asian="zh" style:country-asian="CN" style:font-style-asian="normal" style:language-complex="hi" style:country-complex="IN" style:font-style-complex="normal" style:text-emphasize="none" style:font-relief="none" style:text-overline-style="none" style:text-overline-color="font-color"/>
+  </style:style>
   <style:style style:name="ce19" style:family="table-cell" style:parent-style-name="Default" style:data-style-name="N0">
    <style:table-cell-properties fo:wrap-option="no-wrap"/>
    <style:text-properties fo:font-weight="normal" style:font-weight-asian="normal" style:font-weight-complex="normal"/>
   </style:style>
+  <style:style style:name="ce1" style:family="table-cell" style:parent-style-name="Default" style:data-style-name="N0"/>
   <style:style style:name="ce20" style:family="table-cell" style:parent-style-name="Default" style:data-style-name="N0">
    <style:text-properties fo:font-weight="normal" style:font-weight-asian="normal" style:font-weight-complex="normal"/>
   </style:style>
@@ -493,7 +562,7 @@
      <text:p><text:sheet-name>???</text:sheet-name><text:s/>(<text:title>???</text:title>)</text:p>
     </style:region-left>
     <style:region-right>
-     <text:p><text:date style:data-style-name="N2" text:date-value="2019-05-15">00/00/0000</text:date>, <text:time>00:00:00</text:time></text:p>
+     <text:p><text:date style:data-style-name="N2" text:date-value="2019-05-17">00/00/0000</text:date>, <text:time style:data-style-name="N2" text:time-value="12:12:53.223657374">00:00:00</text:time></text:p>
     </style:region-right>
    </style:header>
    <style:header-left style:display="false"/>
@@ -526,17 +595,24 @@
    </table:calculation-settings>
    <table:table table:name="INTENT" table:style-name="ta1">
     <office:forms form:automatic-focus="false" form:apply-design-mode="false"/>
-    <table:table-column table:style-name="co1" table:default-cell-style-name="ce1"/>
-    <table:table-column table:style-name="co2" table:default-cell-style-name="ce1"/>
-    <table:table-column table:style-name="co3" table:default-cell-style-name="ce1"/>
-    <table:table-column table:style-name="co4" table:number-columns-repeated="5" table:default-cell-style-name="ce1"/>
-    <table:table-column table:style-name="co5" table:default-cell-style-name="ce1"/>
-    <table:table-column table:style-name="co4" table:number-columns-repeated="2" table:default-cell-style-name="ce1"/>
-    <table:table-column table:style-name="co6" table:default-cell-style-name="ce1"/>
-    <table:table-column table:style-name="co7" table:default-cell-style-name="ce1"/>
-    <table:table-column table:style-name="co8" table:default-cell-style-name="ce1"/>
-    <table:table-column table:style-name="co4" table:number-columns-repeated="1009" table:default-cell-style-name="ce1"/>
-    <table:table-column table:style-name="co9" table:default-cell-style-name="ce1"/>
+    <table:table-column table:style-name="co1" table:default-cell-style-name="Default"/>
+    <table:table-column table:style-name="co2" table:default-cell-style-name="Default"/>
+    <table:table-column table:style-name="co3" table:default-cell-style-name="Default"/>
+    <table:table-column table:style-name="co4" table:default-cell-style-name="Default"/>
+    <table:table-column table:style-name="co5" table:default-cell-style-name="Default"/>
+    <table:table-column table:style-name="co6" table:default-cell-style-name="Default"/>
+    <table:table-column table:style-name="co5" table:number-columns-repeated="2" table:default-cell-style-name="Default"/>
+    <table:table-column table:style-name="co7" table:default-cell-style-name="Default"/>
+    <table:table-column table:style-name="co4" table:number-columns-repeated="2" table:default-cell-style-name="Default"/>
+    <table:table-column table:style-name="co8" table:default-cell-style-name="Default"/>
+    <table:table-column table:style-name="co9" table:default-cell-style-name="Default"/>
+    <table:table-column table:style-name="co10" table:default-cell-style-name="Default"/>
+    <table:table-column table:style-name="co11" table:default-cell-style-name="Default"/>
+    <table:table-column table:style-name="co12" table:default-cell-style-name="Default"/>
+    <table:table-column table:style-name="co13" table:default-cell-style-name="Default"/>
+    <table:table-column table:style-name="co14" table:default-cell-style-name="Default"/>
+    <table:table-column table:style-name="co4" table:number-columns-repeated="1005" table:default-cell-style-name="Default"/>
+    <table:table-column table:style-name="co15" table:default-cell-style-name="Default"/>
     <table:table-row table:style-name="ro1">
      <table:table-cell table:style-name="Heading_20_1" office:value-type="string" calcext:value-type="string">
       <text:p>Intent</text:p>
@@ -580,196 +656,235 @@
      <table:table-cell table:style-name="Heading_20_1" office:value-type="string" calcext:value-type="string">
       <text:p>webhookUsed</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="Heading_20_1" table:number-columns-repeated="1010"/>
+     <table:table-cell table:style-name="ce4" office:value-type="string" calcext:value-type="string">
+      <text:p>delegationStrategy</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="Heading_20_1" office:value-type="string" calcext:value-type="string">
+      <text:p>confirmationRequired</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="Heading_20_1" office:value-type="string" calcext:value-type="string">
+      <text:p>slotConfirmationRequired</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="Heading_20_1" office:value-type="string" calcext:value-type="string">
+      <text:p>slotElicitationRequired</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="Heading_20_1" table:number-columns-repeated="1006"/>
     </table:table-row>
     <table:table-row table:style-name="ro2">
-     <table:table-cell table:style-name="Default" office:value-type="string" calcext:value-type="string">
+     <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>GOOGLE_ASSISTANT_WELCOME</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="Default" table:number-columns-repeated="4"/>
-     <table:table-cell table:style-name="Default" office:value-type="string" calcext:value-type="string">
+     <table:table-cell table:number-columns-repeated="4"/>
+     <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>dialogflow</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="Default" table:number-columns-repeated="3"/>
-     <table:table-cell table:style-name="Default" office:value-type="string" calcext:value-type="string">
+     <table:table-cell table:number-columns-repeated="3"/>
+     <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>YES</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="Default" table:number-columns-repeated="1014"/>
+     <table:table-cell table:number-columns-repeated="1014"/>
     </table:table-row>
     <table:table-row table:style-name="ro2">
-     <table:table-cell table:style-name="Default" office:value-type="string" calcext:value-type="string">
+     <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>FallbackIntent</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="Default" office:value-type="string" calcext:value-type="string">
+     <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>Dialogflow Default Fallback Intent</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="Default" table:number-columns-repeated="3"/>
-     <table:table-cell table:style-name="Default" office:value-type="string" calcext:value-type="string">
+     <table:table-cell table:number-columns-repeated="3"/>
+     <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>dialogflow</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="Default" table:number-columns-repeated="1018"/>
+     <table:table-cell table:number-columns-repeated="1018"/>
     </table:table-row>
     <table:table-row table:style-name="ro2">
-     <table:table-cell table:style-name="Default" office:value-type="string" calcext:value-type="string">
+     <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>AMAZON.NextIntent</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="Default" table:number-columns-repeated="1023"/>
+     <table:table-cell table:number-columns-repeated="1023"/>
     </table:table-row>
     <table:table-row table:style-name="ro2">
-     <table:table-cell table:style-name="Default" office:value-type="string" calcext:value-type="string">
+     <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>NumberIntent</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="Default"/>
-     <table:table-cell table:style-name="Default" office:value-type="string" calcext:value-type="string">
+     <table:table-cell/>
+     <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>{number}</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="Default" office:value-type="string" calcext:value-type="string">
+     <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>@sys.number</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="Default" table:number-columns-repeated="2"/>
-     <table:table-cell table:style-name="Default" office:value-type="string" calcext:value-type="string">
+     <table:table-cell table:number-columns-repeated="2"/>
+     <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>dialogflow</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="Default" table:number-columns-repeated="5"/>
-     <table:table-cell table:style-name="Default" office:value-type="string" calcext:value-type="string">
+     <table:table-cell table:number-columns-repeated="5"/>
+     <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>YES</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="Default" table:number-columns-repeated="1011"/>
+     <table:table-cell table:number-columns-repeated="1011"/>
     </table:table-row>
     <table:table-row table:style-name="ro2">
-     <table:table-cell table:style-name="Default" table:number-columns-repeated="2"/>
-     <table:table-cell table:style-name="Default" office:value-type="string" calcext:value-type="string">
+     <table:table-cell table:number-columns-repeated="2"/>
+     <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>{number}</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="Default" office:value-type="string" calcext:value-type="string">
-      <text:p>AMAZON.Number</text:p>
+     <table:table-cell office:value-type="string" calcext:value-type="string">
+      <text:p>AMAZON.NUMBER</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="Default" table:number-columns-repeated="2"/>
-     <table:table-cell table:style-name="Default" office:value-type="string" calcext:value-type="string">
+     <table:table-cell table:number-columns-repeated="2"/>
+     <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>alexa</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="Default" table:number-columns-repeated="1017"/>
+     <table:table-cell table:number-columns-repeated="1017"/>
     </table:table-row>
     <table:table-row table:style-name="ro2">
-     <table:table-cell table:style-name="Default" office:value-type="string" calcext:value-type="string">
+     <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>AMAZON.FallbackIntent</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="Default" table:number-columns-repeated="4"/>
-     <table:table-cell table:style-name="Default" office:value-type="string" calcext:value-type="string">
+     <table:table-cell table:number-columns-repeated="4"/>
+     <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>alexa</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="Default" table:number-columns-repeated="1018"/>
+     <table:table-cell table:number-columns-repeated="1018"/>
     </table:table-row>
     <table:table-row table:style-name="ro2">
-     <table:table-cell table:style-name="Default" office:value-type="string" calcext:value-type="string">
+     <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>actions.intent.SIGN_IN</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="Default" table:number-columns-repeated="4"/>
-     <table:table-cell table:style-name="Default" office:value-type="string" calcext:value-type="string">
+     <table:table-cell table:number-columns-repeated="4"/>
+     <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>dialogflow</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="Default" table:number-columns-repeated="5"/>
-     <table:table-cell table:style-name="Default" office:value-type="string" calcext:value-type="string">
+     <table:table-cell table:number-columns-repeated="5"/>
+     <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>actions_intent_SIGN_IN</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="Default" table:number-columns-repeated="1012"/>
+     <table:table-cell table:number-columns-repeated="1012"/>
     </table:table-row>
     <table:table-row table:style-name="ro2">
-     <table:table-cell table:style-name="Default" office:value-type="string" calcext:value-type="string">
+     <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>JokeIntent</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="Default" office:value-type="string" calcext:value-type="string">
+     <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>Just to get a joke</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="Default" table:number-columns-repeated="3"/>
-     <table:table-cell table:style-name="Default" office:value-type="string" calcext:value-type="string">
+     <table:table-cell table:number-columns-repeated="3"/>
+     <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>dialogflow</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="Default" table:number-columns-repeated="7"/>
+     <table:table-cell table:number-columns-repeated="7"/>
      <table:table-cell table:style-name="ce18" office:value-type="boolean" office:boolean-value="false" calcext:value-type="boolean">
       <text:p>FALSE</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="Default" table:number-columns-repeated="1010"/>
+     <table:table-cell table:number-columns-repeated="1010"/>
     </table:table-row>
     <table:table-row table:style-name="ro2">
-     <table:table-cell table:style-name="Default" office:value-type="string" calcext:value-type="string">
+     <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>DateIntent</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="Default"/>
-     <table:table-cell table:style-name="Default" office:value-type="string" calcext:value-type="string">
+     <table:table-cell/>
+     <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>{date}</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="Default" table:formula="of:=&quot;@sys.date&quot;" office:value-type="string" office:string-value="@sys.date" calcext:value-type="string">
+     <table:table-cell table:formula="of:=&quot;@sys.date&quot;" office:value-type="string" office:string-value="@sys.date" calcext:value-type="string">
       <text:p>@sys.date</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="Default"/>
-     <table:table-cell table:style-name="Default" office:value-type="string" calcext:value-type="string">
+     <table:table-cell/>
+     <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>dialogflow</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="Default"/>
+     <table:table-cell/>
      <table:table-cell table:style-name="ce18" office:value-type="boolean" office:boolean-value="true" calcext:value-type="boolean">
       <text:p>TRUE</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="Default" table:number-columns-repeated="1016"/>
+     <table:table-cell table:number-columns-repeated="1016"/>
     </table:table-row>
     <table:table-row table:style-name="ro2">
-     <table:table-cell table:style-name="Default" office:value-type="string" calcext:value-type="string">
+     <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>TravelIntent</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="Default" office:value-type="string" calcext:value-type="string">
+     <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>Gets the user destination, depart date and return date</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="Default" office:value-type="string" calcext:value-type="string">
+     <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>{originCity}</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="Default" office:value-type="string" calcext:value-type="string">
+     <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>AMAZON.US_CITY</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="Default"/>
-     <table:table-cell table:style-name="Default" office:value-type="string" calcext:value-type="string">
+     <table:table-cell/>
+     <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>alexa</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="Default"/>
+     <table:table-cell/>
      <table:table-cell table:style-name="ce18" office:value-type="boolean" office:boolean-value="true" calcext:value-type="boolean">
       <text:p>TRUE</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="Default" table:number-columns-repeated="1016"/>
+     <table:table-cell table:number-columns-repeated="6"/>
+     <table:table-cell office:value-type="string" calcext:value-type="string">
+      <text:p>ALWAYS</text:p>
+     </table:table-cell>
+     <table:table-cell table:number-columns-repeated="3" table:style-name="ce18" office:value-type="boolean" office:boolean-value="true" calcext:value-type="boolean">
+      <text:p>TRUE</text:p>
+     </table:table-cell>
+     <table:table-cell table:number-columns-repeated="1006"/>
     </table:table-row>
     <table:table-row table:style-name="ro2">
-     <table:table-cell table:style-name="Default" table:number-columns-repeated="2"/>
-     <table:table-cell table:style-name="Default" office:value-type="string" calcext:value-type="string">
+     <table:table-cell table:number-columns-repeated="2"/>
+     <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>{destinationCity}</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="Default" office:value-type="string" calcext:value-type="string">
+     <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>AMAZON.US_CITY</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="Default" table:number-columns-repeated="3"/>
+     <table:table-cell table:number-columns-repeated="3"/>
      <table:table-cell table:style-name="ce18" office:value-type="boolean" office:boolean-value="true" calcext:value-type="boolean">
       <text:p>TRUE</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="Default" table:number-columns-repeated="1016"/>
+     <table:table-cell table:number-columns-repeated="8"/>
+     <table:table-cell table:number-columns-repeated="2" table:style-name="ce18" office:value-type="boolean" office:boolean-value="true" calcext:value-type="boolean">
+      <text:p>TRUE</text:p>
+     </table:table-cell>
+     <table:table-cell table:number-columns-repeated="1006"/>
     </table:table-row>
     <table:table-row table:style-name="ro2">
-     <table:table-cell table:style-name="Default" table:number-columns-repeated="2"/>
-     <table:table-cell table:style-name="Default" office:value-type="string" calcext:value-type="string">
+     <table:table-cell table:number-columns-repeated="2"/>
+     <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>{date}</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="Default" office:value-type="string" calcext:value-type="string">
+     <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>AMAZON.DATE</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="Default" table:number-columns-repeated="3"/>
+     <table:table-cell table:number-columns-repeated="3"/>
      <table:table-cell table:style-name="ce18" office:value-type="boolean" office:boolean-value="true" calcext:value-type="boolean">
       <text:p>TRUE</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="Default" table:number-columns-repeated="1016"/>
+     <table:table-cell table:number-columns-repeated="8"/>
+     <table:table-cell table:style-name="ce18" office:value-type="boolean" office:boolean-value="false" calcext:value-type="boolean">
+      <text:p>FALSE</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce18" office:value-type="boolean" office:boolean-value="true" calcext:value-type="boolean">
+      <text:p>TRUE</text:p>
+     </table:table-cell>
+     <table:table-cell table:number-columns-repeated="1006"/>
     </table:table-row>
     <table:table-row table:style-name="ro2">
-     <table:table-cell table:style-name="Default" table:number-columns-repeated="1024"/>
+     <table:table-cell office:value-type="string" calcext:value-type="string">
+      <text:p>BearIntent</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="string" calcext:value-type="string">
+      <text:p>Select a bear</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="string" calcext:value-type="string">
+      <text:p>{bear}</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="string" calcext:value-type="string">
+      <text:p>LIST_OF_BEARS</text:p>
+     </table:table-cell>
+     <table:table-cell table:number-columns-repeated="1020"/>
     </table:table-row>
-    <table:table-row table:style-name="ro3" table:number-rows-repeated="2">
-     <table:table-cell table:style-name="Default" table:number-columns-repeated="1024"/>
-    </table:table-row>
-    <table:table-row table:style-name="ro3" table:number-rows-repeated="1048559">
+    <table:table-row table:style-name="ro3" table:number-rows-repeated="1048561">
      <table:table-cell table:number-columns-repeated="1024"/>
     </table:table-row>
     <table:table-row table:style-name="ro3">
@@ -777,12 +892,14 @@
     </table:table-row>
    </table:table>
    <table:table table:name="UTTERANCES_MAIN" table:style-name="ta1">
-    <table:table-column table:style-name="co10" table:default-cell-style-name="ce1"/>
-    <table:table-column table:style-name="co11" table:default-cell-style-name="ce1"/>
-    <table:table-column table:style-name="co12" table:default-cell-style-name="ce1"/>
-    <table:table-column table:style-name="co13" table:default-cell-style-name="ce1"/>
-    <table:table-column table:style-name="co4" table:number-columns-repeated="1019" table:default-cell-style-name="ce1"/>
-    <table:table-column table:style-name="co9" table:default-cell-style-name="ce1"/>
+    <office:forms form:automatic-focus="false" form:apply-design-mode="false"/>
+    <table:table-column table:style-name="co16" table:default-cell-style-name="ce1"/>
+    <table:table-column table:style-name="co17" table:default-cell-style-name="ce1"/>
+    <table:table-column table:style-name="co18" table:default-cell-style-name="ce1"/>
+    <table:table-column table:style-name="co19" table:default-cell-style-name="ce1"/>
+    <table:table-column table:style-name="co20" table:default-cell-style-name="ce1"/>
+    <table:table-column table:style-name="co4" table:number-columns-repeated="1018" table:default-cell-style-name="ce1"/>
+    <table:table-column table:style-name="co15" table:default-cell-style-name="ce1"/>
     <table:table-row table:style-name="ro4">
      <table:table-cell table:style-name="Heading_20_1" office:value-type="string" calcext:value-type="string">
       <text:p>NumberIntent</text:p>
@@ -796,7 +913,10 @@
      <table:table-cell table:style-name="Heading_20_1" office:value-type="string" calcext:value-type="string">
       <text:p>TravelIntent</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="Heading_20_1" table:number-columns-repeated="1020"/>
+     <table:table-cell table:style-name="Heading_20_1" office:value-type="string" calcext:value-type="string">
+      <text:p>BearIntent</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="Heading_20_1" table:number-columns-repeated="1019"/>
     </table:table-row>
     <table:table-row table:style-name="ro2">
      <table:table-cell table:style-name="ce19" office:value-type="string" calcext:value-type="string">
@@ -811,14 +931,20 @@
      <table:table-cell table:style-name="ce20" office:value-type="string" calcext:value-type="string">
       <text:p>i&apos;m leaving {date}</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce20" table:number-columns-repeated="1020"/>
+     <table:table-cell table:style-name="ce20" office:value-type="string" calcext:value-type="string">
+      <text:p>I like {bear}</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce20" table:number-columns-repeated="1019"/>
     </table:table-row>
     <table:table-row table:style-name="ro3">
      <table:table-cell table:number-columns-repeated="3"/>
      <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>i want to travel from {originCity}</text:p>
      </table:table-cell>
-     <table:table-cell table:number-columns-repeated="1020"/>
+     <table:table-cell office:value-type="string" calcext:value-type="string">
+      <text:p>I like {bear} bears</text:p>
+     </table:table-cell>
+     <table:table-cell table:number-columns-repeated="1019"/>
     </table:table-row>
     <table:table-row table:style-name="ro3">
      <table:table-cell table:number-columns-repeated="3"/>
@@ -883,11 +1009,41 @@
      <table:table-cell table:number-columns-repeated="1024"/>
     </table:table-row>
    </table:table>
-   <table:table table:name="RESPONSES_MAIN" table:style-name="ta2">
-    <table:table-column table:style-name="co14" table:default-cell-style-name="ce20"/>
+   <table:table table:name="LIST_OF_BEARS" table:style-name="ta2">
+    <office:forms form:automatic-focus="false" form:apply-design-mode="false"/>
+    <table:table-column table:style-name="co21" table:default-cell-style-name="Default"/>
+    <table:table-column table:style-name="co22" table:number-columns-repeated="1023" table:default-cell-style-name="Default"/>
+    <table:table-row table:style-name="ro4">
+     <table:table-cell table:style-name="Heading_20_1" office:value-type="string" calcext:value-type="string">
+      <text:p>LIST_OF_BEARS</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="Heading_20_1" table:number-columns-repeated="1023"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro2">
+     <table:table-cell office:value-type="string" calcext:value-type="string">
+      <text:p>grizzly</text:p>
+     </table:table-cell>
+     <table:table-cell table:number-columns-repeated="1023"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro2">
+     <table:table-cell office:value-type="string" calcext:value-type="string">
+      <text:p>panda</text:p>
+     </table:table-cell>
+     <table:table-cell table:number-columns-repeated="1023"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro2">
+     <table:table-cell office:value-type="string" calcext:value-type="string">
+      <text:p>polar</text:p>
+     </table:table-cell>
+     <table:table-cell table:number-columns-repeated="1023"/>
+    </table:table-row>
+   </table:table>
+   <table:table table:name="RESPONSES_MAIN" table:style-name="ta3">
+    <office:forms form:automatic-focus="false" form:apply-design-mode="false"/>
+    <table:table-column table:style-name="co23" table:default-cell-style-name="ce20"/>
+    <table:table-column table:style-name="co24" table:default-cell-style-name="ce1"/>
+    <table:table-column table:style-name="co25" table:number-columns-repeated="1021" table:default-cell-style-name="ce1"/>
     <table:table-column table:style-name="co15" table:default-cell-style-name="ce1"/>
-    <table:table-column table:style-name="co16" table:number-columns-repeated="1021" table:default-cell-style-name="ce1"/>
-    <table:table-column table:style-name="co9" table:default-cell-style-name="ce1"/>
     <table:table-row table:style-name="ro4">
      <table:table-cell table:style-name="Heading_20_1" office:value-type="string" calcext:value-type="string">
       <text:p>JokeIntent</text:p>
@@ -921,9 +1077,10 @@
     </table:table-row>
    </table:table>
    <table:table table:name="UTTERANCES_NUMBER" table:style-name="ta1">
-    <table:table-column table:style-name="co17" table:default-cell-style-name="ce1"/>
+    <office:forms form:automatic-focus="false" form:apply-design-mode="false"/>
+    <table:table-column table:style-name="co26" table:default-cell-style-name="ce1"/>
     <table:table-column table:style-name="co4" table:number-columns-repeated="1022" table:default-cell-style-name="ce1"/>
-    <table:table-column table:style-name="co9" table:default-cell-style-name="ce1"/>
+    <table:table-column table:style-name="co15" table:default-cell-style-name="ce1"/>
     <table:table-row table:style-name="ro4">
      <table:table-cell table:style-name="Heading_20_1" office:value-type="string" calcext:value-type="string">
       <text:p>NumberIntent</text:p>
@@ -944,9 +1101,10 @@
     </table:table-row>
    </table:table>
    <table:table table:name="VIEWS_FILE" table:style-name="ta1">
-    <table:table-column table:style-name="co18" table:default-cell-style-name="ce1"/>
+    <office:forms form:automatic-focus="false" form:apply-design-mode="false"/>
+    <table:table-column table:style-name="co27" table:default-cell-style-name="ce1"/>
     <table:table-column table:style-name="co4" table:number-columns-repeated="1022" table:default-cell-style-name="ce1"/>
-    <table:table-column table:style-name="co9" table:default-cell-style-name="ce1"/>
+    <table:table-column table:style-name="co15" table:default-cell-style-name="ce1"/>
     <table:table-row table:style-name="ro4">
      <table:table-cell table:style-name="Heading_20_1" office:value-type="string" calcext:value-type="string">
       <text:p>path</text:p>
@@ -982,9 +1140,10 @@
     </table:table-row>
    </table:table>
    <table:table table:name="INVOCATION_NAMES" table:style-name="ta1">
-    <table:table-column table:style-name="co19" table:default-cell-style-name="ce1"/>
+    <office:forms form:automatic-focus="false" form:apply-design-mode="false"/>
+    <table:table-column table:style-name="co28" table:default-cell-style-name="ce1"/>
     <table:table-column table:style-name="co4" table:number-columns-repeated="1022" table:default-cell-style-name="ce1"/>
-    <table:table-column table:style-name="co9" table:default-cell-style-name="ce1"/>
+    <table:table-column table:style-name="co15" table:default-cell-style-name="ce1"/>
     <table:table-row table:style-name="ro4">
      <table:table-cell table:style-name="ce21" office:value-type="string" calcext:value-type="string">
       <text:p>invocationName</text:p>
@@ -1019,10 +1178,11 @@
      <table:table-cell table:number-columns-repeated="1024"/>
     </table:table-row>
    </table:table>
-   <table:table table:name="UTTERANCES_TRAVEL" table:style-name="ta3">
-    <table:table-column table:style-name="co20" table:default-cell-style-name="ce1"/>
-    <table:table-column table:style-name="co21" table:default-cell-style-name="ce1"/>
-    <table:table-column table:style-name="co22" table:default-cell-style-name="ce1"/>
+   <table:table table:name="UTTERANCES_TRAVEL" table:style-name="ta2">
+    <office:forms form:automatic-focus="false" form:apply-design-mode="false"/>
+    <table:table-column table:style-name="co29" table:default-cell-style-name="ce1"/>
+    <table:table-column table:style-name="co30" table:default-cell-style-name="ce1"/>
+    <table:table-column table:style-name="co31" table:default-cell-style-name="ce1"/>
     <table:table-row table:style-name="ro4">
      <table:table-cell table:style-name="Heading_20_1" office:value-type="string" calcext:value-type="string">
       <text:p>TravelIntent/{originCity}</text:p>
@@ -1064,6 +1224,82 @@
      <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>i want to leave on {date}</text:p>
      </table:table-cell>
+    </table:table-row>
+   </table:table>
+   <table:table table:name="PROMPTS_TRAVEL" table:style-name="ta2">
+    <office:forms form:automatic-focus="false" form:apply-design-mode="false"/>
+    <table:table-column table:style-name="co32" table:number-columns-repeated="2" table:default-cell-style-name="Default"/>
+    <table:table-column table:style-name="co33" table:number-columns-repeated="2" table:default-cell-style-name="Default"/>
+    <table:table-column table:style-name="co34" table:default-cell-style-name="Default"/>
+    <table:table-column table:style-name="co35" table:default-cell-style-name="Default"/>
+    <table:table-column table:style-name="co22" table:number-columns-repeated="1018" table:default-cell-style-name="Default"/>
+    <table:table-row table:style-name="ro4">
+     <table:table-cell table:style-name="Heading_20_1" office:value-type="string" calcext:value-type="string">
+      <text:p>TravelIntent/confirmation</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="Heading_20_1" office:value-type="string" calcext:value-type="string">
+      <text:p>TravelIntent/{originCity}/elicitation</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="Heading_20_1" office:value-type="string" calcext:value-type="string">
+      <text:p>TravelIntent/{originCity}/confirmation</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="Heading_20_1" office:value-type="string" calcext:value-type="string">
+      <text:p>TravelIntent/{destinationCity}/elicitation</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="Heading_20_1" office:value-type="string" calcext:value-type="string">
+      <text:p>TravelIntent/{destinationCity}/confirmation</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="Heading_20_1" office:value-type="string" calcext:value-type="string">
+      <text:p>TravelIntent/{date}/elicitation</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="Heading_20_1" table:number-columns-repeated="1018"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro2">
+     <table:table-cell office:value-type="string" calcext:value-type="string">
+      <text:p>You&apos;re traveling from {originCity} to {destinationCity} on <text:s/>{date} <text:s/>is that correct?</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="string" calcext:value-type="string">
+      <text:p>Which city will you be traveling from?</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="string" calcext:value-type="string">
+      <text:p>I heard {destinationCity} as your origin. Is that correct?</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="string" calcext:value-type="string">
+      <text:p>Which city are you traveling to?</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="string" calcext:value-type="string">
+      <text:p>I heard {destinationCity} as your destination. Is that correct?</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="string" calcext:value-type="string">
+      <text:p>On what date do you want to leave?</text:p>
+     </table:table-cell>
+     <table:table-cell table:number-columns-repeated="1018"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro2">
+     <table:table-cell/>
+     <table:table-cell office:value-type="string" calcext:value-type="string">
+      <text:p>Where are you starting your trip?</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+     <table:table-cell office:value-type="string" calcext:value-type="string">
+      <text:p>Where are you going?</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+     <table:table-cell office:value-type="string" calcext:value-type="string">
+      <text:p>What date are you flying out?</text:p>
+     </table:table-cell>
+     <table:table-cell table:number-columns-repeated="1018"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro2">
+     <table:table-cell/>
+     <table:table-cell office:value-type="string" calcext:value-type="string">
+      <text:p>Which city are you leaving from?</text:p>
+     </table:table-cell>
+     <table:table-cell table:number-columns-repeated="3"/>
+     <table:table-cell office:value-type="string" calcext:value-type="string">
+      <text:p>When will you start this trip?</text:p>
+     </table:table-cell>
+     <table:table-cell table:number-columns-repeated="1018"/>
     </table:table-row>
    </table:table>
    <table:named-expressions/>

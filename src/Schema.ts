@@ -251,9 +251,8 @@ export abstract class Schema {
     );
 
     const intents = intentsByPlatformAndEnvironments.map((rawIntent: IIntent) => {
-      const { name, samples } = rawIntent;
-      let { slotsDefinition } = rawIntent;
-      slotsDefinition = _(slotsDefinition)
+      const { name, samples, slotsDefinition } = rawIntent;
+      const slots = _(slotsDefinition)
         .filter(slot => this.filterByPlatform(slot))
         .map((slot: any) => {
           return {
@@ -264,7 +263,7 @@ export abstract class Schema {
         })
         .value();
 
-      return { name, samples, slots: slotsDefinition };
+      return { name, samples, slots };
     });
 
     return intents;
@@ -334,6 +333,7 @@ export interface IIntent {
   name: string;
   samples: string[];
   responses: string[];
+  confirmations: string[];
   slotsDefinition: ISlotDefinition[];
   canFulfillIntent: boolean;
   webhookUsed: boolean;
@@ -345,6 +345,8 @@ export interface IIntent {
   environments: string[];
   platforms: string[];
   locale: string;
+  delegationStrategy?: "ALWAYS" | "SKILL_RESPONSE";
+  confirmationRequired: boolean;
 }
 
 export interface IEvent {
@@ -367,8 +369,14 @@ export interface ISlotDefinition {
   name: string;
   type: string;
   platform?: string;
-  required?: boolean;
-  // samples: string[];
+  required: boolean;
+  requiresConfirmation: boolean;
+  requiresElicitation: boolean;
+  samples: string[];
+  prompts: {
+    confirmation: string[];
+    elicitation: string[];
+  };
 }
 
 export interface ISlot {

@@ -19,11 +19,12 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-/* tslint:disable:no-empty */
+/* tslint:disable:no-empty no-submodule-imports */
 import * as _Promise from "bluebird";
 import * as _ from "lodash";
 import * as path from "path";
-import { IIntent, Schema } from "./Schema";
+import * as uuid from "uuid/v5";
+import { IIntent, ISlotDefinition, Schema } from "./Schema";
 import { IVoxaSheet } from "./VoxaSheet";
 
 const NAMESPACE = "alexa";
@@ -43,6 +44,82 @@ const AVAILABLE_LOCALES = [
   "it-IT",
   "pt-BR"
 ];
+
+export interface IVariation {
+  type: "PlainText" | "SSML";
+  value: string;
+}
+
+export interface IPrompt {
+  id: string;
+  variations: IVariation[];
+}
+
+export interface IDialogSlotPrompt {
+  elicitation?: string;
+  confirmation?: string;
+}
+
+export interface IDialogSlot {
+  name: string;
+  type: string;
+  elicitationRequired: boolean;
+  confirmationRequired: boolean;
+  prompts?: IDialogSlotPrompt;
+}
+
+export type DelegationStrategy = "SKILL_RESPONSE" | "ALWAYS";
+
+export interface IDialogIntent {
+  name: string;
+  delegationStrategy?: DelegationStrategy;
+  confirmationRequired: boolean;
+  slots: IDialogSlot[];
+  prompts?: {
+    confirmation?: string;
+  };
+}
+
+export interface IInteractionModelSlot {
+  name: string;
+  type: string;
+  samples: string[];
+}
+
+export interface IDialog {
+  intents: IDialogIntent[];
+  delegationStrategy: DelegationStrategy;
+}
+
+export interface IInteractionModelIntent {
+  name: string;
+  samples: string[];
+  slots: IInteractionModelSlot[];
+}
+
+export interface IInteractionModelTypeValue {
+  name: {
+    value: string;
+    synonyms: string[];
+  };
+}
+
+export interface IInteractionModelType {
+  name: string;
+  values: IInteractionModelTypeValue[];
+}
+
+export interface IInteractionModel {
+  interactionModel: {
+    languageModel: {
+      invocationName: string;
+      intents: IInteractionModelIntent[];
+      types: IInteractionModelType[];
+    };
+    dialog?: IDialog;
+    prompts?: IPrompt[];
+  };
+}
 
 export class AlexaSchema extends Schema {
   public environment = "staging";
@@ -72,7 +149,7 @@ export class AlexaSchema extends Schema {
       content: { manifest }
     });
   }
-  public contentLanguageModel(locale: string, environment: string) {
+  public contentLanguageModel(locale: string, environment: string): IInteractionModel {
     const invocation = _.find(this.invocations, { locale, environment });
     const invocationName = _.get(invocation, "name", "Skill with no name");
 
@@ -83,7 +160,22 @@ export class AlexaSchema extends Schema {
       return slot;
     });
 
-    return { interactionModel: { languageModel: { invocationName, intents, types } } };
+    const dialog: IDialog = {
+      intents: this.generateDialogModel(this.intentsByPlatformAndEnvironments(locale, environment)),
+      delegationStrategy: "SKILL_RESPONSE"
+    };
+
+    const prompts: IPrompt[] = this.generatePrompts(
+      this.intentsByPlatformAndEnvironments(locale, environment)
+    );
+
+    return {
+      interactionModel: {
+        languageModel: { invocationName, intents, types },
+        dialog,
+        prompts
+      }
+    };
   }
   public buildLanguageModel(locale: string, environment: string) {
     this.fileContent.push({
@@ -111,4 +203,120 @@ export class AlexaSchema extends Schema {
       content: canFulfillIntents
     });
   }
+
+  private generateDialogModel(intents: IIntent[]): IDialogIntent[] {
+    return _(intents)
+      .filter(intent => {
+        if (intent.confirmationRequired || intent.delegationStrategy) {
+          return true;
+        }
+
+        const slotRequiresDialog = _(intent.slotsDefinition)
+          .map(slot => slot.requiresElicitation || slot.requiresConfirmation)
+          .some();
+
+        return slotRequiresDialog;
+      })
+      .map(
+        (intent): IDialogIntent => {
+          const prompts: IDialogSlotPrompt = {};
+          if (intent.confirmations.length > 0) {
+            prompts.confirmation = `Confirmation.Intent.${hashObj(intent.confirmations)}`;
+          }
+          return {
+            name: intent.name,
+            delegationStrategy: intent.delegationStrategy,
+            confirmationRequired: intent.confirmationRequired,
+            slots: this.generateDialogSlotModel(intent.slotsDefinition),
+            prompts
+          };
+        }
+      )
+      .value();
+  }
+
+  private generateDialogSlotModel(slots: ISlotDefinition[]): IDialogSlot[] {
+    return _(slots)
+      .map(
+        (slot: ISlotDefinition): IDialogSlot => {
+          const prompts: IDialogSlotPrompt = {};
+          if (slot.prompts.elicitation.length > 0) {
+            prompts.elicitation = `Elicitation.Slot.${hashObj(slot.prompts.elicitation)}`;
+          }
+
+          if (slot.prompts.confirmation.length > 0) {
+            prompts.confirmation = `Confirmation.Slot.${hashObj(slot.prompts.confirmation)}`;
+          }
+
+          return {
+            name: slot.name.replace("{", "").replace("}", ""),
+            type: slot.type,
+            elicitationRequired: slot.requiresElicitation,
+            confirmationRequired: slot.requiresConfirmation,
+            prompts
+          };
+        }
+      )
+      .value();
+  }
+
+  private generatePrompts(intents: IIntent[]): IPrompt[] {
+    const intentPrompts: IPrompt[] = _(intents)
+      .filter((intent: IIntent): boolean => intent.confirmations.length > 0)
+      .map(
+        (intent: IIntent): IPrompt => {
+          return {
+            id: `Confirmation.Intent.${hashObj(intent.confirmations)}`,
+            variations: this.formatVariations(intent.confirmations)
+          };
+        }
+      )
+      .value();
+
+    const slotPrompts: IPrompt[] = _(intents)
+      .map("slotsDefinition")
+      .flatten()
+      .filter(
+        (slot: ISlotDefinition): boolean =>
+          slot.prompts.confirmation.length > 0 || slot.prompts.elicitation.length > 0
+      )
+      .map(
+        (slot: ISlotDefinition): IPrompt[] => {
+          const prompts: IPrompt[] = [];
+          if (slot.prompts.confirmation.length > 0) {
+            prompts.push({
+              id: `Confirmation.Slot.${hashObj(slot.prompts.confirmation)}`,
+              variations: this.formatVariations(slot.prompts.confirmation)
+            });
+          }
+
+          if (slot.prompts.elicitation.length > 0) {
+            prompts.push({
+              id: `Elicitation.Slot.${hashObj(slot.prompts.elicitation)}`,
+              variations: this.formatVariations(slot.prompts.elicitation)
+            });
+          }
+
+          return prompts;
+        }
+      )
+      .flatten()
+      .value();
+
+    return _.concat(intentPrompts, slotPrompts);
+  }
+
+  private formatVariations(variations: string[]): IVariation[] {
+    return _.map(
+      variations,
+      (variation): IVariation => ({
+        type: "PlainText",
+        value: variation
+      })
+    );
+  }
+}
+
+function hashObj(obj: any): string {
+  return uuid(JSON.stringify(obj), uuid.DNS);
 }
