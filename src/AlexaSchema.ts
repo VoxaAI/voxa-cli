@@ -24,6 +24,20 @@ import * as _Promise from "bluebird";
 import * as _ from "lodash";
 import * as path from "path";
 import * as uuid from "uuid/v5";
+import {
+  DelegationStrategy,
+  IDialog,
+  IDialogIntent,
+  IDialogSlot,
+  IDialogSlotPrompt,
+  IInteractionModel,
+  IInteractionModelIntent,
+  IInteractionModelSlot,
+  IInteractionModelType,
+  IInteractionModelTypeValue,
+  IPrompt,
+  IVariation
+} from "./AlexaInterfaces";
 import { IIntent, ISlotDefinition, Schema } from "./Schema";
 import { IVoxaSheet } from "./VoxaSheet";
 
@@ -44,82 +58,6 @@ const AVAILABLE_LOCALES = [
   "it-IT",
   "pt-BR"
 ];
-
-export interface IVariation {
-  type: "PlainText" | "SSML";
-  value: string;
-}
-
-export interface IPrompt {
-  id: string;
-  variations: IVariation[];
-}
-
-export interface IDialogSlotPrompt {
-  elicitation?: string;
-  confirmation?: string;
-}
-
-export interface IDialogSlot {
-  name: string;
-  type: string;
-  elicitationRequired: boolean;
-  confirmationRequired: boolean;
-  prompts?: IDialogSlotPrompt;
-}
-
-export type DelegationStrategy = "SKILL_RESPONSE" | "ALWAYS";
-
-export interface IDialogIntent {
-  name: string;
-  delegationStrategy?: DelegationStrategy;
-  confirmationRequired: boolean;
-  slots: IDialogSlot[];
-  prompts?: {
-    confirmation?: string;
-  };
-}
-
-export interface IInteractionModelSlot {
-  name: string;
-  type: string;
-  samples: string[];
-}
-
-export interface IDialog {
-  intents: IDialogIntent[];
-  delegationStrategy: DelegationStrategy;
-}
-
-export interface IInteractionModelIntent {
-  name: string;
-  samples: string[];
-  slots: IInteractionModelSlot[];
-}
-
-export interface IInteractionModelTypeValue {
-  name: {
-    value: string;
-    synonyms: string[];
-  };
-}
-
-export interface IInteractionModelType {
-  name: string;
-  values: IInteractionModelTypeValue[];
-}
-
-export interface IInteractionModel {
-  interactionModel: {
-    languageModel: {
-      invocationName: string;
-      intents: IInteractionModelIntent[];
-      types: IInteractionModelType[];
-    };
-    dialog?: IDialog;
-    prompts?: IPrompt[];
-  };
-}
 
 export class AlexaSchema extends Schema {
   public environment = "staging";
@@ -206,17 +144,7 @@ export class AlexaSchema extends Schema {
 
   private generateDialogModel(intents: IIntent[]): IDialogIntent[] {
     return _(intents)
-      .filter(intent => {
-        if (intent.confirmationRequired || intent.delegationStrategy) {
-          return true;
-        }
-
-        const slotRequiresDialog = _(intent.slotsDefinition)
-          .map(slot => slot.requiresElicitation || slot.requiresConfirmation)
-          .some();
-
-        return slotRequiresDialog;
-      })
+      .filter(intentOrSlotRequireDialog)
       .map(
         (intent): IDialogIntent => {
           const prompts: IDialogSlotPrompt = {};
@@ -262,7 +190,7 @@ export class AlexaSchema extends Schema {
 
   private generatePrompts(intents: IIntent[]): IPrompt[] {
     const intentPrompts: IPrompt[] = _(intents)
-      .filter((intent: IIntent): boolean => intent.confirmations.length > 0)
+      .filter(intentHasPrompts)
       .map(
         (intent: IIntent): IPrompt => {
           return {
@@ -273,13 +201,16 @@ export class AlexaSchema extends Schema {
       )
       .value();
 
-    const slotPrompts: IPrompt[] = _(intents)
+    const slotPrompts = this.generateSlotPrompts(intents);
+
+    return _.concat(intentPrompts, slotPrompts);
+  }
+
+  private generateSlotPrompts(intents: IIntent[]): IPrompt[] {
+    return _(intents)
       .map("slotsDefinition")
       .flatten()
-      .filter(
-        (slot: ISlotDefinition): boolean =>
-          slot.prompts.confirmation.length > 0 || slot.prompts.elicitation.length > 0
-      )
+      .filter(slotHasPrompts)
       .map(
         (slot: ISlotDefinition): IPrompt[] => {
           const prompts: IPrompt[] = [];
@@ -302,8 +233,6 @@ export class AlexaSchema extends Schema {
       )
       .flatten()
       .value();
-
-    return _.concat(intentPrompts, slotPrompts);
   }
 
   private formatVariations(variations: string[]): IVariation[] {
@@ -319,4 +248,24 @@ export class AlexaSchema extends Schema {
 
 function hashObj(obj: any): string {
   return uuid(JSON.stringify(obj), uuid.DNS);
+}
+
+function intentOrSlotRequireDialog(intent: IIntent): boolean {
+  if (intent.confirmationRequired || intent.delegationStrategy) {
+    return true;
+  }
+
+  const slotRequiresDialog = _(intent.slotsDefinition)
+    .map(slot => slot.requiresElicitation || slot.requiresConfirmation)
+    .some();
+
+  return slotRequiresDialog;
+}
+
+function slotHasPrompts(slot: ISlotDefinition): boolean {
+  return slot.prompts.confirmation.length > 0 || slot.prompts.elicitation.length > 0;
+}
+
+function intentHasPrompts(intent: IIntent): boolean {
+  return intent.confirmations.length > 0;
 }
