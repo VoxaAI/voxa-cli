@@ -1,14 +1,14 @@
 # voxa-cli
 
-Create interaction model and publishing information for your Alexa skills.
+The perfect toolkit for your Voxa app.
 
 [![Build Status](https://travis-ci.org/VoxaAI/voxa-cli.svg?branch=staging)](https://travis-ci.org/VoxaAI/voxa-cli)
 [![Code Coverage](https://codecov.io/gh/voxaai/voxa-cli/branch/staging/graph/badge.svg)](https://codecov.io/gh/VoxaAI/voxa-cli)
 
-## Install
+## Install it in your Voxa app
 
 ```
-$ npm install --save voxa-cli
+$ yarn add voxa-cli
 ```
 
 ## Roadmap
@@ -23,7 +23,27 @@ $ npm install --save voxa-cli
 
 ## Getting started
 
-Voxa-cli supports many sources like google spreadsheet, office 365, local .xlsx, .ods, .fods files.
+With the Voxa-cli you can scaffold a full Voxa project ready to get started to code your voice app for Amazon Alexa, Google Assistant, Telegram and Facebook Messenger.
+
+You can also create interaction model and publishing information for your Alexa skills. Voxa-cli supports many sources like google spreadsheet, office 365, local .xlsx, .ods, .fods files to manage your interaction model information and publishing information.
+
+### How to generate a Voxa project
+
+As simple as:
+
+```
+$ npx voxa create
+```
+
+You'll be prompt to answer several question like:
+
+- The name of your project
+- The language of preference for your Voxa app (Javascript or Typescript)
+- The platform for your Voxa app
+- Usage of the canfulfill intent if you'll create an Alexa skill
+- Analytics you can use (using Voxa plugins)
+
+Once done you'll be ready to start working on your next voice app.
 
 ### How to connect with Google Spreadsheet
 
@@ -126,8 +146,8 @@ $ npx voxa interaction
 
 ### Other links
 
-- [Interaction spreadsheet structure]({{ site.url }}/docs/interaction-spreadsheet)
-- [Publishing spreadsheet structure]({{ site.url }}/docs/publishing-spreadsheet)
-- [Content structure]({{ site.url }}/docs/interaction-spreadsheet#tabs-to-download-should-have-the-following-structure)
-- [Local manifest]({{ site.url }}/docs/local-manifest)
-- [Platform]({{ site.url }}/docs/platform)
+- [Interaction spreadsheet structure](/docs/interaction-spreadsheet)
+- [Publishing spreadsheet structure](/docs/publishing-spreadsheet)
+- [Content structure](/docs/interaction-spreadsheet#tabs-to-download-should-have-the-following-structure)
+- [Local manifest](/docs/local-manifest)
+- [Platform](/docs/platform)
