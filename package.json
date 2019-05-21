@@ -1,6 +1,6 @@
 {
   "name": "voxa-cli",
-  "version": "2.1.2",
+  "version": "2.1.3-alpha2",
   "description": "The Voxa CLI tools",
   "bin": {
     "voxa": "./bin/voxa.js"
@@ -15,12 +15,15 @@
   "scripts": {
     "clean": "rm -rf lib/",
     "prepare": "npm run clean && tsc",
-    "test": "mocha test/*.spec.* test/**/*.spec.*",
-    "test-ci": "nyc mocha --colors --reporter mocha-jenkins-reporter test test/*.spec.* test/**/*.spec.*",
+    "test": "mocha test/*.spec.* test/**/*.spec.* --exclude test/out/*.spec.* --exclude test/out/**/*.spec.*",
+    "test-ci": "nyc mocha --colors --reporter mocha-jenkins-reporter test test/*.spec.* test/**/*.spec.* --exclude test/out/*.spec.* --exclude test/out/**/*.spec.*",
     "report": "nyc report --reporter=json && nyc report --reporter html && nyc report --reporter=lcov && nyc report --reporter=cobertura",
-    "lint": "tslint --config tslint.json --project tsconfig.json --exclude \"**/*.json\"",
-    "lint-fix": "tslint --fix --config tslint.json --project tsconfig.json --exclude \"**/*.json\"",
-    "tsc": "rm -rf lib && tsc"
+    "lint": "tslint --config tslint.json --project tsconfig.json --exclude \"**/*.json\" --exclude \"templates/*\"",
+    "lint-fix": "tslint --fix --config tslint.json --project tsconfig.json --exclude \"**/*.json\" --exclude \"templates/*\"",
+    "tsc": "rm -rf lib && tsc",
+    "create": "npm run tsc && node bin/voxa.js create",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "author": "Rain Agency <npm@rain.agency> (http://rain.agency)",
   "contributors": [
@@ -56,6 +59,7 @@
     "google-auth-library": "^2.0.0",
     "google-spreadsheet": "^2.0.7",
     "googleapis": "^33.0.0",
+    "handlebars": "^4.1.2",
     "inquirer": "^6.2.2",
     "lodash": "^4.17.11",
     "node-xlsx": "^0.14.1",
@@ -64,13 +68,15 @@
     "qs": "^6.7.0",
     "rxjs": "^6.4.0",
     "source-map-support": "^0.5.9",
-    "uuid": "^3.3.2"
+    "uuid": "^3.3.2",
+    "snyk": "^1.161.1"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
     "@types/chai-fs": "^2.0.1",
     "@types/mocha": "^5.2.6",
     "@types/node": "^10.10.1",
+    "@types/simple-mock": "^0.8.1",
     "chai": "^4.2.0",
     "chai-fs": "^2.0.0",
     "husky": "^1.3.1",
@@ -79,6 +85,7 @@
     "nyc": "^13.3.0",
     "prettier": "^1.16.4",
     "pretty-quick": "^1.10.0",
+    "simple-mock": "^0.8.0",
     "ts-node": "^8.0.3",
     "tslint": "^5.11.0",
     "tslint-config-prettier": "^1.18.0",
@@ -93,5 +100,6 @@
     "hooks": {
       "pre-commit": "pretty-quick --staged && yarn lint && yarn tsc && yarn test"
     }
-  }
+  },
+  "snyk": true
 }

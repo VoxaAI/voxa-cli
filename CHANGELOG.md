@@ -10,10 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Added support for per slot utterances in alexa (this is the beginning of dialog support)
+- Added feature to generate a full Voxa 3 project in Typescript or Javascript. Generate boilerplate code with linting, analytics, serverless, suppport for all available platforms, save/get user information from DynamoDB.
 
 ### Fixed
 
 - Now alexa spec is splitted into smaller units testing specific functionality
+- Fixed @sys. slots on dialogflow were converted into a different type
 
 ## [2.1.2] - 2019-05-08
 

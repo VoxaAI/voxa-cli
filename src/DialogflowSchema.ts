@@ -241,7 +241,10 @@ export class DialogflowSchema extends Schema {
             const slot = _.find(parameters, { name: text });
 
             if (isTemplate && slot) {
-              _.set(element, "meta", `@${_.kebabCase(slot.dataType)}`);
+              const slotMeta = slot.dataType.includes("@sys.")
+                ? slot.dataType
+                : `@${_.kebabCase(slot.dataType)}`;
+              _.set(element, "meta", slotMeta);
               _.set(element, "alias", alias);
             }
 

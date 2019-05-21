@@ -27,7 +27,7 @@ import * as pkg from "../package.json";
 
 module.exports = async (argv: any) => {
   commander.version(pkg.version, "-v, --version");
-  ["interaction", "init"].forEach(c => {
+  ["interaction", "init", "create"].forEach(c => {
     commander.usage(c);
 
     const command = require(`./commands/${c}`);

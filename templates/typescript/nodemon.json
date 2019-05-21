@@ -1,0 +1,15 @@
+{
+  "ignore": [
+    ".git",
+    "node_modules/**/node_modules",
+    "speech-assets/",
+    "test/",
+    "reports/",
+    "content/"
+  ],
+  "verbose": true,
+  "ext": "js,json,ts",
+  "execMap": {
+    "ts": "node"
+  }
+}
