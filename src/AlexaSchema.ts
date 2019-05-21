@@ -149,7 +149,7 @@ export class AlexaSchema extends Schema {
         (intent): IDialogIntent => {
           const prompts: IDialogSlotPrompt = {};
           if (intent.confirmations.length > 0) {
-            prompts.confirmation = `Confirmation.Intent.${hashObj(intent.confirmations)}`;
+            prompts.confirmation = getPromptId("Confirmation", "Intent", intent.confirmations);
           }
           return {
             name: intent.name,
@@ -169,11 +169,11 @@ export class AlexaSchema extends Schema {
         (slot: ISlotDefinition): IDialogSlot => {
           const prompts: IDialogSlotPrompt = {};
           if (slot.prompts.elicitation.length > 0) {
-            prompts.elicitation = `Elicitation.Slot.${hashObj(slot.prompts.elicitation)}`;
+            prompts.elicitation = getPromptId("Elicitation", "Slot", slot.prompts.elicitation);
           }
 
           if (slot.prompts.confirmation.length > 0) {
-            prompts.confirmation = `Confirmation.Slot.${hashObj(slot.prompts.confirmation)}`;
+            prompts.confirmation = getPromptId("Confirmation", "Slot", slot.prompts.confirmation);
           }
 
           return {
@@ -194,7 +194,7 @@ export class AlexaSchema extends Schema {
       .map(
         (intent: IIntent): IPrompt => {
           return {
-            id: `Confirmation.Intent.${hashObj(intent.confirmations)}`,
+            id: getPromptId("Confirmation", "Intent", intent.confirmations),
             variations: this.formatVariations(intent.confirmations)
           };
         }
@@ -216,14 +216,14 @@ export class AlexaSchema extends Schema {
           const prompts: IPrompt[] = [];
           if (slot.prompts.confirmation.length > 0) {
             prompts.push({
-              id: `Confirmation.Slot.${hashObj(slot.prompts.confirmation)}`,
+              id: getPromptId("Confirmation", "Slot", slot.prompts.confirmation),
               variations: this.formatVariations(slot.prompts.confirmation)
             });
           }
 
           if (slot.prompts.elicitation.length > 0) {
             prompts.push({
-              id: `Elicitation.Slot.${hashObj(slot.prompts.elicitation)}`,
+              id: getPromptId("Elicitation", "Slot", slot.prompts.confirmation),
               variations: this.formatVariations(slot.prompts.elicitation)
             });
           }
@@ -268,4 +268,12 @@ function slotHasPrompts(slot: ISlotDefinition): boolean {
 
 function intentHasPrompts(intent: IIntent): boolean {
   return intent.confirmations.length > 0;
+}
+
+function getPromptId(
+  dialogType: "Elicitation" | "Confirmation",
+  objectType: "Slot" | "Intent",
+  data: any
+): string {
+  return `${dialogType}.${objectType}.${hashObj(data)}`;
 }
