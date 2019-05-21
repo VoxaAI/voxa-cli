@@ -192,12 +192,8 @@ export class AlexaSchema extends Schema {
     const intentPrompts: IPrompt[] = _(intents)
       .filter(intentHasPrompts)
       .map(
-        (intent: IIntent): IPrompt => {
-          return {
-            id: getPromptId("Confirmation", "Intent", intent.confirmations),
-            variations: this.formatVariations(intent.confirmations)
-          };
-        }
+        (intent: IIntent): IPrompt =>
+          getPromptsObject("Confirmation", "Intent", intent.confirmations)
       )
       .value();
 
@@ -215,17 +211,11 @@ export class AlexaSchema extends Schema {
         (slot: ISlotDefinition): IPrompt[] => {
           const prompts: IPrompt[] = [];
           if (slot.prompts.confirmation.length > 0) {
-            prompts.push({
-              id: getPromptId("Confirmation", "Slot", slot.prompts.confirmation),
-              variations: this.formatVariations(slot.prompts.confirmation)
-            });
+            prompts.push(getPromptsObject("Confirmation", "Slot", slot.prompts.confirmation));
           }
 
           if (slot.prompts.elicitation.length > 0) {
-            prompts.push({
-              id: getPromptId("Elicitation", "Slot", slot.prompts.confirmation),
-              variations: this.formatVariations(slot.prompts.elicitation)
-            });
+            prompts.push(getPromptsObject("Elicitation", "Slot", slot.prompts.elicitation));
           }
 
           return prompts;
@@ -233,16 +223,6 @@ export class AlexaSchema extends Schema {
       )
       .flatten()
       .value();
-  }
-
-  private formatVariations(variations: string[]): IVariation[] {
-    return _.map(
-      variations,
-      (variation): IVariation => ({
-        type: "PlainText",
-        value: variation
-      })
-    );
   }
 }
 
@@ -270,10 +250,31 @@ function intentHasPrompts(intent: IIntent): boolean {
   return intent.confirmations.length > 0;
 }
 
+function getPromptsObject(
+  dialogType: "Elicitation" | "Confirmation",
+  objectType: "Slot" | "Intent",
+  data: string[]
+): IPrompt {
+  return {
+    id: getPromptId(dialogType, objectType, data),
+    variations: formatVariations(data)
+  };
+}
+
 function getPromptId(
   dialogType: "Elicitation" | "Confirmation",
   objectType: "Slot" | "Intent",
-  data: any
+  data: string[]
 ): string {
   return `${dialogType}.${objectType}.${hashObj(data)}`;
+}
+
+function formatVariations(variations: string[]): IVariation[] {
+  return _.map(
+    variations,
+    (variation): IVariation => ({
+      type: "PlainText",
+      value: variation
+    })
+  );
 }
