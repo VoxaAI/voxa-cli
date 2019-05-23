@@ -28,6 +28,7 @@ import {
   IInvocation,
   IPublishingInformation,
   ISlot,
+  ISlotDefinition,
   ISlotSynonymns,
   IView
 } from "./Schema";
@@ -184,6 +185,12 @@ export function intentUtterProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES
     [] as IVoxaSheet[]
   );
 
+  const voxaSheetPrompts = _.reduce(
+    filterSheets(voxaSheets, [SheetTypes.PROMPTS]),
+    reduceIntent("prompt"),
+    [] as IVoxaSheet[]
+  );
+
   const result = _.chain(voxaSheetsIntent)
     .map((voxaSheetIntent: IVoxaSheet) => {
       const locale = sheetLocale(voxaSheetIntent, AVAILABLE_LOCALES);
@@ -204,7 +211,11 @@ export function intentUtterProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES
             "endIntent",
             "platformSlot",
             "webhookForSlotFilling",
-            "webhookUsed"
+            "webhookUsed",
+            "delegationStrategy",
+            "confirmationRequired",
+            "slotConfirmationRequired",
+            "slotElicitationRequired"
           ]);
           previousIntent = _.isEmpty(info.Intent) ? previousIntent : info.Intent;
           info.Intent = previousIntent;
@@ -245,6 +256,8 @@ export function intentUtterProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES
             const canFulfillIntent = _.get(head, "canFulfillIntent", false) as boolean;
             const startIntent = _.get(head, "startIntent", false) as boolean;
             const endIntent = _.get(head, "endIntent", false) as boolean;
+            const confirmationRequired = _.get(head, "confirmationRequired", false) as boolean;
+            const delegationStrategy = _.get(head, "delegationStrategy");
 
             const samples = getIntentValueList(
               voxaSheetsUtter,
@@ -260,20 +273,45 @@ export function intentUtterProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES
               "response"
             );
 
-            const slotsDefinition = _.chain(item[1])
+            const confirmations = getIntentValueList(
+              voxaSheetPrompts,
+              voxaSheetIntent.spreadsheetId,
+              `${intentName}/confirmation`,
+              "prompt"
+            );
+
+            const slotsDefinition: ISlotDefinition[] = _.chain(item[1])
               .filter("slotName")
-              .map((slot: any) => ({
-                name: slot.slotName,
-                type: slot.slotType,
-                platform: slot.platformSlot,
-                required: slot.slotRequired || false,
-                samples: getIntentValueList(
-                  voxaSheetsUtter,
-                  voxaSheetIntent.spreadsheetId,
-                  `${intentName}/${slot.slotName}`,
-                  "utterance"
-                )
-              }))
+              .map(
+                (slot: any): ISlotDefinition => ({
+                  name: slot.slotName,
+                  type: slot.slotType,
+                  platform: slot.platformSlot,
+                  required: slot.slotRequired || false,
+                  requiresConfirmation: slot.slotConfirmationRequired || false,
+                  requiresElicitation: slot.slotElicitationRequired || false,
+                  samples: getIntentValueList(
+                    voxaSheetsUtter,
+                    voxaSheetIntent.spreadsheetId,
+                    `${intentName}/${slot.slotName}`,
+                    "utterance"
+                  ),
+                  prompts: {
+                    confirmation: getIntentValueList(
+                      voxaSheetPrompts,
+                      voxaSheetIntent.spreadsheetId,
+                      `${intentName}/${slot.slotName}/confirmation`,
+                      "prompt"
+                    ),
+                    elicitation: getIntentValueList(
+                      voxaSheetPrompts,
+                      voxaSheetIntent.spreadsheetId,
+                      `${intentName}/${slot.slotName}/elicitation`,
+                      "prompt"
+                    )
+                  }
+                })
+              )
               .compact()
               .uniq()
               .value();
@@ -289,10 +327,13 @@ export function intentUtterProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES
               startIntent,
               endIntent,
               events,
+              confirmations,
               environments,
               platforms,
               locale,
-              signInRequired
+              signInRequired,
+              confirmationRequired,
+              delegationStrategy
             };
 
             acc.push(intent);
