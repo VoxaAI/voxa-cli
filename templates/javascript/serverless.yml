@@ -70,6 +70,14 @@ functions:
           method: POST
           private: true # Requires clients to add API keys values in the `x-api-key` header of their request
   {{/if}}
+  {{#if accountLinking}}
+  accountLinking:
+    handler: web/handler.expressHandler
+    # The `events` block defines how to trigger the http events
+    events:
+        - http: ANY /
+        - http: 'ANY {proxy+}'
+  {{/if}}
 
 package:
   excludeDevDependencies: true
