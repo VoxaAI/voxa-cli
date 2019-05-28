@@ -56,10 +56,7 @@ if (config.server.hostSkill) {
         next: express.NextFunction
       ) => {
         try {
-          console.log(chalk.cyan(JSON.stringify(req.body, null, 2)));
           const reply = await handler.execute(req.body);
-
-          console.log(chalk.green(JSON.stringify(reply, null, 2)));
           res.json(reply);
         } catch (e) {
           next(e);
