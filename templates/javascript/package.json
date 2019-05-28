@@ -14,10 +14,16 @@
     "alexa-mime": "^0.0.6",
     "ask-cli": "1.4.4",
     "aws-sdk": "^2.326.0",
+    {{#if accountLinking}}
+    "express": "^4.16.4",
+    {{/if}}
     "gulp": "^3.9.1",
     "lambda-log": "^2.0.0",
     "lodash": "^4.17.11",
     "prettier": "^1.17.0",
+    {{#if accountLinking}}
+    "serverless-http": "^2.0.2",
+    {{/if}}
     "voxa": "^3.1.0"{{#if chatbase}},
     "voxa-chatbase": "0.1.1"{{/if}}{{#if dashbot}},
     "voxa-dashbot": "2.0.3"{{/if}}{{#if ga}},
@@ -30,7 +36,9 @@
     "eslint": "^5.16.0",
     "eslint-config-prettier": "^4.2.0",
     "eslint-plugin-prettier": "^3.0.1",
+    {{#unless accountLinking}}
     "express": "^4.16.4",
+    {{/unless}}
     "fs-extra": "^7.0.1",
     "mocha": "^5.2.0",
     "mocha-jenkins-reporter": "^0.4.0",

@@ -649,4 +649,90 @@ describe("Javascript project generator", () => {
       expect(fileContent).to.not.contain("exports.telegramHandler = telegramBot.lambdaHTTP();");
     });
   });
+
+  describe("Generate a Javascript project for Alexa using account linking", () => {
+    before(async () => {
+      simple.mock(inquirer, "prompt").callFn(() => {
+        return Promise.resolve({
+          appName: "my account linking skill",
+          author: "Rain",
+          language: "javascript",
+          voxaCli: false,
+          canfulfill: false,
+          analytics: [],
+          platform: ["alexa"],
+          accountLinking: true
+        });
+      });
+      await action();
+    });
+
+    it("should have an endpoint for account linking in the server file with its configurations", async () => {
+      const filePath = getFilePath("my-account-linking-skill", "server.js");
+      const fileContent = await fs.readFile(filePath, "utf8");
+      expect(fileContent).to.contain('const accountLinkingRoutes = require("./web/routes");');
+      expect(fileContent).to.contain("expressApp.use(accountLinkingRoutes);");
+      expect(fileContent).to.contain("expressApp.use(express.urlencoded({ extended: true }));");
+      expect(fileContent).to.contain('expressApp.use(express.static(__dirname + "/web/public"));');
+      expect(fileContent).to.contain('expressApp.set("views", __dirname + "/web/views");');
+      expect(fileContent).to.contain('expressApp.set("view engine", "ejs");');
+    });
+
+    it("should have the lambda function configuration for http in serverless", async () => {
+      const filePath = getFilePath("my-account-linking-skill", "serverless.yml");
+      const fileContent = await fs.readFile(filePath, "utf8");
+      expect(fileContent).to.contain("accountLinking:");
+      expect(fileContent).to.contain("handler: web/handler.expressHandler");
+    });
+
+    it("should have a web folder containing the express app handler and routes, static and views folders", async () => {
+      const filePath = getFilePath("my-account-linking-skill", "web");
+      const pathExists = await fs.pathExists(filePath);
+      expect(pathExists).to.be.true;
+    });
+  });
+
+  describe("Generate a Javascript project for Alexa without account linking", () => {
+    before(async () => {
+      simple.mock(inquirer, "prompt").callFn(() => {
+        return Promise.resolve({
+          appName: "no account linking skill",
+          author: "Rain",
+          language: "javascript",
+          voxaCli: false,
+          canfulfill: false,
+          analytics: [],
+          platform: ["alexa"],
+          accountLinking: false
+        });
+      });
+      await action();
+    });
+
+    it("should not have an endpoint for account linking in the server file with its configurations", async () => {
+      const filePath = getFilePath("no-account-linking-skill", "server.js");
+      const fileContent = await fs.readFile(filePath, "utf8");
+      expect(fileContent).to.not.contain('const accountLinkingRoutes = require("./web/routes");');
+      expect(fileContent).to.not.contain("expressApp.use(accountLinkingRoutes);");
+      expect(fileContent).to.not.contain("expressApp.use(express.urlencoded({ extended: true }));");
+      expect(fileContent).to.not.contain(
+        'expressApp.use(express.static(__dirname + "/web/public"));'
+      );
+      expect(fileContent).to.not.contain('expressApp.set("views", __dirname + "/web/views");');
+      expect(fileContent).to.not.contain('expressApp.set("view engine", "ejs");');
+    });
+
+    it("should not have the lambda function configuration for http in serverless", async () => {
+      const filePath = getFilePath("no-account-linking-skill", "serverless.yml");
+      const fileContent = await fs.readFile(filePath, "utf8");
+      expect(fileContent).to.not.contain("accountLinking:");
+      expect(fileContent).to.not.contain("handler: web/handler.expressHandler");
+    });
+
+    it("should not have a web folder containing the express app handler and routes, static and views folders", async () => {
+      const filePath = getFilePath("no-account-linking-skill", "web");
+      const pathExists = await fs.pathExists(filePath);
+      expect(pathExists).to.be.false;
+    });
+  });
 });

@@ -36,6 +36,7 @@ interface IAnswers {
   voxaCli: boolean;
   saveUserInfo: boolean;
   platform: string[];
+  accountLinking: boolean;
 }
 
 interface IData {
@@ -54,6 +55,7 @@ interface IData {
   usesGoogleAssistant: boolean;
   usesFacebook: boolean;
   usesTelegram: boolean;
+  accountLinking: boolean;
 }
 
 export default class VoxaGenerator {
@@ -75,7 +77,8 @@ export default class VoxaGenerator {
       usesAlexa: answers.platform.includes("alexa") || answers.platform.includes("all"),
       usesGoogleAssistant: answers.platform.includes("google") || answers.platform.includes("all"),
       usesFacebook: answers.platform.includes("facebook") || answers.platform.includes("all"),
-      usesTelegram: answers.platform.includes("telegram") || answers.platform.includes("all")
+      usesTelegram: answers.platform.includes("telegram") || answers.platform.includes("all"),
+      accountLinking: answers.accountLinking
     };
   }
 
@@ -89,6 +92,9 @@ export default class VoxaGenerator {
       await this.copyServerless();
       await this.copyServer();
       await this.copySrcFiles();
+      if (this.data.accountLinking) {
+        await this.copyWebFiles();
+      }
       await this.copyAllOtherFiles();
       return Promise.resolve(true);
     } catch (error) {
@@ -129,6 +135,13 @@ export default class VoxaGenerator {
     return fs.outputFile(path.join(process.cwd(), this.data.folderName, ...filePath), result);
   }
 
+  private copyFileOrFolder(...filePath: any[]) {
+    return fs.copy(
+      this.getTemplatePath(...filePath),
+      path.join(process.cwd(), this.data.folderName, ...filePath)
+    );
+  }
+
   private copyPackageFile() {
     return this.generateHandlebarTemplateFile("package.json");
   }
@@ -138,10 +151,7 @@ export default class VoxaGenerator {
   }
 
   private copyInteractionFile() {
-    return fs.copy(
-      this.getTemplatePath("interaction.json"),
-      path.join(process.cwd(), this.data.folderName, "interaction.json")
-    );
+    return this.copyFileOrFolder("interaction.json");
   }
 
   private copyServerless() {
@@ -197,6 +207,10 @@ export default class VoxaGenerator {
     return Promise.all(promises);
   }
 
+  private copyWebFiles() {
+    return this.copyFileOrFolder("web");
+  }
+
   private async copyAllOtherFiles() {
     const rootFiles = await fs.readdir(this.getTemplatePath());
     const PROCESSED_FILES = [
@@ -205,7 +219,8 @@ export default class VoxaGenerator {
       "package.json",
       "src",
       "interaction.json",
-      `server.${this.data.ext}`
+      `server.${this.data.ext}`,
+      "web"
     ];
     const filteredFiles = rootFiles.filter(file => !PROCESSED_FILES.includes(file));
     return filteredFiles.map(file => {
