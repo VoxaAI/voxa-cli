@@ -17,9 +17,19 @@ import {
   {{/if}}
 } from "./src/app";
 import * as config from "./src/config";
+{{#if accountLinking}}
+import accountLinkingRoutes from "./web/routes";
+{{/if}}
 
 const expressApp = express();
 expressApp.use(express.json());
+{{#if accountLinking}}
+expressApp.use(express.urlencoded({ extended: true }));
+expressApp.use(express.static(__dirname + "/web/public"));
+expressApp.set("views", __dirname + "/web/views");
+expressApp.set("view engine", "ejs");
+{{/if}}
+
 
 const routes = {
   {{#if usesAlexa}}
@@ -56,5 +66,8 @@ _.map(routes, (handler: VoxaPlatform, route: string) => {
     }
   );
 });
+{{#if accountLinking}}
+expressApp.use(accountLinkingRoutes);
+{{/if}}
 
 expressApp.listen(config.server.port);

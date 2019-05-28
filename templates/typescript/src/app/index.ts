@@ -12,7 +12,7 @@ import {
   GoogleAssistantPlatform,
   {{/if}}
   {{#if saveUserInfo }}
-  IVoxaEvent
+  IVoxaEvent,
   {{/if}}
   plugins,
   VoxaApp
@@ -30,10 +30,10 @@ import * as config from "../config";
 {{#if canfulfill }}
 import * as defaultFulfillIntents from "../../content/en-US/canfulfill-intent.json";
 {{/if}}
-import Model from "./model";
 {{#if saveUserInfo }}
 import { User } from "../services/User";
 {{/if}}
+import Model from "./model";
 import { register as states } from "./states";
 import * as variables from "./variables";
 import * as views from "./views.json";
