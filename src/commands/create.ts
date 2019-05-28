@@ -99,6 +99,12 @@ const questions = [
     default: false
   },
   {
+    type: "confirm",
+    name: "accountLinking",
+    message: "Will you use Account Linking?",
+    default: false
+  },
+  {
     type: "checkbox",
     name: "analytics",
     suffix: "(Hit Enter to skip this)",
