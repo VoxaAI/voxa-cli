@@ -135,6 +135,13 @@ export default class VoxaGenerator {
     return fs.outputFile(path.join(process.cwd(), this.data.folderName, ...filePath), result);
   }
 
+  private copyFileOrFolder(...filePath: any[]) {
+    return fs.copy(
+      this.getTemplatePath(...filePath),
+      path.join(process.cwd(), this.data.folderName, ...filePath)
+    );
+  }
+
   private copyPackageFile() {
     return this.generateHandlebarTemplateFile("package.json");
   }
@@ -144,10 +151,7 @@ export default class VoxaGenerator {
   }
 
   private copyInteractionFile() {
-    return fs.copy(
-      this.getTemplatePath("interaction.json"),
-      path.join(process.cwd(), this.data.folderName, "interaction.json")
-    );
+    return this.copyFileOrFolder("interaction.json");
   }
 
   private copyServerless() {
@@ -204,10 +208,7 @@ export default class VoxaGenerator {
   }
 
   private copyWebFiles() {
-    return fs.copy(
-      this.getTemplatePath("web"),
-      path.join(process.cwd(), this.data.folderName, "web")
-    );
+    return this.copyFileOrFolder("web");
   }
 
   private async copyAllOtherFiles() {
