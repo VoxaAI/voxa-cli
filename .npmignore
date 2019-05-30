@@ -10,3 +10,5 @@ content
 test
 *_secret.json
 .voxa/
+!templates/**/interaction.json
+!templates/**/views.json
