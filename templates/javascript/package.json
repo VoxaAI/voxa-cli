@@ -11,13 +11,10 @@
   "author": "{{ author }}",
   "license": "MIT",
   "dependencies": {
-    "alexa-mime": "^0.0.6",
-    "ask-cli": "1.4.4",
     "aws-sdk": "^2.326.0",
     {{#if accountLinking}}
     "express": "^4.16.4",
     {{/if}}
-    "gulp": "^3.9.1",
     "lambda-log": "^2.0.0",
     "lodash": "^4.17.11",
     "prettier": "^1.17.0",
@@ -30,24 +27,22 @@
     "voxa-ga": "2.0.1"{{/if}}
   },
   "devDependencies": {
+    "alexa-mime": "^0.0.6",
+    "ask-cli": "1.4.4",
     "chai": "^4.2.0",
-    "chalk": "^2.4.2",
-    "dynamodb-local": "^0.0.22",
     "eslint": "^5.16.0",
     "eslint-config-prettier": "^4.2.0",
     "eslint-plugin-prettier": "^3.0.1",
     {{#unless accountLinking}}
     "express": "^4.16.4",
     {{/unless}}
-    "fs-extra": "^7.0.1",
     "mocha": "^5.2.0",
     "mocha-jenkins-reporter": "^0.4.0",
     "mocha-junit-reporter": "^1.18.0",
     "nock": "^10.0.0",
     "nodemon": "^1.18.4",
     "nyc": "^13.0.1",
-    "simple-mock": "^0.8.0",
-    "virtual-alexa": "^0.6.6"{{#if voxaCli}},
+    "simple-mock": "^0.8.0"{{#if voxaCli}},
     "voxa-cli": "2.1.2"{{/if}}
   },
   "directories": {
