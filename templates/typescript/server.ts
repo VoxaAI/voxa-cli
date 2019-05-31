@@ -1,4 +1,3 @@
-import chalk from "chalk";
 import * as express from "express";
 import * as _ from "lodash";
 import { VoxaPlatform } from "voxa";
