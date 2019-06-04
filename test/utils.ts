@@ -18,7 +18,13 @@ try {
   console.log("No client secret for azure");
 }
 
-type interactionNames = "Google" | "Excel" | "Office365" | "OpenDocument-FODS" | "OpenDocument-ODS";
+type interactionNames =
+  | "Google"
+  | "Excel"
+  | "Office365"
+  | "OpenDocument-FODS"
+  | "OpenDocument-ODS"
+  | "platform-specific";
 
 function loadInteraction(name: interactionNames) {
   try {
@@ -36,6 +42,7 @@ export function configurationToExecute() {
   const openDocumentODSInteraction = loadInteraction("OpenDocument-ODS");
   const googleInteraction = loadInteraction("Google");
   const Office365Interaction = loadInteraction("Office365");
+  const platformSpecificInteraction = loadInteraction("platform-specific");
 
   if (_.isEmpty(googleSecret)) {
     googleInteraction.skip = true;
@@ -50,6 +57,7 @@ export function configurationToExecute() {
     excelInteraction,
     openDocumentFODSInteraction,
     openDocumentODSInteraction,
-    Office365Interaction
+    Office365Interaction,
+    platformSpecificInteraction
   ];
 }

@@ -39,6 +39,8 @@ export const description = "create a new interaction.json";
 const ALLOWED_ATTRIBUTES = [
   "platforms",
   "spreadsheets",
+  "dialogflowSpreadsheets",
+  "alexaSpreadsheets",
   "speechPath",
   "content",
   "contentPath",

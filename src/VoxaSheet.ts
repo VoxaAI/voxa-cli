@@ -27,6 +27,11 @@ export declare interface IVoxaSheet {
   data?: any;
 }
 
+export declare interface IPlatformSheets {
+  alexaSpreadsheets: IVoxaSheet[];
+  dialogflowSpreadsheets: IVoxaSheet[];
+}
+
 export class SheetTypes {
   [key: string]: any;
   public static readonly DOWNLOAD = "DOWNLOAD_";

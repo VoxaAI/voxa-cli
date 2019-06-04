@@ -29,6 +29,7 @@ import { transform } from "./connectors/Spreadsheet";
 import { DialogflowSchema } from "./DialogflowSchema";
 import { downloadDirs } from "./Drive";
 import { IFileContent } from "./Schema";
+import { IPlatformSheets, IVoxaSheet } from "./VoxaSheet";
 const fs = _Promise.promisifyAll(fsExtra);
 
 export type ISupportedPlatforms = "alexa" | "dialogflow";
@@ -41,6 +42,8 @@ export interface IInteractionOptions {
   viewsPath?: string;
   synonymPath?: string;
   spreadsheets: string | string[];
+  alexaSpreadsheets: string | string[];
+  dialogflowSpreadsheets: string | string[];
   assets?: string[];
   assetsPath?: string;
 }
@@ -53,6 +56,8 @@ export interface IDefinedInteractionOptions {
   viewsPath: string;
   synonymPath: string;
   spreadsheets: string[];
+  alexaSpreadsheets: string | string[];
+  dialogflowSpreadsheets: string | string[];
   assets: string[];
   assetsPath: string;
 }
@@ -81,21 +86,40 @@ function defaultOptions(interactionOptions: IInteractionOptions): IDefinedIntera
 
   const assets: string[] = interactionOptions.assets || DEFAULT_INTERACTION_OPTIONS.assets;
 
-  const platforms: ISupportedPlatforms[] = _.isString(interactionOptions.platforms)
-    ? [interactionOptions.platforms]
-    : interactionOptions.platforms || DEFAULT_INTERACTION_OPTIONS.platforms;
+  const spreadsheets: string[] = arrayify(interactionOptions.spreadsheets) as string[];
 
-  const spreadsheets: string[] = _.isString(interactionOptions.spreadsheets)
-    ? [interactionOptions.spreadsheets]
-    : interactionOptions.spreadsheets;
+  const alexaSpreadsheets: string[] = arrayify(interactionOptions.alexaSpreadsheets) as string[];
 
-  if (_.isEmpty(spreadsheets)) {
+  const dialogflowSpreadsheets: string[] = arrayify(
+    interactionOptions.dialogflowSpreadsheets
+  ) as string[];
+
+  let platforms: ISupportedPlatforms[] =
+    arrayify(interactionOptions.platforms) || DEFAULT_INTERACTION_OPTIONS.platforms;
+
+  if (!_.isEmpty(alexaSpreadsheets)) {
+    platforms.push("alexa");
+  }
+
+  if (!_.isEmpty(dialogflowSpreadsheets)) {
+    platforms.push("dialogflow");
+  }
+
+  platforms = _.uniq(platforms);
+
+  if (
+    _.isEmpty(spreadsheets) &&
+    _.isEmpty(dialogflowSpreadsheets) &&
+    _.isEmpty(alexaSpreadsheets)
+  ) {
     throw Error("Spreadsheet were not specified in the right format");
   }
 
   return {
     rootPath,
     spreadsheets,
+    alexaSpreadsheets,
+    dialogflowSpreadsheets,
     speechPath,
     synonymPath,
     viewsPath,
@@ -105,17 +129,52 @@ function defaultOptions(interactionOptions: IInteractionOptions): IDefinedIntera
     assets
   };
 }
+
+function arrayify(value: string | any[] | undefined): any[] | undefined {
+  return _.isString(value) ? [value] : value;
+}
+
+async function getSheetsByPlatform(
+  interactionOptions: IInteractionOptions,
+  authKeys: any
+): Promise<IPlatformSheets> {
+  const sheets = await transform(interactionOptions, authKeys);
+
+  const AVAILABLE_PLATFORM_KEYS = ["alexaSpreadsheets", "dialogflowSpreadsheets"];
+  const transformByPlatfromPromises = AVAILABLE_PLATFORM_KEYS.map(spreadsheetKey =>
+    transform(interactionOptions, authKeys, spreadsheetKey)
+  );
+
+  const sheetsByPlatformPromise: IVoxaSheet[][] = await _Promise.all(transformByPlatfromPromises);
+  const sheetsByPlatform: IPlatformSheets = AVAILABLE_PLATFORM_KEYS.reduce((acc, next, index) => {
+    const sheetByPlatform = _.chain(sheets)
+      .cloneDeep()
+      .concat(sheetsByPlatformPromise[index])
+      .uniq()
+      .value();
+
+    _.set(acc, next, sheetByPlatform);
+    return acc;
+  }, {}) as IPlatformSheets; // concat all the sheets from the `spreadsheets` key with platform specific sheets
+
+  return sheetsByPlatform;
+}
 export const buildInteraction = async (interactionOptions: IInteractionOptions, authKeys: any) => {
   const definedInteractionOptions = defaultOptions(interactionOptions);
   console.time("all");
   console.time("timeframe");
-  const sheets = await transform(definedInteractionOptions, authKeys);
+
+  const { alexaSpreadsheets, dialogflowSpreadsheets } = await getSheetsByPlatform(
+    definedInteractionOptions,
+    authKeys
+  );
+
   console.timeEnd("timeframe");
   const platforms = definedInteractionOptions.platforms;
   const schemas = [];
 
   if (platforms.includes("alexa")) {
-    const schema = new AlexaSchema(_.cloneDeep(sheets), definedInteractionOptions);
+    const schema = new AlexaSchema(alexaSpreadsheets, definedInteractionOptions);
     schemas.push(schema);
     await fs.remove(
       path.join(
@@ -127,7 +186,7 @@ export const buildInteraction = async (interactionOptions: IInteractionOptions, 
   }
 
   if (platforms.includes("dialogflow")) {
-    const schema = new DialogflowSchema(_.cloneDeep(sheets), definedInteractionOptions);
+    const schema = new DialogflowSchema(dialogflowSpreadsheets, definedInteractionOptions);
     schemas.push(schema);
     await fs.remove(
       path.join(
