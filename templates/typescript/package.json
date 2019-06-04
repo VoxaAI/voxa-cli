@@ -44,7 +44,7 @@
     "@types/nock": "^9.3.0",
     "@types/simple-mock": "^0.8.0",
     "alexa-mime": "^0.0.6",
-    "ask-cli": "1.4.4",
+    "ask-cli": "^1.7.2",
     "chai": "^4.2.0",
     {{#unless accountLinking}}
     "express": "^4.16.4",
