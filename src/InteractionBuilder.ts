@@ -113,7 +113,7 @@ function defaultOptions(interactionOptions: IInteractionOptions): IDefinedIntera
       (acc: string[], next: any[]) => {
         const key = next[0];
         const value = next[1];
-        if (!_.isEmpty(value)) {
+        if (value) {
           acc.push(key);
         }
         return acc;
@@ -121,6 +121,7 @@ function defaultOptions(interactionOptions: IInteractionOptions): IDefinedIntera
       [] as ISupportedPlatforms[]
     )
     .concat(platforms)
+    .filter()
     .uniq()
     .value() as ISupportedPlatforms[];
 
@@ -128,7 +129,7 @@ function defaultOptions(interactionOptions: IInteractionOptions): IDefinedIntera
     throw Error("Spreadsheet were not specified in the right format");
   }
 
-  platforms = platforms || DEFAULT_INTERACTION_OPTIONS.platforms;
+  platforms = _.isEmpty(platforms) ? DEFAULT_INTERACTION_OPTIONS.platforms : platforms;
 
   return {
     rootPath,

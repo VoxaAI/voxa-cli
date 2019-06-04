@@ -41,7 +41,7 @@ export async function action(cmd: any) {
   let interaction = {} as any;
   let auth = {} as any;
   try {
-    interaction = require(interationPath);
+    interaction = await fs.readJSON(interationPath);
   } catch (e) {
     const sampleInteraction = {
       spreadsheets: ["INTENT SPREADSHEET", "PUBLISHING SPREADSHEET"]
