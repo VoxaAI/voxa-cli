@@ -90,9 +90,13 @@ async function spreadsheetToVoxaSheet(
   });
 }
 
-export async function buildFromGoogleSheets(options: any, authKeys: {}): Promise<IVoxaSheet[]> {
+export async function buildFromGoogleSheets(
+  options: any,
+  authKeys: {},
+  spreadsheetKey: string
+): Promise<IVoxaSheet[]> {
   const spreadsheetsId = _.chain(options)
-    .get("spreadsheets")
+    .get(spreadsheetKey)
     .map(getGoogleSpreadsheetId)
     .compact()
     .value() as string[];

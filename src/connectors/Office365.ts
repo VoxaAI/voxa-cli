@@ -38,9 +38,9 @@ declare interface IAzureSecret {
 
 const OFFICE_PATH = ".voxa/office";
 
-export async function buildFromOffice365(options: any) {
+export async function buildFromOffice365(options: any, spreadsheetKey: string) {
   const officeSharedIds = _.chain(options)
-    .get("spreadsheets")
+    .get(spreadsheetKey)
     .filter(sheet => sheet.includes(".sharepoint.com"))
     .map(getOfficeShareId)
     .compact()
@@ -64,7 +64,7 @@ export async function buildFromOffice365(options: any) {
   }
 
   await fs.remove(path.join(options.rootPath, OFFICE_PATH));
-  return downloadExcelFiles(officeSharedIds, accessToken, options);
+  return downloadExcelFiles(officeSharedIds, accessToken, options, spreadsheetKey);
 }
 
 function getOfficeShareId(sheet: string): string {
@@ -103,7 +103,12 @@ async function getAccessToken(auth: IAzureSecret) {
   return accessToken;
 }
 
-async function downloadExcelFiles(officeSharedIds: string[], accessToken: string, options: any) {
+async function downloadExcelFiles(
+  officeSharedIds: string[],
+  accessToken: string,
+  options: any,
+  spreadsheetKey: string
+) {
   const headers = {
     Authorization: `Bearer ${accessToken}`
   };
@@ -125,10 +130,10 @@ async function downloadExcelFiles(officeSharedIds: string[], accessToken: string
 
   await outputExcelFiles(options, metadataPromises);
 
-  const spreadsheets = _.get(options, "spreadsheets");
+  const spreadsheets = _.get(options, spreadsheetKey);
   spreadsheets.push(OFFICE_PATH);
 
-  return buildFromLocalExcel({ ...options, spreadsheets });
+  return buildFromLocalExcel({ ...options, spreadsheets }, spreadsheetKey);
 }
 
 async function outputExcelFiles(options: any, metadataPromises: Array<axios.AxiosPromise<any>>) {

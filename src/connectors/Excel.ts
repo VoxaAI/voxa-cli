@@ -75,9 +75,12 @@ function refactorExcelData(sheet: IVoxaSheet) {
   return sheet;
 }
 
-export async function buildFromLocalExcel(options: any): Promise<IVoxaSheet[]> {
+export async function buildFromLocalExcel(
+  options: any,
+  spreadsheetKey: string
+): Promise<IVoxaSheet[]> {
   const vsheet = (_.chain(options)
-    .get("spreadsheets")
+    .get(spreadsheetKey)
     .map(f => (f.indexOf("/") === 0 ? f : path.join(options.rootPath, f)))
     .filter(spreadsheet => fs.pathExistsSync(spreadsheet))
     .map(findLocalFiles)
