@@ -103,6 +103,10 @@ function defaultOptions(interactionOptions: IInteractionOptions): IDefinedIntera
     dialogflow: dialogflowSpreadsheets
   };
 
+  // If the user didn't declare anything in the platorm key,
+  // then we should inspect the spreadshseet in alexaSpreadsheets and dialogflowSpreadsheets
+  // to find out what platform the user wants to use.
+
   platforms = _.chain(spreadsheetMapping)
     .toPairs()
     .reduce(
