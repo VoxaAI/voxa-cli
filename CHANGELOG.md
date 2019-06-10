@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.2.0] - 2019-06-10
+
 ### Added
 
 - Added support for per slot utterances in alexa (this is the beginning of dialog support)
@@ -117,7 +119,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add support for Alexa, Dialogflow
 - Add support to download other sheet
 
-[unreleased]: https://github.com/VoxaAI/voxa-cli/compare/2.1.2...staging
+[unreleased]: https://github.com/VoxaAI/voxa-cli/compare/2.2.0...staging
+[2.2.0]: https://github.com/VoxaAI/voxa-cli/compare/2.1.2...2.2.0
 [2.1.2]: https://github.com/VoxaAI/voxa-cli/compare/2.1.1...2.1.2
 [2.1.1]: https://github.com/VoxaAI/voxa-cli/compare/2.1.0...2.1.1
 [2.1.0]: https://github.com/VoxaAI/voxa-cli/compare/2.0.1...2.1.0
