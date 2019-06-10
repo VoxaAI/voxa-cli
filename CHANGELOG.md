@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed @sys. slots on dialogflow were converted into a different type
 - Fixed issue on path option on the interaction command
 - Fixed issue with platforms undefined
+- Fixed empty columns on excel
 
 ## [2.1.2] - 2019-05-08
 
