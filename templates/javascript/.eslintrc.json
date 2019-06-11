@@ -1,0 +1,32 @@
+{
+  "extends": ["plugin:prettier/recommended"],
+  "parserOptions": {
+    "sourceType": "script",
+    "ecmaVersion": 7,
+    "ecmaFeatures": {
+      "impliedStrict": false
+    }
+  },
+  "plugins": [],
+  "rules": {
+    "consistent-return": "warn",
+    "no-multi-assign": "warn",
+    "spaced-comment": "warn",
+    "max-len": "warn",
+    "no-unused-expressions": "off",
+    "no-use-before-define": "off",
+    "no-param-reassign": "off",
+    "import/no-extraneous-dependencies": "off",
+    "global-require": "off",
+    "import/no-dynamic-require": "off",
+    "no-unused-vars": "warn",
+    "no-console": "off",
+    "no-await-in-loop": "off",
+    "no-continue": "off"
+  },
+  "env": {
+    "browser": true,
+    "node": true,
+    "mocha": true
+  }
+}

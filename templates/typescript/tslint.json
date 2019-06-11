@@ -1,0 +1,17 @@
+{
+  "defaultSeverity": "error",
+  "extends": [
+    "tslint:latest",
+    "tslint-config-prettier",
+    "tslint-no-unused-expression-chai"
+  ],
+  "rules": {
+    "no-submodule-imports": [true, "source-map-support"],
+    "no-implicit-dependencies": [true, "dev"]
+  },
+  "linterOptions": {
+    "exclude": [
+      "**/*.json"
+    ]
+  }
+}

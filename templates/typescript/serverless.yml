@@ -1,0 +1,123 @@
+service: {{ folderName }}
+
+plugins:
+  - serverless-plugin-typescript
+
+custom:
+  config: ${file(src/config/index.js):asFunction}
+  {{#if saveUserInfo}}
+
+  DynamoDBBillingMode:
+    production: PAY_PER_REQUEST
+    staging: PROVISIONED
+
+  DynamoDBCapacity:
+    production: !Ref AWS::NoValue
+    staging:
+      ReadCapacityUnits: 1
+      WriteCapacityUnits: 1
+  {{/if}}
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  {{#if saveUserInfo}}
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "dynamodb:*"
+      Resource: !GetAtt TableUsers.Arn
+  {{/if}}
+  environment:
+    NODE_ENV: ${opt:stage}
+
+functions:
+  {{#if usesAlexa}}
+  alexa:
+    timeout: 6
+    handler: src/handler.alexaHandler
+    memorySize: 512
+    events:
+      - alexaSkill: ${env:SKILL_ID}
+  {{/if}}
+  {{#if usesGoogleAssistant}}
+  googleAction:
+    timeout: 6
+    handler: src/handler.assistantHandler
+    memorySize: 512
+    events:
+      - http:
+          path: googleAction
+          method: POST
+          private: true # Requires clients to add API keys values in the `x-api-key` header of their request
+  {{/if}}
+  {{#if usesFacebook}}
+  facebook:
+    timeout: 6
+    handler: src/handler.facebookHandler
+    memorySize: 512
+    events:
+      - http:
+          path: facebook
+          method: POST
+          private: true # Requires clients to add API keys values in the `x-api-key` header of their request
+  {{/if}}
+  {{#if usesTelegram}}
+  telegram:
+    timeout: 6
+    handler: src/handler.telegramHandler
+    memorySize: 512
+    events:
+      - http:
+          path: telegram
+          method: POST
+          private: true # Requires clients to add API keys values in the `x-api-key` header of their request
+  {{/if}}
+  {{#if accountLinking}}
+  accountLinking:
+    handler: web/handler.expressHandler
+    # The `events` block defines how to trigger the http events
+    events:
+        - http: ANY /
+        - http: 'ANY {proxy+}'
+  {{/if}}
+
+package:
+  excludeDevDependencies: true
+  include:
+    - src/config/*.json
+
+  exclude:
+    - scripts/**
+    - assets/**
+    - reports/**
+    - speech-assets/**
+
+resources:
+  Resources:
+    assets:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.config.s3.bucket}
+        AccessControl: PublicRead
+        CorsConfiguration:
+          CorsRules:
+            - AllowedOrigins:
+                - "*"
+              AllowedMethods:
+                - GET
+    {{#if saveUserInfo}}
+
+    TableUsers:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.config.dynamodb.tables.users}
+        BillingMode: ${self:custom.DynamoDBBillingMode.${env:NODE_ENV}}
+        ProvisionedThroughput: ${self:custom.DynamoDBCapacity.${env:NODE_ENV}}
+        AttributeDefinitions:
+          - AttributeName: userId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: userId
+            KeyType: HASH
+    {{/if}}

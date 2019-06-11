@@ -27,6 +27,11 @@ export declare interface IVoxaSheet {
   data?: any;
 }
 
+export declare interface IPlatformSheets {
+  alexaSpreadsheets: IVoxaSheet[];
+  dialogflowSpreadsheets: IVoxaSheet[];
+}
+
 export class SheetTypes {
   [key: string]: any;
   public static readonly DOWNLOAD = "DOWNLOAD_";
@@ -34,6 +39,7 @@ export class SheetTypes {
   public static readonly INTENT = "INTENT";
   public static readonly UTTERANCE = "UTTERANCES_";
   public static readonly RESPONSES = "RESPONSES_";
+  public static readonly PROMPTS = "PROMPTS_";
 
   public static readonly INVOCATION = "INVOCATION_NAMES";
   public static readonly SKILL_GENERAL_INFORMATION = "SKILL_GENERAL_INFORMATION";

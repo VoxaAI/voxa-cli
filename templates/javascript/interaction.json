@@ -1,0 +1,9 @@
+{
+  "platform": ["alexa"],
+  "spreadsheets": [
+    "GOOGLE_SPREADSHEET_URL",
+    "OFFICE365_WORKBOOK_URL",
+    "LOCAL_EXCEL_FILE",
+    "LOCAL_EXCEL_FOLDER"
+  ]
+}

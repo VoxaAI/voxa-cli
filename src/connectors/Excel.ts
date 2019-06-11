@@ -75,9 +75,12 @@ function refactorExcelData(sheet: IVoxaSheet) {
   return sheet;
 }
 
-export async function buildFromLocalExcel(options: any): Promise<IVoxaSheet[]> {
+export async function buildFromLocalExcel(
+  options: any,
+  spreadsheetKey: string
+): Promise<IVoxaSheet[]> {
   const vsheet = (_.chain(options)
-    .get("spreadsheets")
+    .get(spreadsheetKey)
     .map(f => (f.indexOf("/") === 0 ? f : path.join(options.rootPath, f)))
     .filter(spreadsheet => fs.pathExistsSync(spreadsheet))
     .map(findLocalFiles)
@@ -96,8 +99,8 @@ export async function buildFromLocalExcel(options: any): Promise<IVoxaSheet[]> {
 function processBookData(data: string[][]) {
   // this is all because of a bug in node-xlsx where the first cell of the first tab get's a lot
   // of garbage appended to it's content
-  const titleRow = data[0];
-  const firstColumnTitle = titleRow[0];
+  const titleRow = _.get(data, "[0]", "");
+  const firstColumnTitle = _.get(titleRow, "[0]", "");
   const split = firstColumnTitle.split("\n");
   if (split.length > 1) {
     titleRow[0] = split[split.length - 1];

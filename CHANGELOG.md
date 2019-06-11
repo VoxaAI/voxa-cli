@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.2.0] - 2019-06-10
+
+### Added
+
+- Added support for per slot utterances in alexa (this is the beginning of dialog support)
+- Added feature to generate a full Voxa 3 project in Typescript or Javascript. Generate boilerplate code with linting, analytics, serverless, suppport for all available platforms, save/get user information from DynamoDB, account linking.
+- Added alexa dialog model implementation
+- Added new spreadsheets keys for specific platforms in the interaction.json (alexaSpreadsheets, dialogflowSpreadsheets)
+
+### Fixed
+
+- Now alexa spec is splitted into smaller units testing specific functionality
+- Fixed @sys. slots on dialogflow were converted into a different type
+- Fixed issue on path option on the interaction command
+- Fixed issue with platforms undefined
+- Fixed empty columns on excel
+
 ## [2.1.2] - 2019-05-08
 
 ### Added
@@ -102,7 +119,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add support for Alexa, Dialogflow
 - Add support to download other sheet
 
-[unreleased]: https://github.com/VoxaAI/voxa-cli/compare/2.1.2...staging
+[unreleased]: https://github.com/VoxaAI/voxa-cli/compare/2.2.0...staging
+[2.2.0]: https://github.com/VoxaAI/voxa-cli/compare/2.1.2...2.2.0
 [2.1.2]: https://github.com/VoxaAI/voxa-cli/compare/2.1.1...2.1.2
 [2.1.1]: https://github.com/VoxaAI/voxa-cli/compare/2.1.0...2.1.1
 [2.1.0]: https://github.com/VoxaAI/voxa-cli/compare/2.0.1...2.1.0

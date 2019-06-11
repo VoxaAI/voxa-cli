@@ -1,0 +1,51 @@
+{
+  "name": "{{ folderName }}",
+  "version": "0.0.1",
+  "main": "src/app/index.js",
+  "scripts": {
+    "test": "mocha test/*.spec.* test/**/*.spec.*",
+    "watch": "nodemon --inspect server.js",
+    "lint": "eslint src/ test/ server.js"{{#if voxaCli}},
+    "interaction": "voxa interaction"{{/if}}
+  },
+  "author": "{{ author }}",
+  "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "^2.326.0",
+    {{#if accountLinking}}
+    "express": "^4.16.4",
+    {{/if}}
+    "lambda-log": "^2.0.0",
+    "lodash": "^4.17.11",
+    "prettier": "^1.17.0",
+    {{#if accountLinking}}
+    "serverless-http": "^2.0.2",
+    {{/if}}
+    "voxa": "^3.1.0"{{#if chatbase}},
+    "voxa-chatbase": "0.1.1"{{/if}}{{#if dashbot}},
+    "voxa-dashbot": "2.0.3"{{/if}}{{#if ga}},
+    "voxa-ga": "2.0.1"{{/if}}
+  },
+  "devDependencies": {
+    "alexa-mime": "^0.0.6",
+    "ask-cli": "^1.7.2",
+    "chai": "^4.2.0",
+    "eslint": "^5.16.0",
+    "eslint-config-prettier": "^4.2.0",
+    "eslint-plugin-prettier": "^3.0.1",
+    {{#unless accountLinking}}
+    "express": "^4.16.4",
+    {{/unless}}
+    "mocha": "^5.2.0",
+    "mocha-jenkins-reporter": "^0.4.0",
+    "mocha-junit-reporter": "^1.18.0",
+    "nock": "^10.0.0",
+    "nodemon": "^1.18.4",
+    "nyc": "^13.0.1",
+    "simple-mock": "^0.8.0"{{#if voxaCli}},
+    "voxa-cli": "2.1.2"{{/if}}
+  },
+  "directories": {
+    "test": "test"
+  }
+}

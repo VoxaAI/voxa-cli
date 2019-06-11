@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Welcome to my Account Linking Page!</title>
+    <meta name="description" content="Account Linking page">
+    <link id="favicon" rel="icon" href="favicon.ico" type="image/x-icon">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/style.css">
+  </head>
+  <body>
+    <form action="/" method="post">
+      <p>Enter your Credentials</p>
+      <input type="hidden" name="redirect_uri" value="<%= redirect_uri %>" />
+      <input type="hidden" name="state" value="<%= state %>" />
+      
+      <input type="text" name="email" placeholder="Email">
+      <input type="password" name="password" placeholder="Password">
+      <button type="submit">Submit</button>
+    </form>
+  </body>
+</html>
