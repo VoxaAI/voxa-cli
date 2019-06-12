@@ -32,7 +32,7 @@ You can also create interaction model and publishing information for your Alexa 
 As simple as:
 
 ```
-$ npx voxa create
+$ npx voxa-cli create
 ```
 
 You'll be prompt to answer several question like:
