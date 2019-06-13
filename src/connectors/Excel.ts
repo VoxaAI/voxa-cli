@@ -55,9 +55,8 @@ function readFileCreateWorkbook(f: string) {
 }
 
 function refactorExcelData(sheet: IVoxaSheet) {
-  sheet.data = _.chain(sheet)
-    .get("data")
-    .map((next, index: number, arr) => {
+  sheet.data = (_.chain(sheet).get("data") as any)
+    .map((next: any, index: number, arr: any) => {
       if (index === 0) {
         return next;
       }
@@ -79,10 +78,9 @@ export async function buildFromLocalExcel(
   options: any,
   spreadsheetKey: string
 ): Promise<IVoxaSheet[]> {
-  const vsheet = (_.chain(options)
-    .get(spreadsheetKey)
-    .map(f => (f.indexOf("/") === 0 ? f : path.join(options.rootPath, f)))
-    .filter(spreadsheet => fs.pathExistsSync(spreadsheet))
+  const vsheet = ((_.chain(options).get(spreadsheetKey) as any)
+    .map((f: string) => (f.indexOf("/") === 0 ? f : path.join(options.rootPath, f)))
+    .filter((spreadsheet: string) => fs.pathExistsSync(spreadsheet))
     .map(findLocalFiles)
     .flatten()
     .map(readFileCreateWorkbook)

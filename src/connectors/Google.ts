@@ -34,12 +34,11 @@ function initVoxaSheet(
   spreadsheetsId: string[],
   spreadsheetResp: sheets_v4.Resource$Spreadsheets$Sheets[]
 ): IVoxaSheet[] {
-  return _.chain(spreadsheetResp)
+  return (_.chain(spreadsheetResp)
     .map((spreadsheet, index: number) => {
       const spreadsheetTitle = _.get(spreadsheet, "data.properties.title");
       const spreadsheetId = spreadsheetsId[index];
-      const sheetNames = _.chain(spreadsheet)
-        .get("data.sheets", [])
+      const sheetNames = (_.chain(spreadsheet).get("data.sheets", []) as any)
         .map("properties.title")
         .value();
       return sheetNames.map((sheetTitle: string) => {
@@ -48,7 +47,7 @@ function initVoxaSheet(
       });
     })
     .flatten()
-    .map(findSheetType)
+    .map(findSheetType) as any)
     .compact()
     .value();
 }
@@ -78,8 +77,7 @@ async function spreadsheetToVoxaSheet(
   }
 
   return spreadsheetResp.map((sheet: IVoxaSheet, index: number) => {
-    const data = _.chain(sheetPromises[index])
-      .get("data.values", [])
+    const data = (_.chain(sheetPromises[index]).get("data.values", []) as any)
       .reduce(rowFormatted, [])
       .drop()
       .value();
@@ -95,8 +93,7 @@ export async function buildFromGoogleSheets(
   authKeys: {},
   spreadsheetKey: string
 ): Promise<IVoxaSheet[]> {
-  const spreadsheetsId = _.chain(options)
-    .get(spreadsheetKey)
+  const spreadsheetsId = (_.chain(options).get(spreadsheetKey) as any)
     .map(getGoogleSpreadsheetId)
     .compact()
     .value() as string[];

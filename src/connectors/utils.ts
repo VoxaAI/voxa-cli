@@ -39,8 +39,7 @@ export function findSheetType(spreadsheet: IVoxaSheet): IVoxaSheet | undefined {
 }
 
 export function rowFormatted(acc: any[], next: any, iindex: number, arr: any[]) {
-  const item = _.chain(arr)
-    .head()
+  const item = (_.chain(arr).head() as any)
     .zip(next)
     .map((zipObj: any) => [zipObj[0], valueFormatted(zipObj[1])])
     .fromPairs()

@@ -229,20 +229,20 @@ export function intentUtterProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES
           (acc: IIntent[], item: any) => {
             const intentName = item[0] as string;
             const head = _.head(item[1]);
-            const events = _.chain(head)
+            const events = (_.chain(head) as any)
               .get("events", "")
               .split(",")
               .map(_.trim)
               .compact()
               .value() as string[];
             const signInRequired = _.get(head, "signInRequired", false) as boolean;
-            const environments = _.chain(head)
+            const environments = (_.chain(head) as any)
               .get("environment", "")
               .split(",")
               .map(_.trim)
               .compact()
               .value() as string[];
-            const platforms = _.chain(head)
+            const platforms = (_.chain(head) as any)
               .get("platformIntent", "")
               .split(",")
               .map(_.trim)

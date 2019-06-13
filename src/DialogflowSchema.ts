@@ -153,8 +153,9 @@ export class DialogflowSchema extends Schema {
       .map(intent => {
         const intentName = intent.name.replace("AMAZON.", "");
 
-        const intentId = _.chain(intents)
-          .find(i => i.name === intent.name || i.name === intentName)
+        const intentId = (_.chain(intents).find(
+          i => i.name === intent.name || i.name === intentName
+        ) as any)
           .get("id")
           .value();
         return intentId;
