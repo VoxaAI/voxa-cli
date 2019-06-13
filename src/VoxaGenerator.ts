@@ -29,7 +29,7 @@ import * as path from "path";
 
 interface IAnswers {
   appName: string;
-  canfulfill: boolean;
+  canFulfill: boolean;
   language: string;
   author: string;
   analytics: string[];
@@ -42,7 +42,7 @@ interface IAnswers {
 interface IData {
   appName: string;
   folderName: string;
-  canfulfill: boolean;
+  canFulfill: boolean;
   language: string;
   ext: string;
   author: string;
@@ -65,7 +65,7 @@ export default class VoxaGenerator {
     this.data = {
       appName: answers.appName,
       folderName: _.kebabCase(answers.appName),
-      canfulfill: answers.canfulfill,
+      canFulfill: answers.canFulfill,
       language: answers.language,
       ext: answers.language === "javascript" ? "js" : "ts",
       author: answers.author,

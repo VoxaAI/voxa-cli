@@ -27,9 +27,6 @@ import { register as voxaDashbot } from "voxa-dashbot";
 import * as voxaGA from "voxa-ga";
 {{/if}}
 import * as config from "../config";
-{{#if canfulfill }}
-import * as defaultFulfillIntents from "../../content/en-US/canfulfill-intent.json";
-{{/if}}
 {{#if saveUserInfo }}
 import { User } from "../services/User";
 {{/if}}
@@ -38,7 +35,18 @@ import { register as states } from "./states";
 import * as variables from "./variables";
 import * as views from "./views.json";
 
-export const voxaApp = new VoxaApp({ Model, views, variables{{#if canfulfill }}, defaultFulfillIntents{{/if}} });
+{{#if canFulfill }}
+let environment = process.env.NODE_ENV || "staging";
+
+if (environment === "local.example") {
+  environment = "staging";
+}
+
+// tslint:disable-next-line
+const defaultFulfillIntents = require(`../content/${environment}-canfulfill-intents.json`);
+
+{{/if}}
+export const voxaApp = new VoxaApp({ Model, views, variables{{#if canFulfill }}, defaultFulfillIntents{{/if}} });
 states(voxaApp);
 
 {{#if usesAlexa}}
