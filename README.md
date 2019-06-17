@@ -32,7 +32,7 @@ You can also create interaction model and publishing information for your Alexa 
 As simple as:
 
 ```
-$ npx voxa-cli create
+$ npx voxa create
 ```
 
 You'll be prompt to answer several question like:
@@ -44,6 +44,10 @@ You'll be prompt to answer several question like:
 - Analytics you can use (using Voxa plugins)
 
 Once done you'll be ready to start working on your next voice app.
+
+### Having trouble using `npx voxa create`?
+
+We noticed that on Windows using `npx voxa create` sometimes results on undesired output. You can use `npx voxa-cli create` as a workaround. We haven't found that issue on MacOS and Linux yet.
 
 ### How to connect with Google Spreadsheet
 
