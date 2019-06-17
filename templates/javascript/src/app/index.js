@@ -24,9 +24,6 @@ const voxaDashbot = require("voxa-dashbot").register;
 const voxaChatbase = require("voxa-chatbase");
 {{/if}}
 const config = require("../config");
-{{#if canfulfill }}
-const defaultFulfillIntents = require("../../content/en-US/canfulfill-intent.json");
-{{/if}}
 const Model = require("./model");
 {{#if saveUserInfo }}
 const User = require("../services/User");
@@ -35,7 +32,17 @@ const states = require("./states");
 const variables = require("./variables");
 const views = require("./views.json");
 
-const voxaApp = new VoxaApp({ Model, views, variables{{#if canfulfill }}, defaultFulfillIntents{{/if}} });
+{{#if canFulfill }}
+let environment = process.env.NODE_ENV || "staging";
+
+if (environment === "local.example") {
+  environment = "staging";
+}
+
+const defaultFulfillIntents = require(`../content/${environment}-canfulfill-intents.json`);
+
+{{/if}}
+const voxaApp = new VoxaApp({ Model, views, variables{{#if canFulfill }}, defaultFulfillIntents{{/if}} });
 states(voxaApp);
 
 {{#if usesAlexa}}

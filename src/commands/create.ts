@@ -88,8 +88,8 @@ const questions = [
   },
   {
     type: "confirm",
-    name: "canfulfill",
-    message: "Will you use the Canfulfill intent?",
+    name: "canFulfill",
+    message: "Will you use the CanFulfillIntentRequest interface?",
     default: false
   },
   {

@@ -123,13 +123,15 @@ Create a new file on your skill root project `./interaction.json` and paste the 
 
 ```json
 {
-  "platform": ["alexa", "dialogFlow"],
+  "platforms": ["alexa", "dialogFlow"],
   "spreadsheets": [
     "GOOGLE_SPREADSHEET_URL",
     "OFFICE365_WORKBOOK_URL",
     "LOCAL_EXCEL_FILE",
     "LOCAL_EXCEL_FOLDER"
-  ]
+  ],
+  "contentPath": "src/content",
+  "viewsPath": "src/languageResources"
 }
 ```
 

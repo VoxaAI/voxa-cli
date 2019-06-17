@@ -27,7 +27,7 @@ describe("Typescript project generator", () => {
           author: "Rain",
           language: "typescript",
           voxaCli: false,
-          canfulfill: true,
+          canFulfill: true,
           analytics: [],
           platform: ["all"]
         });
@@ -77,7 +77,7 @@ describe("Typescript project generator", () => {
           author: "Rain",
           language: "typescript",
           voxaCli: true,
-          canfulfill: true,
+          canFulfill: true,
           analytics: [],
           platform: ["all"]
         });
@@ -94,7 +94,7 @@ describe("Typescript project generator", () => {
     it("should have voxa-cli package in package.json", async () => {
       const filePath = getFilePath("voxa-cli-skill", "package.json");
       const fileContent = await fs.readFile(filePath, "utf8");
-      expect(fileContent).to.contain('"voxa-cli": "2.1.2"');
+      expect(fileContent).to.contain('"voxa-cli": "2.2.0"');
       expect(fileContent).to.contain('"interaction": "voxa interaction"');
     });
 
@@ -116,7 +116,7 @@ describe("Typescript project generator", () => {
           author: "Rain",
           language: "typescript",
           voxaCli: false,
-          canfulfill: true,
+          canFulfill: true,
           analytics: [],
           platform: ["all"]
         });
@@ -155,7 +155,7 @@ describe("Typescript project generator", () => {
           author: "Rain",
           language: "typescript",
           voxaCli: false,
-          canfulfill: true,
+          canFulfill: true,
           analytics: [],
           platform: ["all"]
         });
@@ -178,7 +178,7 @@ describe("Typescript project generator", () => {
           author: "Rain",
           language: "typescript",
           voxaCli: false,
-          canfulfill: true,
+          canFulfill: true,
           analytics: ["all"],
           platform: ["all"]
         });
@@ -246,7 +246,7 @@ describe("Typescript project generator", () => {
           author: "Rain",
           language: "typescript",
           voxaCli: false,
-          canfulfill: true,
+          canFulfill: true,
           analytics: ["none"],
           platform: ["all"]
         });
@@ -314,7 +314,7 @@ describe("Typescript project generator", () => {
           author: "Rain",
           language: "typescript",
           voxaCli: false,
-          canfulfill: true,
+          canFulfill: true,
           analytics: ["ga"],
           platform: ["all"]
         });
@@ -382,7 +382,7 @@ describe("Typescript project generator", () => {
           author: "Rain",
           language: "typescript",
           voxaCli: false,
-          canfulfill: true,
+          canFulfill: true,
           analytics: ["ga", "dashbot"],
           platform: ["all"]
         });
@@ -465,7 +465,7 @@ describe("Typescript project generator", () => {
           author: "Rain",
           language: "typescript",
           voxaCli: false,
-          canfulfill: true,
+          canFulfill: true,
           analytics: ["none"],
           saveUserInfo: true,
           platform: ["all"]
@@ -535,7 +535,7 @@ describe("Typescript project generator", () => {
           author: "Rain",
           language: "typescript",
           voxaCli: false,
-          canfulfill: true,
+          canFulfill: true,
           analytics: ["none"],
           saveUserInfo: false,
           platform: ["all"]
@@ -607,7 +607,7 @@ describe("Typescript project generator", () => {
           author: "Rain",
           language: "typescript",
           voxaCli: false,
-          canfulfill: false,
+          canFulfill: false,
           analytics: [],
           platform: ["alexa"]
         });
@@ -684,7 +684,7 @@ describe("Typescript project generator", () => {
           author: "Rain",
           language: "typescript",
           voxaCli: false,
-          canfulfill: false,
+          canFulfill: false,
           analytics: [],
           platform: ["alexa", "google"]
         });
@@ -761,7 +761,7 @@ describe("Typescript project generator", () => {
           author: "Rain",
           language: "typescript",
           voxaCli: false,
-          canfulfill: false,
+          canFulfill: false,
           analytics: [],
           platform: ["alexa", "google", "facebook"]
         });
@@ -834,7 +834,7 @@ describe("Typescript project generator", () => {
           author: "Rain",
           language: "typescript",
           voxaCli: false,
-          canfulfill: false,
+          canFulfill: false,
           analytics: [],
           platform: ["all"]
         });
@@ -903,7 +903,7 @@ describe("Typescript project generator", () => {
           author: "Rain",
           language: "typescript",
           voxaCli: false,
-          canfulfill: false,
+          canFulfill: false,
           analytics: [],
           platform: ["alexa"],
           accountLinking: true
@@ -945,7 +945,7 @@ describe("Typescript project generator", () => {
           author: "Rain",
           language: "typescript",
           voxaCli: false,
-          canfulfill: false,
+          canFulfill: false,
           analytics: [],
           platform: ["alexa"],
           accountLinking: false
