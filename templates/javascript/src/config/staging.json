@@ -10,7 +10,7 @@
   }{{/if}}{{#if ga}},
   "googleAnalytics": {
     "trackingId": "UA-XXXX-X",
-    "appName": "{{ folderName }}",
+    "appName": "{{ kebabAppName }}",
     "ignoreUsers": [],
     "suppressSending": true
   }{{/if}}{{#if dashbot}},
