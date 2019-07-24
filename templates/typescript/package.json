@@ -1,5 +1,5 @@
 {
-  "name": "{{ folderName }}",
+  "name": "{{ kebabAppName }}",
   "version": "0.0.1",
   "main": "src/app/index.ts",
   "scripts": {

@@ -52,6 +52,12 @@ const questions = [
     default: os.userInfo().username
   },
   {
+    type: "confirm",
+    name: "newDir",
+    message: "Do you want to create the app in a new directory?",
+    default: false
+  },
+  {
     type: "checkbox",
     name: "platform",
     message: "Which platform will the app use?",
@@ -122,10 +128,13 @@ export async function action() {
   async function executePrompt(): Promise<any> {
     return inquirer.prompt(observe).then(async (answers: any) => {
       try {
+        if (_.isUndefined(answers.newDir)) {
+          answers.newDir = true; // To not change existing tests behaviour
+        }
         const voxaGenerator = new VoxaGenerator(answers);
         const success = await voxaGenerator.generateProject();
         if (success) {
-          showInstructionsToGetStarted(_.kebabCase(answers.appName));
+          showInstructionsToGetStarted(_.kebabCase(answers.appName), answers.newDir);
         } else {
           console.log("Something went wrong, try again");
         }
@@ -143,10 +152,12 @@ export async function action() {
   await executePrompt();
 }
 
-function showInstructionsToGetStarted(folderName: string) {
+function showInstructionsToGetStarted(folderName: string, newDir: boolean) {
   console.log("Let's get started!");
   console.log("");
-  console.log(`cd ${folderName}`);
+  if (newDir) {
+    console.log(`cd ${folderName}`);
+  }
   console.log("yarn install");
   console.log("yarn watch");
   console.log("");

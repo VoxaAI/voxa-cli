@@ -37,10 +37,12 @@ interface IAnswers {
   saveUserInfo: boolean;
   platform: string[];
   accountLinking: boolean;
+  newDir: boolean;
 }
 
 interface IData {
   appName: string;
+  kebabAppName: string;
   folderName: string;
   canFulfill: boolean;
   language: string;
@@ -64,7 +66,8 @@ export default class VoxaGenerator {
   constructor(answers: IAnswers) {
     this.data = {
       appName: answers.appName,
-      folderName: _.kebabCase(answers.appName),
+      kebabAppName: _.kebabCase(answers.appName),
+      folderName: answers.newDir ? _.kebabCase(answers.appName) : "",
       canFulfill: answers.canFulfill,
       language: answers.language,
       ext: answers.language === "javascript" ? "js" : "ts",

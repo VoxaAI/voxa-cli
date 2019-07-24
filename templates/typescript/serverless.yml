@@ -1,4 +1,4 @@
-service: {{ folderName }}
+service: {{ kebabAppName }}
 
 plugins:
   - serverless-plugin-typescript
