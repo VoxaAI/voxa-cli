@@ -46,6 +46,7 @@
     "alexa-mime": "^0.0.6",
     "ask-cli": "^1.7.3",
     "chai": "^4.2.0",
+    "chalk": "^2.4.2",
     {{#unless accountLinking}}
     "express": "^4.17.1",
     {{/unless}}
