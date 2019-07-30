@@ -1,5 +1,6 @@
 const express = require("express");
 const _ = require("lodash");
+const chalk = require("chalk");
 const {
   {{#if usesAlexa}}
   alexaSkill,
@@ -63,5 +64,12 @@ if (config.server.hostSkill) {
 expressApp.use(accountLinkingRoutes);
 {{/if}}
 
-expressApp.listen(config.server.port);
+expressApp.listen(config.server.port, () => {
+  console.log("");
+  console.log(chalk.green("Listening on:"));
+  console.log("");
+  Object.keys(routes).forEach((route) => {
+    console.log(chalk.green(`localhost:${config.server.port}${route}`));
+  });
+});
 exports.expressApp = expressApp;
