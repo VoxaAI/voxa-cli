@@ -98,14 +98,21 @@ export class AlexaSchema extends Schema {
       return slot;
     });
 
-    const dialog: IDialog = {
+    let dialog: IDialog | undefined = {
       intents: this.generateDialogModel(this.intentsByPlatformAndEnvironments(locale, environment)),
       delegationStrategy: "SKILL_RESPONSE"
     };
 
-    const prompts: IPrompt[] = this.generatePrompts(
+    if (!dialog.intents.length) {
+      dialog = undefined;
+    }
+
+    let prompts: IPrompt[] | undefined = this.generatePrompts(
       this.intentsByPlatformAndEnvironments(locale, environment)
     );
+    if (!prompts.length) {
+      prompts = undefined;
+    }
 
     return {
       interactionModel: {
@@ -207,20 +214,18 @@ export class AlexaSchema extends Schema {
       .map("slotsDefinition")
       .flatten()
       .filter(slotHasPrompts)
-      .map(
-        (slot: ISlotDefinition): IPrompt[] => {
-          const prompts: IPrompt[] = [];
-          if (slot.prompts.confirmation.length > 0) {
-            prompts.push(getPromptsObject("Confirmation", "Slot", slot.prompts.confirmation));
-          }
-
-          if (slot.prompts.elicitation.length > 0) {
-            prompts.push(getPromptsObject("Elicitation", "Slot", slot.prompts.elicitation));
-          }
-
-          return prompts;
+      .map((slot: ISlotDefinition): IPrompt[] => {
+        const prompts: IPrompt[] = [];
+        if (slot.prompts.confirmation.length > 0) {
+          prompts.push(getPromptsObject("Confirmation", "Slot", slot.prompts.confirmation));
         }
-      )
+
+        if (slot.prompts.elicitation.length > 0) {
+          prompts.push(getPromptsObject("Elicitation", "Slot", slot.prompts.elicitation));
+        }
+
+        return prompts;
+      })
       .flatten()
       .value();
   }

@@ -1,0 +1,7 @@
+{
+  "platforms": ["alexa"],
+  "spreadsheets": ["../spreadsheets/Voxa Cli Intents Utterances-only-alexa-no-dialog en-US.xlsx"],
+  "viewsPath": "../out/excel-no-dialog/",
+  "speechPath": "../out/excel-no-dialog/speech-assets",
+  "contentPath": "../out/excel-no-dialog/content"
+}
