@@ -7,10 +7,7 @@ import { configurations } from "./mocha.spec";
 
 configurations.forEach(interactionFile => {
   if (!_.includes(interactionFile.platforms, "alexa") && !interactionFile.alexaSpreadsheets) {
-    console.log("============================================================================");
-    console.log(interactionFile);
-    console.log("============================================================================");
-    return console.log("skip");
+    return;
   }
 
   describe(`${interactionFile.name} Alexa`, () => {
