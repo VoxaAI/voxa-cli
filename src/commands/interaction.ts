@@ -70,4 +70,6 @@ function getAuth(rootPath: string) {
     //   return;
     // }
   }
+
+  return auth;
 }
