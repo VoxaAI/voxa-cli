@@ -98,27 +98,11 @@ export class AlexaSchema extends Schema {
       values: rawSlot.values.map(value => ({ name: value }))
     }));
 
-    let dialog: IDialog | undefined = {
-      intents: this.generateDialogModel(this.intentsByPlatformAndEnvironments(locale, environment)),
-      delegationStrategy: "SKILL_RESPONSE"
-    };
-
-    if (!dialog.intents.length) {
-      dialog = undefined;
-    }
-
-    let prompts: IPrompt[] | undefined = this.generatePrompts(
-      this.intentsByPlatformAndEnvironments(locale, environment)
-    );
-    if (!prompts.length) {
-      prompts = undefined;
-    }
-
     return {
       interactionModel: {
         languageModel: { invocationName, intents, types },
-        dialog,
-        prompts
+        dialog: this.getDialogForLocaleAndEnvironment(locale, environment),
+        prompts: this.getPromptsForLocaleAndEnvironment(locale, environment)
       }
     };
   }
@@ -148,6 +132,36 @@ export class AlexaSchema extends Schema {
       ),
       content: canFulfillIntents
     });
+  }
+
+  private getDialogForLocaleAndEnvironment(
+    locale: string,
+    environment: string
+  ): IDialog | undefined {
+    const dialog: IDialog | undefined = {
+      intents: this.generateDialogModel(this.intentsByPlatformAndEnvironments(locale, environment)),
+      delegationStrategy: "SKILL_RESPONSE"
+    };
+
+    if (!dialog.intents.length) {
+      return;
+    }
+
+    return dialog;
+  }
+
+  private getPromptsForLocaleAndEnvironment(
+    locale: string,
+    environment: string
+  ): IPrompt[] | undefined {
+    const prompts: IPrompt[] | undefined = this.generatePrompts(
+      this.intentsByPlatformAndEnvironments(locale, environment)
+    );
+    if (!prompts.length) {
+      return;
+    }
+
+    return prompts;
   }
 
   private generateDialogModel(intents: IIntent[]): IDialogIntent[] {
