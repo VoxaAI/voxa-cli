@@ -87,16 +87,16 @@ export class AlexaSchema extends Schema {
       content: { manifest }
     });
   }
+
   public contentLanguageModel(locale: string, environment: string): IInteractionModel {
     const invocation = _.find(this.invocations, { locale, environment });
     const invocationName = _.get(invocation, "name", "Skill with no name");
 
     const intents = this.getIntentsDefinition(locale, environment);
-    const types = this.getSlotsByIntentsDefinition(locale, environment).map(rawSlot => {
-      const { name, values } = rawSlot;
-      const slot = { name, values: values.map(value => ({ name: value })) };
-      return slot;
-    });
+    const types = this.getSlotsByIntentsDefinition(locale, environment).map(rawSlot => ({
+      name: rawSlot.name,
+      values: rawSlot.values.map(value => ({ name: value }))
+    }));
 
     let dialog: IDialog | undefined = {
       intents: this.generateDialogModel(this.intentsByPlatformAndEnvironments(locale, environment)),
@@ -122,6 +122,7 @@ export class AlexaSchema extends Schema {
       }
     };
   }
+
   public buildLanguageModel(locale: string, environment: string) {
     this.fileContent.push({
       path: path.join(
