@@ -37,11 +37,8 @@ export async function action(cmd: any) {
   const interactionPath = path.isAbsolute(interactionFileName)
     ? interactionFileName
     : path.join(rootPath, interactionFileName);
-  const authFileName = "client_secret.json";
-  const authPath = path.join(rootPath, authFileName);
 
   let interaction = {} as any;
-  let auth = {} as any;
   try {
     interaction = await fs.readJSON(interactionPath);
   } catch (e) {
@@ -56,6 +53,14 @@ export async function action(cmd: any) {
     }
   }
 
+  interaction.rootPath = path.dirname(interactionFileName);
+  await buildInteraction(interaction, getAuth(rootPath));
+}
+
+function getAuth(rootPath: string) {
+  const authFileName = "client_secret.json";
+  const authPath = path.join(rootPath, authFileName);
+  let auth = {} as any;
   try {
     // a path we KNOW is totally bogus and not a module
     auth = require(authPath);
@@ -65,7 +70,4 @@ export async function action(cmd: any) {
     //   return;
     // }
   }
-
-  interaction.rootPath = path.dirname(interactionFileName);
-  await buildInteraction(interaction, auth);
 }
