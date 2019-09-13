@@ -1,7 +1,0 @@
-{
-  "platforms": ["dialogflow", "alexa"],
-  "spreadsheets": ["Voxa Cli Intents Utterances en-US.xlsx"],
-  "viewsPath": "out/excel/",
-  "speechPath": "out/excel/speech-assets",
-  "contentPath": "out/excel/content"
-}

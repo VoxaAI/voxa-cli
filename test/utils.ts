@@ -1,4 +1,5 @@
 import * as _ from "lodash";
+import fs = require("fs");
 
 let googleSecret: any;
 let officeSecret: any;
@@ -24,12 +25,13 @@ type interactionNames =
   | "Office365"
   | "OpenDocument-FODS"
   | "OpenDocument-ODS"
-  | "platform-specific";
+  | "platform-specific"
+  | "Excel-No-Dialog";
 
 function loadInteraction(name: interactionNames) {
   try {
-    const interactionFileName = `interaction-${name.toLowerCase()}.json`;
-    const interaction = require(`./${interactionFileName}`);
+    const interactionFileName = `${__dirname}/interaction-files/interaction-${name.toLowerCase()}.json`;
+    const interaction = JSON.parse(fs.readFileSync(interactionFileName).toString());
     return { ...interaction, interactionFileName, name };
   } catch {
     return { name, skip: true };
@@ -43,6 +45,7 @@ export function configurationToExecute() {
   const googleInteraction = loadInteraction("Google");
   const Office365Interaction = loadInteraction("Office365");
   const platformSpecificInteraction = loadInteraction("platform-specific");
+  const excelNoDialogInteraction = loadInteraction("Excel-No-Dialog");
 
   if (_.isEmpty(googleSecret)) {
     googleInteraction.skip = true;
@@ -58,6 +61,7 @@ export function configurationToExecute() {
     openDocumentFODSInteraction,
     openDocumentODSInteraction,
     Office365Interaction,
-    platformSpecificInteraction
+    platformSpecificInteraction,
+    excelNoDialogInteraction
   ];
 }

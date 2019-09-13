@@ -87,34 +87,26 @@ export class AlexaSchema extends Schema {
       content: { manifest }
     });
   }
+
   public contentLanguageModel(locale: string, environment: string): IInteractionModel {
     const invocation = _.find(this.invocations, { locale, environment });
     const invocationName = _.get(invocation, "name", "Skill with no name");
 
     const intents = this.getIntentsDefinition(locale, environment);
-    const types = this.getSlotsByIntentsDefinition(locale, environment).map(rawSlot => {
-      const { name, values } = rawSlot;
-      const slot = { name, values: values.map(value => ({ name: value })) };
-      return slot;
-    });
-
-    const dialog: IDialog = {
-      intents: this.generateDialogModel(this.intentsByPlatformAndEnvironments(locale, environment)),
-      delegationStrategy: "SKILL_RESPONSE"
-    };
-
-    const prompts: IPrompt[] = this.generatePrompts(
-      this.intentsByPlatformAndEnvironments(locale, environment)
-    );
+    const types = this.getSlotsByIntentsDefinition(locale, environment).map(rawSlot => ({
+      name: rawSlot.name,
+      values: rawSlot.values.map(value => ({ name: value }))
+    }));
 
     return {
       interactionModel: {
         languageModel: { invocationName, intents, types },
-        dialog,
-        prompts
+        dialog: this.getDialogForLocaleAndEnvironment(locale, environment),
+        prompts: this.getPromptsForLocaleAndEnvironment(locale, environment)
       }
     };
   }
+
   public buildLanguageModel(locale: string, environment: string) {
     this.fileContent.push({
       path: path.join(
@@ -140,6 +132,36 @@ export class AlexaSchema extends Schema {
       ),
       content: canFulfillIntents
     });
+  }
+
+  private getDialogForLocaleAndEnvironment(
+    locale: string,
+    environment: string
+  ): IDialog | undefined {
+    const dialog: IDialog | undefined = {
+      intents: this.generateDialogModel(this.intentsByPlatformAndEnvironments(locale, environment)),
+      delegationStrategy: "SKILL_RESPONSE"
+    };
+
+    if (!dialog.intents.length) {
+      return;
+    }
+
+    return dialog;
+  }
+
+  private getPromptsForLocaleAndEnvironment(
+    locale: string,
+    environment: string
+  ): IPrompt[] | undefined {
+    const prompts: IPrompt[] | undefined = this.generatePrompts(
+      this.intentsByPlatformAndEnvironments(locale, environment)
+    );
+    if (!prompts.length) {
+      return;
+    }
+
+    return prompts;
   }
 
   private generateDialogModel(intents: IIntent[]): IDialogIntent[] {
@@ -207,20 +229,18 @@ export class AlexaSchema extends Schema {
       .map("slotsDefinition")
       .flatten()
       .filter(slotHasPrompts)
-      .map(
-        (slot: ISlotDefinition): IPrompt[] => {
-          const prompts: IPrompt[] = [];
-          if (slot.prompts.confirmation.length > 0) {
-            prompts.push(getPromptsObject("Confirmation", "Slot", slot.prompts.confirmation));
-          }
-
-          if (slot.prompts.elicitation.length > 0) {
-            prompts.push(getPromptsObject("Elicitation", "Slot", slot.prompts.elicitation));
-          }
-
-          return prompts;
+      .map((slot: ISlotDefinition): IPrompt[] => {
+        const prompts: IPrompt[] = [];
+        if (slot.prompts.confirmation.length > 0) {
+          prompts.push(getPromptsObject("Confirmation", "Slot", slot.prompts.confirmation));
         }
-      )
+
+        if (slot.prompts.elicitation.length > 0) {
+          prompts.push(getPromptsObject("Elicitation", "Slot", slot.prompts.elicitation));
+        }
+
+        return prompts;
+      })
       .flatten()
       .value();
   }

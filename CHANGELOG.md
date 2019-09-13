@@ -7,7 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
 - Added prompt to check if the project should be generated in the same folder or not.
+
+### Fixed
+
+- When building the alexa interaction model there was a bug where even when empty the Dialog property was still being included, that's fixed now
 
 ## [2.2.0] - 2019-06-10
 

@@ -1,7 +1,0 @@
-{
-  "alexaSpreadsheets": ["Voxa Cli Intents Utterances-only-alexa en-US.xlsx"],
-  "dialogflowSpreadsheets": ["Voxa Cli Intents Utterances-only-dialogflow en-US.xlsx"],
-  "viewsPath": "out/excel/",
-  "speechPath": "out/excel/speech-assets",
-  "contentPath": "out/excel/content"
-}
