@@ -1,5 +1,5 @@
 {
-  "name": "{{ folderName }}",
+  "name": "{{ kebabAppName }}",
   "version": "0.0.1",
   "main": "src/app/index.ts",
   "scripts": {
@@ -11,60 +11,61 @@
   "author": "{{ author }}",
   "license": "MIT",
   "dependencies": {
-    "@sentry/cli": "^1.36.1",
+    "@sentry/cli": "^1.44.3",
     "@types/aws-sdk": "^2.7.0",
     {{#if accountLinking}}
-    "@types/express": "^4.16.1",
+    "@types/express": "^4.17.0",
     {{/if}}
-    "@types/lambda-log": "^2.0.1",
-    "@types/raven": "^2.5.1",
-    "aws-sdk": "^2.326.0",
+    "@types/lambda-log": "^2.2.0",
+    "@types/raven": "^2.5.3",
+    "aws-sdk": "^2.474.0",
     {{#if accountLinking}}
-    "express": "^4.16.4",
+    "express": "^4.17.1",
     {{/if}}
-    "lambda-log": "^2.0.0",
+    "lambda-log": "^2.2.0",
     "lodash": "^4.17.11",
     "raven": "^2.6.4",
     {{#if accountLinking}}
     "serverless-http": "^2.0.2",
     {{/if}}
     "serverless-sentry-lib": "^1.1.2",
-    "source-map-support": "^0.5.9",
-    "voxa": "^3.1.0"{{#if chatbase}},
+    "source-map-support": "^0.5.12",
+    "voxa": "^3.1.3"{{#if chatbase}},
     "voxa-chatbase": "0.1.1"{{/if}}{{#if dashbot}},
     "voxa-dashbot": "2.0.3"{{/if}}{{#if ga}},
     "voxa-ga": "2.0.1"{{/if}}
   },
   "devDependencies": {
-    "@types/chai": "^4.1.6",
+    "@types/chai": "^4.1.7",
     {{#unless accountLinking}}
-    "@types/express": "^4.16.1",
+    "@types/express": "^4.17.0",
     {{/unless}}
-    "@types/mocha": "^5.2.5",
-    "@types/nock": "^9.3.0",
-    "@types/simple-mock": "^0.8.0",
+    "@types/mocha": "^5.2.7",
+    "@types/nock": "^10.0.3",
+    "@types/simple-mock": "^0.8.1",
     "alexa-mime": "^0.0.6",
-    "ask-cli": "^1.7.2",
+    "ask-cli": "^1.7.3",
     "chai": "^4.2.0",
+    "chalk": "^2.4.2",
     {{#unless accountLinking}}
-    "express": "^4.16.4",
+    "express": "^4.17.1",
     {{/unless}}
-    "mocha": "^5.2.0",
-    "mocha-jenkins-reporter": "^0.4.0",
-    "mocha-junit-reporter": "^1.18.0",
-    "nock": "^10.0.0",
-    "nodemon": "^1.18.4",
-    "nyc": "^13.0.1",
-    "serverless": "^1.32.0",
-    "serverless-plugin-typescript": "^1.1.5",
+    "mocha": "^6.1.4",
+    "mocha-jenkins-reporter": "^0.4.1",
+    "mocha-junit-reporter": "^1.23.0",
+    "nock": "^10.0.6",
+    "nodemon": "^1.19.1",
+    "nyc": "^14.1.1",
+    "serverless": "^1.45.1",
+    "serverless-plugin-typescript": "^1.1.7",
     "serverless-sentry": "^1.2.0",
     "simple-mock": "^0.8.0",
     "ts-node": "^7.0.1",
-    "tslint": "^5.11.0",
-    "tslint-config-prettier": "^1.15.0",
-    "tslint-no-unused-expression-chai": "^0.1.3",
-    "typescript": "^3.1.1"{{#if voxaCli}},
-    "voxa-cli": "2.1.2"{{/if}}
+    "tslint": "^5.17.0",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-no-unused-expression-chai": "^0.1.4",
+    "typescript": "^3.5.1"{{#if voxaCli}},
+    "voxa-cli": "2.2.0"{{/if}}
   },
   "directories": {
     "test": "test"

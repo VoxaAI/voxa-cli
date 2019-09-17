@@ -34,14 +34,13 @@ export const options = [{ flags: "-p, --path <path>", description: "overwrite ro
 export async function action(cmd: any) {
   const rootPath = cmd.path || process.cwd();
   const interactionFileName = cmd.interactionFileName || "interaction.json";
-  const interationPath = path.join(rootPath, interactionFileName);
-  const authFileName = "client_secret.json";
-  const authPath = path.join(rootPath, authFileName);
+  const interactionPath = path.isAbsolute(interactionFileName)
+    ? interactionFileName
+    : path.join(rootPath, interactionFileName);
 
   let interaction = {} as any;
-  let auth = {} as any;
   try {
-    interaction = await fs.readJSON(interationPath);
+    interaction = await fs.readJSON(interactionPath);
   } catch (e) {
     const sampleInteraction = {
       spreadsheets: ["INTENT SPREADSHEET", "PUBLISHING SPREADSHEET"]
@@ -49,11 +48,19 @@ export async function action(cmd: any) {
     const sampleInteractionStr = JSON.stringify(sampleInteraction, null, 2);
 
     if (e.code === "MODULE_NOT_FOUND") {
-      console.log(`mm... It seems you don\'t have a ${interationPath}. Let me create it for you`);
-      return fs.outputFileSync(interationPath, sampleInteractionStr, { flag: "w" });
+      console.log(`mm... It seems you don\'t have a ${interactionPath}. Let me create it for you`);
+      return fs.outputFileSync(interactionPath, sampleInteractionStr, { flag: "w" });
     }
   }
 
+  interaction.rootPath = path.dirname(interactionFileName);
+  await buildInteraction(interaction, getAuth(rootPath));
+}
+
+function getAuth(rootPath: string) {
+  const authFileName = "client_secret.json";
+  const authPath = path.join(rootPath, authFileName);
+  let auth = {} as any;
   try {
     // a path we KNOW is totally bogus and not a module
     auth = require(authPath);
@@ -64,6 +71,5 @@ export async function action(cmd: any) {
     // }
   }
 
-  interaction.rootPath = rootPath;
-  await buildInteraction(interaction, auth);
+  return auth;
 }

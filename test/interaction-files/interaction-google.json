@@ -3,9 +3,9 @@
   "spreadsheets": [
     "https://docs.google.com/spreadsheets/d/1Jh04EJInZWIbMiRKGyxBO2JC54PlLof6Sxpcc_YkxsA/edit"
   ],
-  "viewsPath": "out/google-sheet/",
-  "speechPath": "out/google-sheet/speech-assets",
-  "contentPath": "out/google-sheet/content",
+  "viewsPath": "../out/google-sheet/",
+  "speechPath": "../out/google-sheet/speech-assets",
+  "contentPath": "../out/google-sheet/content",
   "assets": ["1MMjLUHViqoZTHXlMPU93Ig-Y0Gkyt5ey"],
-  "assetsPath": "out/google-sheet/assets"
+  "assetsPath": "../out/google-sheet/assets"
 }

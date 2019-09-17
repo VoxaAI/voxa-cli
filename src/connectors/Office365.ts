@@ -39,9 +39,8 @@ declare interface IAzureSecret {
 const OFFICE_PATH = ".voxa/office";
 
 export async function buildFromOffice365(options: any, spreadsheetKey: string) {
-  const officeSharedIds = _.chain(options)
-    .get(spreadsheetKey)
-    .filter(sheet => sheet.includes(".sharepoint.com"))
+  const officeSharedIds = (_.chain(options).get(spreadsheetKey) as any)
+    .filter((sheet: string) => sheet.includes(".sharepoint.com"))
     .map(getOfficeShareId)
     .compact()
     .value() as string[];

@@ -6,6 +6,10 @@ import { promisify } from "util";
 import { configurations } from "./mocha.spec";
 
 configurations.forEach(interactionFile => {
+  if (!_.includes(interactionFile.platforms, "alexa") && !interactionFile.alexaSpreadsheets) {
+    return;
+  }
+
   describe(`${interactionFile.name} Alexa`, () => {
     let interaction: any;
 
@@ -15,7 +19,7 @@ configurations.forEach(interactionFile => {
       }
 
       const interactionPath = path.join(
-        __dirname,
+        path.dirname(interactionFile.interactionFileName),
         interactionFile.speechPath,
         "alexa/en-US/production-interaction.json"
       );
@@ -72,7 +76,7 @@ configurations.forEach(interactionFile => {
 
         before(() => {
           travelIntent = interaction.interactionModel.languageModel.intents[3];
-          travelIntentDialog = interaction.interactionModel.dialog.intents[0];
+          travelIntentDialog = _.get(interaction, "interactionModel.dialog.intents[0]");
           prompts = interaction.interactionModel.prompts;
         });
 
@@ -83,58 +87,72 @@ configurations.forEach(interactionFile => {
           expect(slotNames).to.eql(["originCity", "destinationCity", "date"]);
         });
 
-        it("should have specific utterances for each slot", () => {
-          const slotSamples = _(travelIntent.slots)
-            .map("samples")
-            .value();
-
-          expect(slotSamples).to.eql([
-            ["i'm leaving from {originCity}", "{originCity}", "i'm traveling from {originCity}"],
-            ["i'm traveling to {destinationCity}", "{destinationCity}"],
-            ["i'm traveling on {date}", "{date}", "i want to leave on {date}"]
-          ]);
-        });
-
         it("should have many utterances", () => {
           const utterances = travelIntent.samples;
           expect(utterances).to.have.lengthOf(10);
         });
 
-        it("should generate a dialog model", () => {
-          expect(travelIntentDialog.name).to.equal("TravelIntent");
-        });
+        describe("Dialog", () => {
+          if (!_.includes(interactionFile.interactionFileName, "no-dialog")) {
+            it("should have specific utterances for each slot", () => {
+              const slotSamples = _(travelIntent.slots)
+                .map("samples")
+                .value();
 
-        it("should require confirmation for the TravelIntent dialog", () => {
-          expect(travelIntentDialog.confirmationRequired).to.be.true;
-        });
+              expect(slotSamples).to.eql([
+                [
+                  "i'm leaving from {originCity}",
+                  "{originCity}",
+                  "i'm traveling from {originCity}"
+                ],
+                ["i'm traveling to {destinationCity}", "{destinationCity}"],
+                ["i'm traveling on {date}", "{date}", "i want to leave on {date}"]
+              ]);
+            });
+            it("should generate a dialog model", () => {
+              expect(travelIntentDialog.name).to.equal("TravelIntent");
+            });
 
-        it("should require confirmation for the {originCity} slot", () => {
-          const originCitySlot = travelIntentDialog.slots[0];
-          expect(originCitySlot.confirmationRequired).to.be.true;
-        });
+            it("should require confirmation for the TravelIntent dialog", () => {
+              expect(travelIntentDialog.confirmationRequired).to.be.true;
+            });
 
-        it("should have a confirmation and an elicit dialog for {originCity}", () => {
-          const originCitySlot = travelIntentDialog.slots[0];
-          expect(originCitySlot.prompts.elicitation).to.exist;
-          expect(originCitySlot.prompts.confirmation).to.exist;
-        });
+            it("should require confirmation for the {originCity} slot", () => {
+              const originCitySlot = travelIntentDialog.slots[0];
+              expect(originCitySlot.confirmationRequired).to.be.true;
+            });
 
-        it("should have an elicit dialog but not a confirmation for {date}", () => {
-          const originCitySlot = travelIntentDialog.slots[2];
-          expect(originCitySlot.prompts.elicitation).to.exist;
-          expect(originCitySlot.prompts.confirmation).to.not.exist;
-        });
+            it("should have a confirmation and an elicit dialog for {originCity}", () => {
+              const originCitySlot = travelIntentDialog.slots[0];
+              expect(originCitySlot.prompts.elicitation).to.exist;
+              expect(originCitySlot.prompts.confirmation).to.exist;
+            });
 
-        it("should have 6 prompts", () => {
-          expect(prompts).to.have.lengthOf(6);
-        });
+            it("should have an elicit dialog but not a confirmation for {date}", () => {
+              const originCitySlot = travelIntentDialog.slots[2];
+              expect(originCitySlot.prompts.elicitation).to.exist;
+              expect(originCitySlot.prompts.confirmation).to.not.exist;
+            });
 
-        it("shoudl have 11 variations", () => {
-          const variations = _(prompts)
-            .map("variations")
-            .flatten()
-            .value();
-          expect(variations).to.have.lengthOf(11);
+            it("should have 6 prompts", () => {
+              expect(prompts).to.have.lengthOf(6);
+            });
+
+            it("shoudl have 11 variations", () => {
+              const variations = _(prompts)
+                .map("variations")
+                .flatten()
+                .value();
+              expect(variations).to.have.lengthOf(11);
+            });
+          } else {
+            it("should not generate a dialog model", () => {
+              expect(travelIntentDialog).to.be.undefined;
+            });
+            it("should not generate prompts", () => {
+              expect(prompts).to.be.undefined;
+            });
+          }
         });
       });
     });

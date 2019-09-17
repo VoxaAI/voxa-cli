@@ -27,7 +27,7 @@ describe("Javascript project generator", () => {
           author: "Rain",
           language: "javascript",
           voxaCli: false,
-          canfulfill: true,
+          canFulfill: true,
           analytics: [],
           platform: ["all"]
         });
@@ -69,6 +69,57 @@ describe("Javascript project generator", () => {
     });
   });
 
+  describe("Generate a basic project in the same directory", () => {
+    before(async () => {
+      simple.mock(inquirer, "prompt").callFn(() => {
+        return Promise.resolve({
+          appName: "my skill",
+          author: "Rain",
+          newDir: false,
+          language: "javascript",
+          voxaCli: false,
+          canFulfill: true,
+          analytics: [],
+          platform: ["all"]
+        });
+      });
+      await action();
+    });
+
+    it("should have a src folder", async () => {
+      const filePath = getFilePath("src");
+      const pathExists = await fs.pathExists(filePath);
+      expect(pathExists).to.be.true;
+    });
+
+    it("should have a server.js file", async () => {
+      const filePath = getFilePath("server.js");
+      const pathExists = await fs.pathExists(filePath);
+      expect(pathExists).to.be.true;
+    });
+
+    it("should have a README file with the name of the skill", async () => {
+      const filePath = getFilePath("README.md");
+      const pathExists = await fs.pathExists(filePath);
+      const fileContent = await fs.readFile(filePath, "utf8");
+      expect(pathExists).to.be.true;
+      expect(fileContent).to.contain("my skill");
+    });
+
+    it("should have a package.json file with the name of the skill and author", async () => {
+      const filePath = getFilePath("package.json");
+      const fileContent = await fs.readFile(filePath, "utf8");
+      expect(fileContent).to.contain('"name": "my-skill",');
+      expect(fileContent).to.contain('"author": "Rain",');
+    });
+
+    it("should have a test folder", async () => {
+      const filePath = getFilePath("test");
+      const pathExists = await fs.pathExists(filePath);
+      expect(pathExists).to.be.true;
+    });
+  });
+
   describe("Generate a Javascript project with voxa-cli", () => {
     before(async () => {
       simple.mock(inquirer, "prompt").callFn(() => {
@@ -77,7 +128,7 @@ describe("Javascript project generator", () => {
           author: "Rain",
           language: "javascript",
           voxaCli: true,
-          canfulfill: true,
+          canFulfill: true,
           analytics: [],
           platform: ["all"]
         });
@@ -94,7 +145,7 @@ describe("Javascript project generator", () => {
     it("should have voxa-cli package in package.json", async () => {
       const filePath = getFilePath("voxa-cli-skill", "package.json");
       const fileContent = await fs.readFile(filePath, "utf8");
-      expect(fileContent).to.contain('"voxa-cli": "2.1.2"');
+      expect(fileContent).to.contain('"voxa-cli": "2.2.0"');
       expect(fileContent).to.contain('"interaction": "voxa interaction"');
     });
 
@@ -116,7 +167,7 @@ describe("Javascript project generator", () => {
           author: "Rain",
           language: "javascript",
           voxaCli: false,
-          canfulfill: true,
+          canFulfill: true,
           analytics: [],
           platform: ["all"]
         });
@@ -155,7 +206,7 @@ describe("Javascript project generator", () => {
           author: "Rain",
           language: "javascript",
           voxaCli: false,
-          canfulfill: true,
+          canFulfill: true,
           analytics: [],
           platform: ["all"]
         });
@@ -178,7 +229,7 @@ describe("Javascript project generator", () => {
           author: "Rain",
           language: "javascript",
           voxaCli: false,
-          canfulfill: true,
+          canFulfill: true,
           analytics: ["all"],
           platform: ["all"]
         });
@@ -246,7 +297,7 @@ describe("Javascript project generator", () => {
           author: "Rain",
           language: "javascript",
           voxaCli: false,
-          canfulfill: true,
+          canFulfill: true,
           analytics: ["none"],
           platform: ["all"]
         });
@@ -314,7 +365,7 @@ describe("Javascript project generator", () => {
           author: "Rain",
           language: "javascript",
           voxaCli: false,
-          canfulfill: true,
+          canFulfill: true,
           analytics: ["ga"],
           platform: ["all"]
         });
@@ -382,7 +433,7 @@ describe("Javascript project generator", () => {
           author: "Rain",
           language: "javascript",
           voxaCli: false,
-          canfulfill: true,
+          canFulfill: true,
           analytics: ["ga", "dashbot"],
           platform: ["all"]
         });
@@ -465,7 +516,7 @@ describe("Javascript project generator", () => {
           author: "Rain",
           language: "javascript",
           voxaCli: false,
-          canfulfill: true,
+          canFulfill: true,
           analytics: ["none"],
           saveUserInfo: true,
           platform: ["all"]
@@ -526,7 +577,7 @@ describe("Javascript project generator", () => {
           author: "Rain",
           language: "javascript",
           voxaCli: false,
-          canfulfill: true,
+          canFulfill: true,
           analytics: ["none"],
           saveUserInfo: false,
           platform: ["all"]
@@ -589,7 +640,7 @@ describe("Javascript project generator", () => {
           author: "Rain",
           language: "javascript",
           voxaCli: false,
-          canfulfill: false,
+          canFulfill: false,
           analytics: [],
           platform: ["alexa"]
         });
@@ -658,7 +709,7 @@ describe("Javascript project generator", () => {
           author: "Rain",
           language: "javascript",
           voxaCli: false,
-          canfulfill: false,
+          canFulfill: false,
           analytics: [],
           platform: ["alexa"],
           accountLinking: true
@@ -700,7 +751,7 @@ describe("Javascript project generator", () => {
           author: "Rain",
           language: "javascript",
           voxaCli: false,
-          canfulfill: false,
+          canFulfill: false,
           analytics: [],
           platform: ["alexa"],
           accountLinking: false

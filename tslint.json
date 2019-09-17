@@ -1,13 +1,7 @@
 {
-  "defaultSeverity": "error",
-  "extends": ["tslint:latest", "tslint-config-prettier", "tslint-no-unused-expression-chai"],
+  "extends": ["tslint:latest", "tslint-config-prettier"],
   "rules": {
-    "no-submodule-imports": [true, "source-map-support"],
-    "no-implicit-dependencies": [true, "dev"],
-    "prefer-conditional-expression": false,
-    "object-literal-sort-keys": false
-  },
-  "linterOptions": {
-    "exclude": ["**/*.json", "templates/*"]
+    "object-literal-sort-keys": false,
+    "no-submodule-imports": false
   }
 }

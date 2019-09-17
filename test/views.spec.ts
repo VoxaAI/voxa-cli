@@ -1,3 +1,4 @@
+import fs = require("fs-extra");
 import { expect } from "chai";
 import * as path from "path";
 import { configurations } from "./mocha.spec";
@@ -10,7 +11,13 @@ configurations.forEach(interaction => {
         return this.skip();
       }
 
-      views = await require(path.join(__dirname, interaction.viewsPath, "views.json"));
+      const viewsPath = path.join(
+        path.dirname(interaction.interactionFileName),
+        interaction.viewsPath,
+        "views.json"
+      );
+
+      views = JSON.parse((await fs.readFile(viewsPath)).toString());
     });
 
     it("should generate an en-US Launch.say", () => {

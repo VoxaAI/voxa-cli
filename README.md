@@ -45,6 +45,10 @@ You'll be prompt to answer several question like:
 
 Once done you'll be ready to start working on your next voice app.
 
+### Having trouble using `npx voxa create`?
+
+We noticed that on Windows using `npx voxa create` sometimes results on undesired output. You can use `npx voxa-cli create` as a workaround. We haven't found that issue on MacOS and Linux yet.
+
 ### How to connect with Google Spreadsheet
 
 To programmatically access your spreadsheet, you’ll need to create a service account and OAuth2 credentials from the Google API Console. If you’ve been burned by OAuth2 before, don’t worry; service accounts are way easier to use.
@@ -123,13 +127,15 @@ Create a new file on your skill root project `./interaction.json` and paste the 
 
 ```json
 {
-  "platform": ["alexa", "dialogFlow"],
+  "platforms": ["alexa", "dialogFlow"],
   "spreadsheets": [
     "GOOGLE_SPREADSHEET_URL",
     "OFFICE365_WORKBOOK_URL",
     "LOCAL_EXCEL_FILE",
     "LOCAL_EXCEL_FOLDER"
-  ]
+  ],
+  "contentPath": "src/content",
+  "viewsPath": "src/languageResources"
 }
 ```
 

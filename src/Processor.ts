@@ -229,26 +229,10 @@ export function intentUtterProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES
           (acc: IIntent[], item: any) => {
             const intentName = item[0] as string;
             const head = _.head(item[1]);
-            const events = _.chain(head)
-              .get("events", "")
-              .split(",")
-              .map(_.trim)
-              .compact()
-              .value() as string[];
+            const events: string[] = splitValues(head, "events");
+            const environments: string[] = splitValues(head, "environment");
+            const platforms: string[] = splitValues(head, "platformIntent", true);
             const signInRequired = _.get(head, "signInRequired", false) as boolean;
-            const environments = _.chain(head)
-              .get("environment", "")
-              .split(",")
-              .map(_.trim)
-              .compact()
-              .value() as string[];
-            const platforms = _.chain(head)
-              .get("platformIntent", "")
-              .split(",")
-              .map(_.trim)
-              .map(_.toLower)
-              .compact()
-              .value() as string[];
 
             const webhookForSlotFilling = (_.get(head, "webhookForSlotFilling", false) ||
               _.get(head, "useWebhookForSlotFilling", false)) as boolean;
@@ -412,6 +396,19 @@ function reduceIntent(propName: string) {
     acc.push(row);
     return acc;
   };
+}
+
+function splitValues(head: any, propertyName: string, shouldLowerCase?: boolean): string[] {
+  let splittedValue = (_.chain(head) as any)
+    .get(propertyName, "")
+    .split(",")
+    .map(_.trim);
+
+  if (shouldLowerCase) {
+    splittedValue = splittedValue.map(_.toLower);
+  }
+
+  return splittedValue.compact().value() as string[];
 }
 
 function getIntentValueList(
