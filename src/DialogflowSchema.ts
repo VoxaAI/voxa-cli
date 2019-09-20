@@ -30,7 +30,7 @@ import { IVoxaSheet } from "./VoxaSheet";
 const NAMESPACE = "dialogflow";
 // https://developers.google.com/actions/localization/languages-locales
 
-const LOCALES = _.chain([
+const LOCALES = _([
   "en-US",
   "en-AU",
   "en-CA",
@@ -63,7 +63,7 @@ const LOCALES = _.chain([
   .uniq()
   .value();
 
-const LANG_BUT_LOCALE = _.chain(LOCALES)
+const LANG_BUT_LOCALE = _(LOCALES)
   .map(item => item.split("-")[0]) // es, en, du etc.
   .uniq()
   .value();
@@ -130,13 +130,11 @@ export class DialogflowSchema extends Schema {
       environment
     );
 
-    const startIntents = _.chain(intentsByPlatformAndEnvironments)
+    const startIntents = _(intentsByPlatformAndEnvironments)
       .filter({ startIntent: true })
       .map(intent => {
-        const intentName = intent.name.replace("AMAZON.", "");
-        const startIntent = _.chain(intents)
-          .find(i => i.name === intent.name || i.name === intentName)
-          .value();
+        const startIntent = findIntent(intent.name, intents);
+
         if (startIntent) {
           return {
             intentId: _.get(startIntent, "id"),
@@ -147,17 +145,11 @@ export class DialogflowSchema extends Schema {
       .compact()
       .value();
 
-    const endIntentIds = _.chain(intentsByPlatformAndEnvironments)
+    const endIntentIds = _(intentsByPlatformAndEnvironments)
       .filter({ endIntent: true })
       .map(intent => {
-        const intentName = intent.name.replace("AMAZON.", "");
-
-        const intentId = (_.chain(intents).find(
-          i => i.name === intent.name || i.name === intentName
-        ) as any)
-          .get("id")
-          .value();
-        return intentId;
+        const filteredIntent = findIntent(intent.name, intents);
+        return _.get(filteredIntent, "id");
       })
       .compact()
       .value();
@@ -201,13 +193,13 @@ export class DialogflowSchema extends Schema {
     );
 
     locale = this.getLocale(locale);
-    const intents = intentsByPlatformAndEnvironments.map((rawIntent: IIntent) => {
+    intentsByPlatformAndEnvironments.map((rawIntent: IIntent) => {
       let { name, samples, events } = rawIntent;
       const { slotsDefinition } = rawIntent;
       name = name.replace("AMAZON.", "");
 
       const builtInIntentSamples = _.get(BUILT_IN_INTENTS, name, []);
-      samples = _.chain(samples)
+      samples = _(samples)
         .concat(builtInIntentSamples)
         .uniq()
         .value();
@@ -407,4 +399,9 @@ export class DialogflowSchema extends Schema {
 
 function hashObj(obj: {}) {
   return uuid(JSON.stringify(obj), uuid.DNS);
+}
+
+function findIntent(name: string, intents: IIntent[]): IIntent | undefined {
+  const intentName = name.replace("AMAZON.", "");
+  return _.find(intents, i => i.name === name || i.name === intentName);
 }
