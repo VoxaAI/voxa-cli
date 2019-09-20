@@ -23,9 +23,8 @@
 import Promise from "bluebird";
 import fsExtra from "fs-extra";
 import _ from "lodash";
-import { IVoxaSheet } from "./VoxaSheet";
-const fs = Promise.promisifyAll(fsExtra);
 import path from "path";
+import { IDefinedInteractionOptions } from "./InteractionBuilder";
 import {
   downloadProcessor,
   intentUtterProcessor,
@@ -34,6 +33,8 @@ import {
   slotProcessor,
   viewsProcessor
 } from "./Processor";
+import { IVoxaSheet } from "./VoxaSheet";
+const fs = Promise.promisifyAll(fsExtra);
 
 export abstract class Schema {
   public intents: IIntent[] = [];
@@ -92,11 +93,11 @@ export abstract class Schema {
   public buildDownloads(): void {
     this.downloads.forEach(download => {
       const file: IFileContent = {
-        path: path.join(
-          this.interactionOptions.rootPath,
-          this.interactionOptions.contentPath,
+        path: buildFilePath(
+          this.interactionOptions,
           `${download.locale}/${_.kebabCase(download.name)}.json`
         ),
+
         content: download.data
       };
       this.fileContent.push(file);
@@ -180,20 +181,12 @@ export abstract class Schema {
       .value();
 
     const fileViewMap: IFileContent = {
-      path: path.join(
-        this.interactionOptions.rootPath,
-        this.interactionOptions.viewsPath,
-        "views.map.json"
-      ),
+      path: buildFilePath(this.interactionOptions, "views.map.json"),
       content: viewsContent
     };
 
     const fileVariablesMap: IFileContent = {
-      path: path.join(
-        this.interactionOptions.rootPath,
-        this.interactionOptions.viewsPath,
-        "variables.map.json"
-      ),
+      path: buildFilePath(this.interactionOptions, "variables.map.json"),
       content: variablesContent
     };
 
@@ -207,11 +200,7 @@ export abstract class Schema {
       .value();
 
     const file: IFileContent = {
-      path: path.join(
-        this.interactionOptions.rootPath,
-        this.interactionOptions.viewsPath,
-        "views.json"
-      ),
+      path: buildFilePath(this.interactionOptions, "views.json"),
       content: viewsContent
     };
     this.fileContent.push(file);
@@ -220,9 +209,8 @@ export abstract class Schema {
   public buildSynonyms(): void {
     this.slots.forEach(slot => {
       const file: IFileContent = {
-        path: path.join(
-          this.interactionOptions.rootPath,
-          this.interactionOptions.contentPath,
+        path: buildFilePath(
+          this.interactionOptions,
           "synonyms",
           `${slot.locale}/${_.kebabCase(slot.name)}.json`
         ),
@@ -404,4 +392,8 @@ export interface IPublishingInformation {
   key: string;
   value: string | object;
   environments: string[];
+}
+
+function buildFilePath(options: IDefinedInteractionOptions, ...names: string[]): string {
+  return path.join(options.rootPath, options.viewsPath, ...names);
 }
