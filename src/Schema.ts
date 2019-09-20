@@ -20,11 +20,8 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 /* tslint:disable:forin */
-import Promise from "bluebird";
-import fsExtra from "fs-extra";
 import _ from "lodash";
 import path from "path";
-import { IDefinedInteractionOptions } from "./InteractionBuilder";
 import {
   downloadProcessor,
   intentUtterProcessor,
@@ -34,7 +31,6 @@ import {
   viewsProcessor
 } from "./Processor";
 import { IVoxaSheet } from "./VoxaSheet";
-const fs = Promise.promisifyAll(fsExtra);
 
 export abstract class Schema {
   public intents: IIntent[] = [];
@@ -93,8 +89,8 @@ export abstract class Schema {
   public buildDownloads(): void {
     this.downloads.forEach(download => {
       const file: IFileContent = {
-        path: buildFilePath(
-          this.interactionOptions,
+        path: this.buildFilePath(
+          this.interactionOptions.viewsPath,
           `${download.locale}/${_.kebabCase(download.name)}.json`
         ),
 
@@ -181,12 +177,12 @@ export abstract class Schema {
       .value();
 
     const fileViewMap: IFileContent = {
-      path: buildFilePath(this.interactionOptions, "views.map.json"),
+      path: this.buildFilePath(this.interactionOptions.viewsPath, "views.map.json"),
       content: viewsContent
     };
 
     const fileVariablesMap: IFileContent = {
-      path: buildFilePath(this.interactionOptions, "variables.map.json"),
+      path: this.buildFilePath(this.interactionOptions.viewsPath, "variables.map.json"),
       content: variablesContent
     };
 
@@ -200,7 +196,7 @@ export abstract class Schema {
       .value();
 
     const file: IFileContent = {
-      path: buildFilePath(this.interactionOptions, "views.json"),
+      path: this.buildFilePath(this.interactionOptions.viewsPath, "views.json"),
       content: viewsContent
     };
     this.fileContent.push(file);
@@ -209,8 +205,8 @@ export abstract class Schema {
   public buildSynonyms(): void {
     this.slots.forEach(slot => {
       const file: IFileContent = {
-        path: buildFilePath(
-          this.interactionOptions,
+        path: this.buildFilePath(
+          this.interactionOptions.viewsPath,
           "synonyms",
           `${slot.locale}/${_.kebabCase(slot.name)}.json`
         ),
@@ -315,6 +311,10 @@ export abstract class Schema {
   protected filterByPlatform(slot: ISlotDefinition) {
     return slot.platform === this.NAMESPACE || slot.platform === undefined;
   }
+
+  protected buildFilePath(...names: string[]): string {
+    return path.join(this.interactionOptions.rootPath, ...names);
+  }
 }
 
 export interface IIntent {
@@ -392,8 +392,4 @@ export interface IPublishingInformation {
   key: string;
   value: string | object;
   environments: string[];
-}
-
-function buildFilePath(options: IDefinedInteractionOptions, ...names: string[]): string {
-  return path.join(options.rootPath, options.viewsPath, ...names);
 }

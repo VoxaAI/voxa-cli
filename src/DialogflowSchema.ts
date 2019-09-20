@@ -96,13 +96,7 @@ export class DialogflowSchema extends Schema {
 
   public buildPackage(environment: string) {
     const file: IFileContent = {
-      path: path.join(
-        this.interactionOptions.rootPath,
-        this.interactionOptions.speechPath,
-        this.NAMESPACE,
-        environment,
-        "package.json"
-      ),
+      path: this.buildFilePath(environment, "package.json"),
       content: {
         version: "1.0.0"
       }
@@ -174,13 +168,7 @@ export class DialogflowSchema extends Schema {
     );
 
     const file: IFileContent = {
-      path: path.join(
-        this.interactionOptions.rootPath,
-        this.interactionOptions.speechPath,
-        this.NAMESPACE,
-        environment,
-        "agent.json"
-      ),
+      path: this.buildFilePath(environment, "agent.json"),
       content: agent
     };
     this.fileContent.push(file);
@@ -262,14 +250,7 @@ export class DialogflowSchema extends Schema {
 
       if (!_.isEmpty(resultSamples)) {
         const file: IFileContent = {
-          path: path.join(
-            this.interactionOptions.rootPath,
-            this.interactionOptions.speechPath,
-            this.NAMESPACE,
-            environment,
-            "intents",
-            `${name}_usersays_${locale}.json`
-          ),
+          path: this.buildFilePath(environment, "intents", `${name}_usersays_${locale}.json`),
           content: resultSamples
         };
         this.fileContent.push(file);
@@ -337,14 +318,7 @@ export class DialogflowSchema extends Schema {
 
       _.set(intent, "id", hashObj(intent));
       const file: IFileContent = {
-        path: path.join(
-          this.interactionOptions.rootPath,
-          this.interactionOptions.speechPath,
-          this.NAMESPACE,
-          environment,
-          "intents",
-          `${intent.name}.json`
-        ),
+        path: this.buildFilePath(environment, "intents", `${intent.name}.json`),
         content: intent
       };
       this.fileContent.push(file);
@@ -369,22 +343,12 @@ export class DialogflowSchema extends Schema {
         _.set(slotContent, "id", hashObj(slotContent));
 
         const fileDef: IFileContent = {
-          path: path.join(
-            this.interactionOptions.rootPath,
-            this.interactionOptions.speechPath,
-            this.NAMESPACE,
-            environment,
-            "entities",
-            `${slotName}.json`
-          ),
+          path: this.buildFilePath(environment, "entities", `${slotName}.json`),
           content: slotContent
         };
 
         const fileValue: IFileContent = {
-          path: path.join(
-            this.interactionOptions.rootPath,
-            this.interactionOptions.speechPath,
-            this.NAMESPACE,
+          path: this.buildFilePath(
             environment,
             "entities",
             `${slotName}_entries_${localeEntity}.json`
@@ -394,6 +358,10 @@ export class DialogflowSchema extends Schema {
 
         this.fileContent.push(fileDef, fileValue);
       });
+  }
+
+  protected buildFilePath(...names: string[]): string {
+    return super.buildFilePath(this.interactionOptions.speechPath, this.NAMESPACE, ...names);
   }
 }
 
