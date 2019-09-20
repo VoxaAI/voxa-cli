@@ -19,9 +19,8 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-import * as _Promise from "bluebird";
 
-import * as _ from "lodash";
+import _ from "lodash";
 import { IVoxaSheet, SheetTypes } from "../VoxaSheet";
 
 export function findSheetType(spreadsheet: IVoxaSheet): IVoxaSheet | undefined {

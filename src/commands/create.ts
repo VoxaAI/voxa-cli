@@ -20,13 +20,13 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 /* tslint:disable:no-submodule-imports no-console */
-"use strict";
-
-import * as inquirer from "inquirer";
-import * as _ from "lodash";
-import * as os from "os";
+import bluebird from "bluebird";
+import inquirer from "inquirer";
+import _ from "lodash";
+import os from "os";
 import { Observable } from "rxjs";
 import VoxaGenerator from "../VoxaGenerator";
+global.Promise = bluebird;
 
 export const name = "create";
 export const alias = "";

@@ -20,8 +20,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 /* tslint:disable:no-submodule-imports */
-import * as _Promise from "bluebird";
-import * as _ from "lodash";
+import _ from "lodash";
 import {
   IDownload,
   IIntent,

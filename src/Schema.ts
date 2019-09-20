@@ -20,12 +20,12 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 /* tslint:disable:forin */
-import * as _Promise from "bluebird";
-import * as fsExtra from "fs-extra";
-import * as _ from "lodash";
-import { getSheetType, IVoxaSheet, SheetTypes } from "./VoxaSheet";
-const fs = _Promise.promisifyAll(fsExtra);
-import * as path from "path";
+import Promise from "bluebird";
+import fsExtra from "fs-extra";
+import _ from "lodash";
+import { IVoxaSheet } from "./VoxaSheet";
+const fs = Promise.promisifyAll(fsExtra);
+import path from "path";
 import {
   downloadProcessor,
   intentUtterProcessor,

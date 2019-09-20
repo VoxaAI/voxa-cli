@@ -1,8 +1,30 @@
+/*
+ * Copyright (c) 2019 Rain Agency <contact@rain.agency>
+ * Author: Rain Agency <contact@rain.agency>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+ * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+ * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 import { expect } from "chai";
-import * as fs from "fs-extra";
-import * as inquirer from "inquirer";
-import * as path from "path";
-import * as simple from "simple-mock";
+import fs from "fs-extra";
+import inquirer from "inquirer";
+import path from "path";
+import simple from "simple-mock";
 import { action } from "../src/commands/create";
 
 describe("Typescript project generator", () => {
@@ -21,16 +43,14 @@ describe("Typescript project generator", () => {
 
   describe("Generate a basic project", () => {
     before(async () => {
-      simple.mock(inquirer, "prompt").callFn(() => {
-        return Promise.resolve({
-          appName: "my skill",
-          author: "Rain",
-          language: "typescript",
-          voxaCli: false,
-          canFulfill: true,
-          analytics: [],
-          platform: ["all"]
-        });
+      simple.mock(inquirer, "prompt").resolveWith({
+        appName: "my skill",
+        author: "Rain",
+        language: "typescript",
+        voxaCli: false,
+        canFulfill: true,
+        analytics: [],
+        platform: ["all"]
       });
       await action();
     });
@@ -71,17 +91,15 @@ describe("Typescript project generator", () => {
 
   describe("Generate a basic project in the same directory", () => {
     before(async () => {
-      simple.mock(inquirer, "prompt").callFn(() => {
-        return Promise.resolve({
-          appName: "my skill",
-          author: "Rain",
-          language: "typescript",
-          voxaCli: false,
-          canFulfill: true,
-          analytics: [],
-          platform: ["all"],
-          newDir: false
-        });
+      simple.mock(inquirer, "prompt").resolveWith({
+        appName: "my skill",
+        author: "Rain",
+        language: "typescript",
+        voxaCli: false,
+        canFulfill: true,
+        analytics: [],
+        platform: ["all"],
+        newDir: false
       });
       await action();
     });
@@ -122,16 +140,14 @@ describe("Typescript project generator", () => {
 
   describe("Generate a Typescript project with voxa-cli", () => {
     before(async () => {
-      simple.mock(inquirer, "prompt").callFn(() => {
-        return Promise.resolve({
-          appName: "voxa cli skill",
-          author: "Rain",
-          language: "typescript",
-          voxaCli: true,
-          canFulfill: true,
-          analytics: [],
-          platform: ["all"]
-        });
+      simple.mock(inquirer, "prompt").resolveWith({
+        appName: "voxa cli skill",
+        author: "Rain",
+        language: "typescript",
+        voxaCli: true,
+        canFulfill: true,
+        analytics: [],
+        platform: ["all"]
       });
       await action();
     });
@@ -161,16 +177,14 @@ describe("Typescript project generator", () => {
 
   describe("Generate a Typescript project without voxa-cli", () => {
     before(async () => {
-      simple.mock(inquirer, "prompt").callFn(() => {
-        return Promise.resolve({
-          appName: "no voxa cli skill",
-          author: "Rain",
-          language: "typescript",
-          voxaCli: false,
-          canFulfill: true,
-          analytics: [],
-          platform: ["all"]
-        });
+      simple.mock(inquirer, "prompt").resolveWith({
+        appName: "no voxa cli skill",
+        author: "Rain",
+        language: "typescript",
+        voxaCli: false,
+        canFulfill: true,
+        analytics: [],
+        platform: ["all"]
       });
       await action();
     });
@@ -200,16 +214,14 @@ describe("Typescript project generator", () => {
 
   describe("Generate a Typescript project that uses canfulfill intents", () => {
     before(async () => {
-      simple.mock(inquirer, "prompt").callFn(() => {
-        return Promise.resolve({
-          appName: "can fulfill skill",
-          author: "Rain",
-          language: "typescript",
-          voxaCli: false,
-          canFulfill: true,
-          analytics: [],
-          platform: ["all"]
-        });
+      simple.mock(inquirer, "prompt").resolveWith({
+        appName: "can fulfill skill",
+        author: "Rain",
+        language: "typescript",
+        voxaCli: false,
+        canFulfill: true,
+        analytics: [],
+        platform: ["all"]
       });
       await action();
     });
@@ -223,16 +235,14 @@ describe("Typescript project generator", () => {
 
   describe("Generate a Typescript project that uses all analytics", () => {
     before(async () => {
-      simple.mock(inquirer, "prompt").callFn(() => {
-        return Promise.resolve({
-          appName: "all analytics skill",
-          author: "Rain",
-          language: "typescript",
-          voxaCli: false,
-          canFulfill: true,
-          analytics: ["all"],
-          platform: ["all"]
-        });
+      simple.mock(inquirer, "prompt").resolveWith({
+        appName: "all analytics skill",
+        author: "Rain",
+        language: "typescript",
+        voxaCli: false,
+        canFulfill: true,
+        analytics: ["all"],
+        platform: ["all"]
       });
       await action();
     });
@@ -291,16 +301,14 @@ describe("Typescript project generator", () => {
 
   describe("Generate a Typescript project doesn't use any analytics", () => {
     before(async () => {
-      simple.mock(inquirer, "prompt").callFn(() => {
-        return Promise.resolve({
-          appName: "no analytics skill",
-          author: "Rain",
-          language: "typescript",
-          voxaCli: false,
-          canFulfill: true,
-          analytics: ["none"],
-          platform: ["all"]
-        });
+      simple.mock(inquirer, "prompt").resolveWith({
+        appName: "no analytics skill",
+        author: "Rain",
+        language: "typescript",
+        voxaCli: false,
+        canFulfill: true,
+        analytics: ["none"],
+        platform: ["all"]
       });
       await action();
     });
@@ -359,16 +367,14 @@ describe("Typescript project generator", () => {
 
   describe("Generate a Typescript project that uses only Google Analytics", () => {
     before(async () => {
-      simple.mock(inquirer, "prompt").callFn(() => {
-        return Promise.resolve({
-          appName: "ga analytics skill",
-          author: "Rain",
-          language: "typescript",
-          voxaCli: false,
-          canFulfill: true,
-          analytics: ["ga"],
-          platform: ["all"]
-        });
+      simple.mock(inquirer, "prompt").resolveWith({
+        appName: "ga analytics skill",
+        author: "Rain",
+        language: "typescript",
+        voxaCli: false,
+        canFulfill: true,
+        analytics: ["ga"],
+        platform: ["all"]
       });
       await action();
     });
@@ -427,16 +433,14 @@ describe("Typescript project generator", () => {
 
   describe("Generate a Typescript project that uses only Google Analytics and Dashbot", () => {
     before(async () => {
-      simple.mock(inquirer, "prompt").callFn(() => {
-        return Promise.resolve({
-          appName: "ga dashbot analytics skill",
-          author: "Rain",
-          language: "typescript",
-          voxaCli: false,
-          canFulfill: true,
-          analytics: ["ga", "dashbot"],
-          platform: ["all"]
-        });
+      simple.mock(inquirer, "prompt").resolveWith({
+        appName: "ga dashbot analytics skill",
+        author: "Rain",
+        language: "typescript",
+        voxaCli: false,
+        canFulfill: true,
+        analytics: ["ga", "dashbot"],
+        platform: ["all"]
       });
       await action();
     });
@@ -510,17 +514,15 @@ describe("Typescript project generator", () => {
 
   describe("Generate a Typescript project that store user information in DynamoDB", () => {
     before(async () => {
-      simple.mock(inquirer, "prompt").callFn(() => {
-        return Promise.resolve({
-          appName: "user skill",
-          author: "Rain",
-          language: "typescript",
-          voxaCli: false,
-          canFulfill: true,
-          analytics: ["none"],
-          saveUserInfo: true,
-          platform: ["all"]
-        });
+      simple.mock(inquirer, "prompt").resolveWith({
+        appName: "user skill",
+        author: "Rain",
+        language: "typescript",
+        voxaCli: false,
+        canFulfill: true,
+        analytics: ["none"],
+        saveUserInfo: true,
+        platform: ["all"]
       });
       await action();
     });
@@ -580,17 +582,15 @@ describe("Typescript project generator", () => {
 
   describe("Generate a Typescript project that doesn't store user information in DynamoDB", () => {
     before(async () => {
-      simple.mock(inquirer, "prompt").callFn(() => {
-        return Promise.resolve({
-          appName: "no user skill",
-          author: "Rain",
-          language: "typescript",
-          voxaCli: false,
-          canFulfill: true,
-          analytics: ["none"],
-          saveUserInfo: false,
-          platform: ["all"]
-        });
+      simple.mock(inquirer, "prompt").resolveWith({
+        appName: "no user skill",
+        author: "Rain",
+        language: "typescript",
+        voxaCli: false,
+        canFulfill: true,
+        analytics: ["none"],
+        saveUserInfo: false,
+        platform: ["all"]
       });
       await action();
     });
@@ -652,16 +652,14 @@ describe("Typescript project generator", () => {
 
   describe("Generate a Typescript project only for Alexa", () => {
     before(async () => {
-      simple.mock(inquirer, "prompt").callFn(() => {
-        return Promise.resolve({
-          appName: "my alexa skill",
-          author: "Rain",
-          language: "typescript",
-          voxaCli: false,
-          canFulfill: false,
-          analytics: [],
-          platform: ["alexa"]
-        });
+      simple.mock(inquirer, "prompt").resolveWith({
+        appName: "my alexa skill",
+        author: "Rain",
+        language: "typescript",
+        voxaCli: false,
+        canFulfill: false,
+        analytics: [],
+        platform: ["alexa"]
       });
       await action();
     });
@@ -729,16 +727,14 @@ describe("Typescript project generator", () => {
 
   describe("Generate a Typescript project only for Alexa and Google Assistant", () => {
     before(async () => {
-      simple.mock(inquirer, "prompt").callFn(() => {
-        return Promise.resolve({
-          appName: "my alexa ga skill",
-          author: "Rain",
-          language: "typescript",
-          voxaCli: false,
-          canFulfill: false,
-          analytics: [],
-          platform: ["alexa", "google"]
-        });
+      simple.mock(inquirer, "prompt").resolveWith({
+        appName: "my alexa ga skill",
+        author: "Rain",
+        language: "typescript",
+        voxaCli: false,
+        canFulfill: false,
+        analytics: [],
+        platform: ["alexa", "google"]
       });
       await action();
     });
@@ -806,16 +802,14 @@ describe("Typescript project generator", () => {
 
   describe("Generate a Typescript project only for Alexa, Google Assistant and Facebook Messenger", () => {
     before(async () => {
-      simple.mock(inquirer, "prompt").callFn(() => {
-        return Promise.resolve({
-          appName: "my alexa ga fb skill",
-          author: "Rain",
-          language: "typescript",
-          voxaCli: false,
-          canFulfill: false,
-          analytics: [],
-          platform: ["alexa", "google", "facebook"]
-        });
+      simple.mock(inquirer, "prompt").resolveWith({
+        appName: "my alexa ga fb skill",
+        author: "Rain",
+        language: "typescript",
+        voxaCli: false,
+        canFulfill: false,
+        analytics: [],
+        platform: ["alexa", "google", "facebook"]
       });
       await action();
     });
@@ -879,16 +873,14 @@ describe("Typescript project generator", () => {
 
   describe("Generate a Typescript project for all platforms available", () => {
     before(async () => {
-      simple.mock(inquirer, "prompt").callFn(() => {
-        return Promise.resolve({
-          appName: "my all platforms skill",
-          author: "Rain",
-          language: "typescript",
-          voxaCli: false,
-          canFulfill: false,
-          analytics: [],
-          platform: ["all"]
-        });
+      simple.mock(inquirer, "prompt").resolveWith({
+        appName: "my all platforms skill",
+        author: "Rain",
+        language: "typescript",
+        voxaCli: false,
+        canFulfill: false,
+        analytics: [],
+        platform: ["all"]
       });
       await action();
     });
@@ -948,17 +940,15 @@ describe("Typescript project generator", () => {
 
   describe("Generate a Typescript project for Alexa using account linking", () => {
     before(async () => {
-      simple.mock(inquirer, "prompt").callFn(() => {
-        return Promise.resolve({
-          appName: "my account linking skill",
-          author: "Rain",
-          language: "typescript",
-          voxaCli: false,
-          canFulfill: false,
-          analytics: [],
-          platform: ["alexa"],
-          accountLinking: true
-        });
+      simple.mock(inquirer, "prompt").resolveWith({
+        appName: "my account linking skill",
+        author: "Rain",
+        language: "typescript",
+        voxaCli: false,
+        canFulfill: false,
+        analytics: [],
+        platform: ["alexa"],
+        accountLinking: true
       });
       await action();
     });
@@ -990,17 +980,15 @@ describe("Typescript project generator", () => {
 
   describe("Generate a Typescript project for Alexa without account linking", () => {
     before(async () => {
-      simple.mock(inquirer, "prompt").callFn(() => {
-        return Promise.resolve({
-          appName: "no account linking skill",
-          author: "Rain",
-          language: "typescript",
-          voxaCli: false,
-          canFulfill: false,
-          analytics: [],
-          platform: ["alexa"],
-          accountLinking: false
-        });
+      simple.mock(inquirer, "prompt").resolveWith({
+        appName: "no account linking skill",
+        author: "Rain",
+        language: "typescript",
+        voxaCli: false,
+        canFulfill: false,
+        analytics: [],
+        platform: ["alexa"],
+        accountLinking: false
       });
       await action();
     });

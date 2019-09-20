@@ -20,15 +20,13 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 /* tslint:disable:no-submodule-imports no-console */
-"use strict";
 
-import { all } from "bluebird";
-import * as colors from "colors";
-import * as fs from "fs-extra";
-import * as inquirer from "inquirer";
-import * as _ from "lodash";
-import * as pad from "pad";
-import * as path from "path";
+import colors from "colors";
+import fs from "fs-extra";
+import inquirer from "inquirer";
+import _ from "lodash";
+import pad from "pad";
+import path from "path";
 import { Observable } from "rxjs";
 import { DEFAULT_INTERACTION_OPTIONS } from "../InteractionBuilder";
 
@@ -92,7 +90,7 @@ export async function action() {
         })
         .value();
 
-      result = await all(result);
+      result = await Promise.all(result);
       result = result.every((r: boolean) => r);
 
       return noEmptyAnswer(input) && result
