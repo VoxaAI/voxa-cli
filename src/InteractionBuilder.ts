@@ -20,17 +20,16 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 /* tslint:disable:no-console no-submodule-imports */
-import * as _Promise from "bluebird";
-import * as fsExtra from "fs-extra";
-import * as _ from "lodash";
-import * as path from "path";
+import fsExtra from "fs-extra";
+import _ from "lodash";
+import path from "path";
 import { AlexaSchema } from "./AlexaSchema";
 import { transform } from "./connectors/Spreadsheet";
 import { DialogflowSchema } from "./DialogflowSchema";
 import { downloadDirs } from "./Drive";
 import { IFileContent, IInvocation, Schema } from "./Schema";
 import { IPlatformSheets, IVoxaSheet } from "./VoxaSheet";
-const fs = _Promise.promisifyAll(fsExtra);
+const fs = Promise.promisifyAll(fsExtra);
 
 export type ISupportedPlatforms = "alexa" | "dialogflow";
 
@@ -161,7 +160,7 @@ async function getSheetsByPlatform(
     transform(interactionOptions, authKeys, spreadsheetKey)
   );
 
-  const sheetsByPlatformPromise: IVoxaSheet[][] = await _Promise.all(transformByPlatfromPromises);
+  const sheetsByPlatformPromise: IVoxaSheet[][] = await Promise.all(transformByPlatfromPromises);
   const sheetsByPlatform: IPlatformSheets = AVAILABLE_PLATFORM_KEYS.reduce((acc, next, index) => {
     const sheetByPlatform = _.chain(sheets)
       .cloneDeep()

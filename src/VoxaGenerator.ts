@@ -20,12 +20,11 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 /* tslint:disable:no-submodule-imports no-console */
-"use strict";
 
-import * as fs from "fs-extra";
-import * as Handlebars from "handlebars";
-import * as _ from "lodash";
-import * as path from "path";
+import fs from "fs-extra";
+import Handlebars from "handlebars";
+import _ from "lodash";
+import path from "path";
 
 interface IAnswers {
   appName: string;

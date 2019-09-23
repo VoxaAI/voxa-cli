@@ -19,16 +19,17 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-import * as _Promise from "bluebird";
+import bluebird from "bluebird";
 import { auth, JWT } from "google-auth-library";
 import { google, sheets_v4 } from "googleapis";
-import * as _ from "lodash";
+import _ from "lodash";
 import { IVoxaSheet } from "../VoxaSheet";
 import { findSheetType, rowFormatted } from "./utils";
+global.Promise = bluebird;
 
 const sheets = google.sheets("v4");
-const readSpreadsheet: any = _Promise.promisify(sheets.spreadsheets.get, { context: sheets });
-const readSheetTab: any = _Promise.promisify(sheets.spreadsheets.values.get, { context: sheets });
+const readSpreadsheet: any = Promise.promisify(sheets.spreadsheets.get, { context: sheets });
+const readSheetTab: any = Promise.promisify(sheets.spreadsheets.values.get, { context: sheets });
 
 function initVoxaSheet(
   spreadsheetsId: string[],
@@ -71,7 +72,7 @@ async function spreadsheetToVoxaSheet(
   );
 
   try {
-    sheetPromises = await _Promise.all(sheetPromises);
+    sheetPromises = await Promise.all(sheetPromises);
   } catch (e) {
     throw new Error(`Unable to get spreadsheet ${e}`);
   }
@@ -107,7 +108,7 @@ export async function buildFromGoogleSheets(
   const client = auth.fromJSON(authKeys) as JWT;
   client.scopes = ["https://www.googleapis.com/auth/spreadsheets.readonly"];
   try {
-    spreadsheetResp = await _Promise.all(
+    spreadsheetResp = await Promise.all(
       spreadsheetsId.map((spreadsheetId: string) =>
         readSpreadsheet({ auth: client, spreadsheetId })
       )

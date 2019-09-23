@@ -20,21 +20,15 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 /* tslint:disable:no-empty no-submodule-imports */
-import * as _Promise from "bluebird";
-import * as _ from "lodash";
-import * as path from "path";
-import * as uuid from "uuid/v5";
+import _ from "lodash";
+import path from "path";
+import uuid from "uuid/v5";
 import {
-  DelegationStrategy,
   IDialog,
   IDialogIntent,
   IDialogSlot,
   IDialogSlotPrompt,
   IInteractionModel,
-  IInteractionModelIntent,
-  IInteractionModelSlot,
-  IInteractionModelType,
-  IInteractionModelTypeValue,
   IPrompt,
   IVariation
 } from "./AlexaInterfaces";
