@@ -221,6 +221,7 @@ export default class VoxaGenerator {
       "package.json",
       "src",
       "interaction.json",
+      ".gitignore",
       `server.${this.data.ext}`,
       "web"
     ];
