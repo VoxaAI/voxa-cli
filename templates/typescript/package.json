@@ -56,6 +56,7 @@
     "nock": "^10.0.6",
     "nodemon": "^1.19.1",
     "nyc": "^14.1.1",
+    "prettier": "^1.18.2",
     "serverless": "^1.45.1",
     "serverless-plugin-typescript": "^1.1.7",
     "serverless-sentry": "^1.2.0",
