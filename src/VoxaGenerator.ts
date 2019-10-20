@@ -88,6 +88,7 @@ export default class VoxaGenerator {
     try {
       await this.copyPackageFile();
       await this.copyReadmeFile();
+      await this.copyGitIgnoreFile();
       if (this.data.voxaCli) {
         await this.copyInteractionFile();
       }
@@ -150,6 +151,10 @@ export default class VoxaGenerator {
 
   private async copyReadmeFile() {
     return this.generateHandlebarTemplateFile("README.md");
+  }
+
+  private async copyGitIgnoreFile() {
+    return this.generateHandlebarTemplateFile(".gitignore")
   }
 
   private copyInteractionFile() {
@@ -221,6 +226,7 @@ export default class VoxaGenerator {
       "package.json",
       "src",
       "interaction.json",
+      ".gitignore",
       `server.${this.data.ext}`,
       "web"
     ];
