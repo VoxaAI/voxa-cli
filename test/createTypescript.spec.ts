@@ -252,7 +252,7 @@ describe("Typescript project generator", () => {
       const fileContent = await fs.readFile(filePath, "utf8");
       expect(fileContent).to.contain('import * as voxaGA from "voxa-ga";');
       expect(fileContent).to.contain('import { register as voxaDashbot } from "voxa-dashbot"');
-      expect(fileContent).to.contain('import * as voxaChatbase from "voxa-chatbase"');
+      expect(fileContent).to.contain('import voxaChatbase from "voxa-chatbase"');
       expect(fileContent).to.contain("voxaGA(voxaApp, config.googleAnalytics);");
       expect(fileContent).to.contain("voxaDashbot(voxaApp, config.dashbot);");
       expect(fileContent).to.contain("voxaChatbase(voxaApp, config.chatbase);");
