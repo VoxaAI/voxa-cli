@@ -11,40 +11,40 @@
   "author": "{{ author }}",
   "license": "MIT",
   "dependencies": {
-    "aws-sdk": "^2.474.0",
+    "aws-sdk": "^2.553.0",
     {{#if accountLinking}}
     "express": "^4.17.1",
     {{/if}}
-    "lambda-log": "^2.2.0",
-    "lodash": "^4.17.11",
+    "lambda-log": "^2.3.1",
+    "lodash": "^4.17.15",
     {{#if accountLinking}}
-    "serverless-http": "^2.0.2",
+    "serverless-http": "^2.3.0",
     {{/if}}
-    "voxa": "^3.1.3"{{#if chatbase}},
-    "voxa-chatbase": "0.1.1"{{/if}}{{#if dashbot}},
+    "voxa": "^3.3.0"{{#if chatbase}},
+    "voxa-chatbase": "1.0.2"{{/if}}{{#if dashbot}},
     "voxa-dashbot": "2.0.3"{{/if}}{{#if ga}},
     "voxa-ga": "2.0.1"{{/if}}
   },
   "devDependencies": {
-    "alexa-mime": "^0.0.6",
-    "ask-cli": "^1.7.3",
+    "alexa-mime": "^0.0.7",
+    "ask-cli": "^1.7.15",
     "chai": "^4.2.0",
     "chalk": "^2.4.2",
-    "eslint": "^5.16.0",
-    "eslint-config-prettier": "^4.3.0",
-    "eslint-plugin-prettier": "^3.1.0",
+    "eslint": "^6.5.1",
+    "eslint-config-prettier": "^6.4.0",
+    "eslint-plugin-prettier": "^3.1.1",
     {{#unless accountLinking}}
     "express": "^4.17.1",
     {{/unless}}
-    "mocha": "^6.1.4",
-    "mocha-jenkins-reporter": "^0.4.1",
-    "mocha-junit-reporter": "^1.23.0",
-    "nock": "^10.0.6",
-    "nodemon": "^1.19.1",
+    "mocha": "^6.2.2",
+    "mocha-jenkins-reporter": "^0.4.2",
+    "mocha-junit-reporter": "^1.23.1",
+    "nock": "^11.4.0",
+    "nodemon": "^1.19.4",
     "nyc": "^14.1.1",
     "prettier": "^1.18.2",
     "simple-mock": "^0.8.0"{{#if voxaCli}},
-    "voxa-cli": "2.2.0"{{/if}}
+    "voxa-cli": "2.2.1"{{/if}}
   },
   "directories": {
     "test": "test"
