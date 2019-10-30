@@ -162,7 +162,7 @@ describe("Javascript project generator", () => {
     it("should have voxa-cli package in package.json", async () => {
       const filePath = getFilePath("voxa-cli-skill", "package.json");
       const fileContent = await fs.readFile(filePath, "utf8");
-      expect(fileContent).to.contain('"voxa-cli": "2.2.0"');
+      expect(fileContent).to.contain('"voxa-cli"');
       expect(fileContent).to.contain('"interaction": "voxa interaction"');
     });
 
@@ -262,9 +262,9 @@ describe("Javascript project generator", () => {
     it("should have all analytics in the package.json file", async () => {
       const filePath = getFilePath("all-analytics-skill", "package.json");
       const fileContent = await fs.readFile(filePath, "utf8");
-      expect(fileContent).to.contain('"voxa-chatbase": "0.1.1"');
-      expect(fileContent).to.contain('"voxa-dashbot": "2.0.3"');
-      expect(fileContent).to.contain('"voxa-ga": "2.0.1"');
+      expect(fileContent).to.contain('"voxa-chatbase"');
+      expect(fileContent).to.contain('"voxa-dashbot"');
+      expect(fileContent).to.contain('"voxa-ga"');
     });
 
     it("should have all analytics basic configurations in the config files", async () => {

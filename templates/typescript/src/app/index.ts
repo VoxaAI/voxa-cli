@@ -18,7 +18,7 @@ import {
   VoxaApp
 } from "voxa";
 {{#if chatbase }}
-import * as voxaChatbase from "voxa-chatbase";
+import voxaChatbase from "voxa-chatbase";
 {{/if}}
 {{#if dashbot }}
 import { register as voxaDashbot } from "voxa-dashbot";
