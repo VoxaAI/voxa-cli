@@ -20,6 +20,6 @@ gem "jekyll-theme-cayman"
 # If you have any plugins, put them here!
 group :jekyll_plugins do
   gem "jekyll-feed", "~> 0.6"
-  gem "github-pages"
-  gem 'jemoji'
+  gem "github-pages", ">= 196"
+  gem 'jemoji', '>= 0.10.2'
 end
