@@ -1,5 +1,5 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
-version: v1.13.3
+version: v1.14.0
 ignore: {}
 # patches apply the minimum changes required to fix a vulnerability
 patch:
@@ -20,3 +20,6 @@ patch:
         patched: '2019-05-05T21:10:57.131Z'
     - googleapis > googleapis-common > google-auth-library > gcp-metadata > axios:
         patched: '2019-05-05T21:10:57.131Z'
+  SNYK-JS-TREEKILL-536781:
+    - snyk > snyk-sbt-plugin > tree-kill:
+        patched: '2019-12-11T21:11:11.755Z'

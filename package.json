@@ -14,7 +14,7 @@
   },
   "scripts": {
     "clean": "rm -rf lib/",
-    "prepare": "npm run clean && tsc",
+    "prepare": "yarn run snyk-protect && npm run clean && tsc",
     "test": "mocha test/*.spec.* test/**/*.spec.* --exclude test/out/*.spec.* --exclude test/out/**/*.spec.*",
     "test-ci": "nyc mocha --colors --reporter mocha-jenkins-reporter test test/*.spec.* test/**/*.spec.* --exclude test/out/*.spec.* --exclude test/out/**/*.spec.*",
     "report": "nyc report --reporter=json && nyc report --reporter html && nyc report --reporter=lcov && nyc report --reporter=cobertura",
@@ -68,7 +68,7 @@
     "path": "^0.12.7",
     "qs": "^6.7.0",
     "rxjs": "^6.5.2",
-    "snyk": "^1.178.1",
+    "snyk": "^1.258.2",
     "source-map-support": "^0.5.12",
     "uuid": "^3.3.2"
   },
