@@ -15,11 +15,15 @@ $ yarn add voxa-cli
 
 ## Getting started
 
-With the Voxa-cli you can scaffold a full Voxa project ready to get started to code your voice app for Amazon Alexa, Google Assistant, Telegram and Facebook Messenger.
+voxa-cli allows you to create a new voxa project or generate the interaction model needed in your alexa, dialogflow project.
+
+### \$ voxa create
+
+With the `Voxa-cli create command` you can scaffold a full Voxa project ready to get started to code your voice app for Amazon Alexa, Google Assistant, Telegram and Facebook Messenger.
 
 You can also create interaction model and publishing information for your Alexa skills. Voxa-cli supports many sources like google spreadsheet, office 365, local .xlsx, .ods, .fods files to manage your interaction model information and publishing information.
 
-### How to generate a Voxa project
+#### How to generate a Voxa project
 
 As simple as:
 
@@ -37,11 +41,13 @@ You'll be prompt to answer several question like:
 
 Once done you'll be ready to start working on your next voice app.
 
-### Having trouble using `npx voxa create`?
+#### Having trouble using `npx voxa create`?
 
 We noticed that on Windows using `npx voxa create` sometimes results on undesired output. You can use `npx voxa-cli create` as a workaround. We haven't found that issue on MacOS and Linux yet.
 
-### How to connect with Google Spreadsheet
+### \$ voxa interaction
+
+#### How to connect with Google Spreadsheet
 
 To programmatically access your spreadsheet, you’ll need to create a service account and OAuth2 credentials from the Google API Console. If you’ve been burned by OAuth2 before, don’t worry; service accounts are way easier to use.
 
@@ -65,11 +71,11 @@ Find the client_email inside client_secret.json. Back in your spreadsheet, click
 
 Finally copy the client_secret.json in the root of the project. `client_secret.json`
 
-### How to connect with Office 365 workbooks
+#### How to connect with Office 365 workbooks
 
 We will need an AAD (Azure Active Directory) and register out application. Create one by using the azure.portal. Your Azure Active Directory ID can be found in Azure Portal > AAD Properties
 
-#### Registering an OAuth App
+##### Registering an OAuth App
 
 - Sign in to the Azure portal.
 - If your account gives you access to more than one, select your account in the top right corner, and set your portal session to the desired Azure AD tenant.
@@ -89,7 +95,7 @@ We will need an AAD (Azure Active Directory) and register out application. Creat
   - Expires: Choose "Never Expire," unless you want to change your key every year or two.
   - Click Save - a new Client Secret will be generated for you. This will be the only time you will see the Client Secret, so you better copy it to a secured location otherwise you won't be able to retrieve it again!
 
-#### Configuring App Permission
+##### Configuring App Permission
 
 Now that we have created an app, we have to configure its permissions.
 
@@ -112,10 +118,12 @@ Finally create a file and name it `azure.secret.json` in the root folder of your
 }
 ```
 
-### Interaction.json
+#### Interaction.json
 
 Once you have the OAuth2 you should create the interaction.json.
 Create a new file on your skill root project `./interaction.json` and paste the following snippet. Replace all the values you need.
+
+Basic structure
 
 ```json
 {
@@ -123,11 +131,37 @@ Create a new file on your skill root project `./interaction.json` and paste the 
   "spreadsheets": [
     "GOOGLE_SPREADSHEET_URL",
     "OFFICE365_WORKBOOK_URL",
-    "LOCAL_EXCEL_FILE",
+    "LOCAL_EXCEL_FILE_PATH",
     "LOCAL_EXCEL_FOLDER"
   ],
   "contentPath": "src/content",
   "viewsPath": "src/languageResources"
+}
+```
+
+Local excel file
+
+```json
+{
+  "platforms": ["dialogflow", "alexa"],
+  "spreadsheets": ["./vui/basic-interaction-model.xlsx"],
+  "viewsPath": "./views/",
+  "speechPath": "./speech-assets",
+  "contentPath": "./content"
+}
+```
+
+Google file
+
+```json
+{
+  "platforms": ["dialogflow", "alexa"],
+  "spreadsheets": [
+    "https://docs.google.com/spreadsheets/d/1Jh04EJInZWIbMiRKGyxBO2JC54PlLof6Sxpcc_YkxsA/edit"
+  ],
+  "viewsPath": "./views/",
+  "speechPath": "./speech-assets",
+  "contentPath": "./content"
 }
 ```
 
@@ -139,15 +173,15 @@ $ npx voxa interaction
 
 ### Options
 
-- **spreadsheets**: Array of spreadsheets. Each sheet should be a interaction model for a specific locale. Spreadsheet can also be about publishing information. Make sure to review [Interaction spreadsheet structure]({{ site.url }}/docs/interaction-spreadsheet) and [Publishing spreadsheet structure]({{ site.url }}/docs/publishing-spreadsheet)
-- **platform**: We currently support Alexa and Dialog Flow interaction models. Make sure to review [platform structure]({{ site.url }}/docs/platform)
+- **spreadsheets**: Array of spreadsheets. Each sheet should be a interaction model for a specific locale. Spreadsheet can also be about publishing information. Make sure to review [Interaction spreadsheet structure](https://voxaai.github.io/voxa-cli/docs/interaction-spreadsheet) and [Publishing spreadsheet structure](https://voxaai.github.io/voxa-cli/docs/publishing-spreadsheet)
+- **platform**: We currently support Alexa and Dialog Flow interaction models. Make sure to review [platform structure](https://voxaai.github.io/voxa-cli/docs/platform)
 
 ### Other links
 
-- [Interaction spreadsheet structure](/docs/interaction-spreadsheet)
-- [Publishing spreadsheet structure](/docs/publishing-spreadsheet)
-- [Content structure](/docs/interaction-spreadsheet#tabs-to-download-should-have-the-following-structure)
-- [Local manifest](/docs/local-manifest)
-- [Platform](/docs/platform)
+- [Interaction spreadsheet structure](https://voxaai.github.io/voxa-cli/docs/interaction-spreadsheet)
+- [Publishing spreadsheet structure](https://voxaai.github.io/voxa-cli/docs/publishing-spreadsheet)
+- [Content structure](https://voxaai.github.io/voxa-cli/docs/interaction-spreadsheet#tabs-to-download-should-have-the-following-structure)
+- [Local manifest](https://voxaai.github.io/voxa-cli/docs/local-manifest)
+- [Platform](https://voxaai.github.io/voxa-cli/docs/platform)
 
 > visit: https://voxaai.github.io/voxa-cli/
