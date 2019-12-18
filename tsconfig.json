@@ -11,7 +11,9 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "strict": true,
-    "lib": ["es2016"]
+    "lib": ["es2016"],
+    "esModuleInterop": true
   },
-  "include": ["./src/**/*.ts", "./src/**/*.json"]
+  "include": ["./src/**/*.ts", "./src/**/*.json", "./test/**/*.ts"],
+  "exclude": ["./test/out/**/*.ts"]
 }

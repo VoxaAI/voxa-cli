@@ -19,11 +19,14 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-"use strict";
 
-import * as commander from "commander";
+import commander from "commander";
 import "source-map-support/register";
-import * as pkg from "../package.json";
+import pkg from "../package.json";
+
+// The same Promise API, everywhere.
+import bluebird from "bluebird";
+global.Promise = bluebird;
 
 module.exports = async (argv: any) => {
   commander.version(pkg.version, "-v, --version");

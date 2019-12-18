@@ -2,6 +2,8 @@
   "extends": ["tslint:latest", "tslint-config-prettier"],
   "rules": {
     "object-literal-sort-keys": false,
-    "no-submodule-imports": false
+    "no-submodule-imports": false,
+    "no-unused-expression": false,
+    "no-implicit-dependencies": [true, "dev"]
   }
 }

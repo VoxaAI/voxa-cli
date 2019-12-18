@@ -20,12 +20,11 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 /* tslint:disable:no-submodule-imports no-console */
-"use strict";
 
-import * as fs from "fs-extra";
-import * as Handlebars from "handlebars";
-import * as _ from "lodash";
-import * as path from "path";
+import fs from "fs-extra";
+import Handlebars from "handlebars";
+import _ from "lodash";
+import path from "path";
 
 interface IAnswers {
   appName: string;
@@ -89,6 +88,7 @@ export default class VoxaGenerator {
     try {
       await this.copyPackageFile();
       await this.copyReadmeFile();
+      await this.copyGitIgnoreFile();
       if (this.data.voxaCli) {
         await this.copyInteractionFile();
       }
@@ -151,6 +151,10 @@ export default class VoxaGenerator {
 
   private async copyReadmeFile() {
     return this.generateHandlebarTemplateFile("README.md");
+  }
+
+  private async copyGitIgnoreFile() {
+    return this.generateHandlebarTemplateFile(".gitignore")
   }
 
   private copyInteractionFile() {
@@ -222,6 +226,7 @@ export default class VoxaGenerator {
       "package.json",
       "src",
       "interaction.json",
+      ".gitignore",
       `server.${this.data.ext}`,
       "web"
     ];

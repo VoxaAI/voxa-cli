@@ -19,12 +19,14 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-import * as axios from "axios";
-import { all } from "bluebird";
-import * as fs from "fs-extra";
-import * as _ from "lodash";
-import * as path from "path";
-import * as qs from "qs";
+import axios from "axios";
+// tslint:disable-next-line
+import { AxiosRequestConfig, AxiosPromise } from "axios";
+
+import fs from "fs-extra";
+import _ from "lodash";
+import path from "path";
+import qs from "qs";
 import { IFileContent } from "../Schema";
 import { buildFromLocalExcel } from "./Excel";
 
@@ -84,7 +86,7 @@ async function getAccessToken(auth: IAzureSecret) {
     resource: "https://graph.microsoft.com"
   };
 
-  const axiosOptions: axios.AxiosRequestConfig = {
+  const axiosOptions: AxiosRequestConfig = {
     method: "POST",
     headers: { "content-type": "application/x-www-form-urlencoded" },
     data: qs.stringify(data),
@@ -93,7 +95,7 @@ async function getAccessToken(auth: IAzureSecret) {
 
   let accessToken: string | undefined;
   try {
-    const resp = await axios.default.request(axiosOptions);
+    const resp = await axios.request(axiosOptions);
     accessToken = _.get(resp, "data.access_token");
   } catch (error) {
     throw error;
@@ -114,11 +116,11 @@ async function downloadExcelFiles(
 
   const metadataPromises = _.chain(officeSharedIds)
     .map(sharedId => [
-      axios.default.request({
+      axios.request({
         headers,
         url: `https://graph.microsoft.com/v1.0/shares/${sharedId}/driveitem`
       }),
-      axios.default.request({
+      axios.request({
         responseType: "arraybuffer",
         headers,
         url: `https://graph.microsoft.com/v1.0/shares/${sharedId}/driveitem/content`
@@ -135,9 +137,9 @@ async function downloadExcelFiles(
   return buildFromLocalExcel({ ...options, spreadsheets }, spreadsheetKey);
 }
 
-async function outputExcelFiles(options: any, metadataPromises: Array<axios.AxiosPromise<any>>) {
-  const files: any = await all(metadataPromises);
-  await all(
+async function outputExcelFiles(options: any, metadataPromises: Array<AxiosPromise<any>>) {
+  const files: any = await Promise.all(metadataPromises);
+  await Promise.all(
     _.chain(files)
       .chunk(2)
       .map(item => {

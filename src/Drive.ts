@@ -19,12 +19,10 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-import * as bluebird from "bluebird";
 import crypto = require("crypto");
 import fs = require("fs-extra");
-import { auth, JWT } from "google-auth-library";
 import { drive_v3, google } from "googleapis";
-import * as path from "path";
+import path from "path";
 
 export async function downloadDirs(dirs: string[], assetsRoot: string, key: any) {
   const jwtClient = new google.auth.JWT(
@@ -44,7 +42,7 @@ export async function downloadDirs(dirs: string[], assetsRoot: string, key: any)
     const reply = await resInFolder(drive, dir);
     const files = reply.data.files;
     if (files) {
-      await bluebird.map(files, file => downloadResource(drive, file, assetsRoot));
+      await Promise.map(files, file => downloadResource(drive, file, assetsRoot));
     }
   }
 }
@@ -96,7 +94,7 @@ export async function downloadDirectoryResource(
   const reply = await resInFolder(driveService, fileResource.id as string);
   const files = reply.data.files;
   if (files) {
-    await bluebird.map(files, file => downloadResource(driveService, file, newRoot));
+    await Promise.map(files, file => downloadResource(driveService, file, newRoot));
   }
 }
 

@@ -20,10 +20,9 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 /* tslint:disable:no-submodule-imports no-console */
-"use strict";
 
-import * as fs from "fs-extra";
-import * as path from "path";
+import fs from "fs-extra";
+import path from "path";
 import { buildInteraction } from "../InteractionBuilder";
 
 export const name = "interaction";
