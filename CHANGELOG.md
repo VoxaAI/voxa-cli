@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Update nvmrc on Javascript project to v10
 - Added nvmrc to Typescript project with v10
+- Update packages, lint and refactor
+- update documentation, fix broken links 
 
 ## [2.2.1] - 2019-09-17
 
