@@ -11,16 +11,6 @@ The perfect toolkit for your Voxa app.
 $ yarn add voxa-cli
 ```
 
-## Roadmap
-
-| Feature                  | Description                                                     | Completed | Version |
-| ------------------------ | --------------------------------------------------------------- | :-------: | :-----: |
-| **Multicommand support** | Organize project to support multiple commands                   |    ✅     |  2.0.0  |
-| **Command Init**         | Allow user to create an empty (default) interaction json Voxa 3 |    ✅     |  2.0.0  |
-| **Command Interaction**  | Improvements to interaction command                             |    ✅     |  2.0.0  |
-| **Typescript**           | Move to project to Typescript                                   |    ✅     |  2.0.0  |
-| **README.md**            | Update/Improve repo README.md                                   |    ❌     |  2.0.0  |
-
 ## Getting started
 
 With the Voxa-cli you can scaffold a full Voxa project ready to get started to code your voice app for Amazon Alexa, Google Assistant, Telegram and Facebook Messenger.
