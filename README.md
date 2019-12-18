@@ -1,6 +1,6 @@
 # voxa-cli
 
-> visit: https://voxaai.github.io/voxa-cli/
+> visit: [https://voxaai.github.io/voxa-cli/](https://voxaai.github.io/voxa-cli/)
 
 The perfect toolkit for your Voxa app.
 
@@ -176,6 +176,13 @@ $ npx voxa interaction
 - **spreadsheets**: Array of spreadsheets. Each sheet should be a interaction model for a specific locale. Spreadsheet can also be about publishing information. Make sure to review [Interaction spreadsheet structure](https://voxaai.github.io/voxa-cli/docs/interaction-spreadsheet) and [Publishing spreadsheet structure](https://voxaai.github.io/voxa-cli/docs/publishing-spreadsheet)
 - **platform**: We currently support Alexa and Dialog Flow interaction models. Make sure to review [platform structure](https://voxaai.github.io/voxa-cli/docs/platform)
 
+### spreadsheet samples
+
+- [advance-interaction](https://drive.google.com/open?id=1JlS2LgOKurinzUN8YsZ6QOpr3JxZlr63)
+- [advance-publishing-infromation](https://drive.google.com/open?id=1JRIlmPIwFlaEgaqUfXqGb2BdRY4QXnw-)
+- [basic-interaction](https://drive.google.com/open?id=1_Aq1h0CMpScmTLeelhw1pCCXnlDvmP2R)
+- [basic-publishing-information](https://drive.google.com/open?id=1sptXVbpC4JoG46LVj7bEmTSus87YIObc)
+
 ### Other links
 
 - [Interaction spreadsheet structure](https://voxaai.github.io/voxa-cli/docs/interaction-spreadsheet)
@@ -184,4 +191,4 @@ $ npx voxa interaction
 - [Local manifest](https://voxaai.github.io/voxa-cli/docs/local-manifest)
 - [Platform](https://voxaai.github.io/voxa-cli/docs/platform)
 
-> visit: https://voxaai.github.io/voxa-cli/
+> visit: [https://voxaai.github.io/voxa-cli/](https://voxaai.github.io/voxa-cli/)
