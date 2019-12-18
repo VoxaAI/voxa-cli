@@ -44,7 +44,6 @@ try {
 type interactionNames =
   | "Google"
   | "Excel"
-  | "Office365"
   | "OpenDocument-FODS"
   | "OpenDocument-ODS"
   | "platform-specific"
@@ -65,7 +64,6 @@ export function configurationToExecute() {
   const openDocumentFODSInteraction = loadInteraction("OpenDocument-FODS");
   const openDocumentODSInteraction = loadInteraction("OpenDocument-ODS");
   const googleInteraction = loadInteraction("Google");
-  const Office365Interaction = loadInteraction("Office365");
   const platformSpecificInteraction = loadInteraction("platform-specific");
   const excelNoDialogInteraction = loadInteraction("Excel-No-Dialog");
 
@@ -73,16 +71,11 @@ export function configurationToExecute() {
     googleInteraction.skip = true;
   }
 
-  if (_.isEmpty(officeSecret)) {
-    Office365Interaction.skip = true;
-  }
-
   return [
     googleInteraction,
     excelInteraction,
     openDocumentFODSInteraction,
     openDocumentODSInteraction,
-    Office365Interaction,
     platformSpecificInteraction,
     excelNoDialogInteraction
   ];
