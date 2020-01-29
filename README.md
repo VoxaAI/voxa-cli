@@ -178,6 +178,9 @@ $ npx voxa interaction
 
 ### spreadsheet samples
 
+- [rock-paper-lizard-interaction-model](https://drive.google.com/open?id=1VNfAn8H0PvSqcouJPrPsXx1kgPfYYAha)
+- [quiz-interaction-model](https://drive.google.com/open?id=1HiG3VPzMwOyJEPi87QtnJjcIujy6p5za)
+- [podcast-interaction-model](https://drive.google.com/open?id=16VvK_P0avgVUjtqbd9X9Yvae6WitgLOm)
 - [advance-interaction](https://drive.google.com/open?id=1JlS2LgOKurinzUN8YsZ6QOpr3JxZlr63)
 - [advance-publishing-infromation](https://drive.google.com/open?id=1JRIlmPIwFlaEgaqUfXqGb2BdRY4QXnw-)
 - [basic-interaction](https://drive.google.com/open?id=1_Aq1h0CMpScmTLeelhw1pCCXnlDvmP2R)
