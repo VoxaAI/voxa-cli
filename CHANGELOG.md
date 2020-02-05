@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Parse number values (height and width) in supportedViewports for Alexa Skill Manifest
 - Update nvmrc on Javascript project to v10
 - Added nvmrc to Typescript project with v10
 - Update packages, lint and refactor
