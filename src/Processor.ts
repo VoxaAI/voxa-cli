@@ -360,9 +360,17 @@ export function publishingProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES:
           .get("key", "")
           .replace("{locale}", locale)
           .value();
-        const value = _.chain(item)
+        let value = _.chain(item)
           .get("value", "")
           .value();
+
+        const containsParseNumberKey = ["maxWidth", "minWidth", "maxHeight", "minHeight"].some(s =>
+          key.includes(s)
+        );
+
+        if (containsParseNumberKey && _.toNumber(value)) {
+          value = _.toNumber(value);
+        }
 
         const publishInfo: IPublishingInformation = { key, value, environments };
         acc.push(publishInfo);
