@@ -111,7 +111,7 @@ resources:
     TableUsers:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: ${self:custom.config.dynamodb.tables.users}
+        TableName: ${self:custom.config.dynamoDB.tables.users}
         BillingMode: ${self:custom.DynamoDBBillingMode.${env:NODE_ENV}}
         ProvisionedThroughput: ${self:custom.DynamoDBCapacity.${env:NODE_ENV}}
         AttributeDefinitions:

@@ -569,7 +569,7 @@ describe("Typescript project generator", () => {
       expect(fileContent).to.contain("Resource: !GetAtt TableUsers.Arn");
       expect(fileContent).to.contain("TableUsers:");
       // tslint:disable-next-line:no-invalid-template-strings
-      expect(fileContent).to.contain("TableName: ${self:custom.config.dynamodb.tables.users}");
+      expect(fileContent).to.contain("TableName: ${self:custom.config.dynamoDB.tables.users}");
     });
 
     it("should add a user attribute to the model", async () => {
@@ -639,7 +639,7 @@ describe("Typescript project generator", () => {
       expect(fileContent).to.not.contain("Resource: !GetAtt TableUsers.Arn");
       expect(fileContent).to.not.contain("TableUsers:");
       // tslint:disable-next-line:no-invalid-template-strings
-      expect(fileContent).to.not.contain("TableName: ${self:custom.config.dynamodb.tables.users}");
+      expect(fileContent).to.not.contain("TableName: ${self:custom.config.dynamoDB.tables.users}");
     });
 
     it("should not add a user attribute to the model", async () => {
