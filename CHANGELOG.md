@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update packages, lint and refactor
 - update documentation, fix broken links
 
+### Fixed
+
+- Fixed misspelled DynamoDB key on serverless yml file
+
 ## [2.2.1] - 2019-09-17
 
 ### Added
