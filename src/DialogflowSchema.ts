@@ -266,6 +266,7 @@ export class DialogflowSchema extends Schema {
     locale = this.getLocale(locale);
     this.builtIntents = intentsByPlatformAndEnvironments.map((rawIntent: IIntent) => {
       let { name, events } = rawIntent;
+      const { transferParameterName, transferValue } = rawIntent;
       const { webhookForSlotFilling, slotsDefinition, responses, webhookUsed } = rawIntent;
       name = name.replace("AMAZON.", "");
       const fallbackIntent = name === "FallbackIntent";
@@ -274,7 +275,8 @@ export class DialogflowSchema extends Schema {
       events = name === "LaunchIntent" ? ["WELCOME", "GOOGLE_ASSISTANT_WELCOME"] : events;
       events = (events as string[]).map((eventName: string) => ({ name: eventName }));
 
-      const parameters = _(slotsDefinition)
+      // tslint:disable-next-line: prefer-const
+      let parameters = _(slotsDefinition)
         .filter(slot => this.filterByPlatform(slot))
         .map(slot => ({
           dataType: _.includes(slot.type, "@sys.") ? slot.type : `@${_.kebabCase(slot.type)}`,
@@ -284,6 +286,16 @@ export class DialogflowSchema extends Schema {
           required: slot.required
         }))
         .value();
+
+      if (transferParameterName && transferValue) {
+        parameters.push({
+          dataType: "",
+          name: transferParameterName,
+          value: transferValue,
+          isList: false,
+          required: false
+        });
+      }
 
       const messages = [];
       if (responses.length > 0) {

@@ -335,6 +335,8 @@ export interface IIntent {
   locale: string;
   delegationStrategy?: "ALWAYS" | "SKILL_RESPONSE";
   confirmationRequired: boolean;
+  transferParameterName?: string;
+  transferValue?: string;
 }
 
 export interface IEvent {
@@ -384,7 +386,7 @@ export interface IView {
 
 export interface IDownload {
   name: string;
-  data: Array<{}>;
+  data: {}[];
   locale: string;
 }
 
