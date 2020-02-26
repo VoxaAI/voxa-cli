@@ -153,5 +153,34 @@ configurations.forEach(interactionFile => {
         expect(intent.responses[0].parameters[0].required).to.be.true;
       });
     });
+
+    describe("HUMANINTENT", () => {
+      let intent: any;
+
+      before(async () => {
+        const intentPath = path.join(
+          path.dirname(interactionFile.interactionFileName),
+          interactionFile.speechPath,
+          "dialogflow/production/intents/HUMANINTENT.json"
+        );
+        intent = JSON.parse((await fs.readFile(intentPath)).toString());
+      });
+
+      it("should set Parameter Name and Parameter Value in properties: name and value", () => {
+        expect(intent.responses[0].parameters).to.have.lengthOf(1);
+        expect(intent.responses[0].parameters[0]).to.be.eql({
+          dataType: "",
+          name: "skill",
+          value: "Fallback skill",
+          isList: false,
+          required: false
+        });
+      });
+
+      it("should set action as HUMANINTENT", () => {
+        expect(intent.responses[0].parameters).to.have.lengthOf(1);
+        expect(intent.responses[0].action).to.be.eql("HUMANINTENT");
+      });
+    });
   });
 });

@@ -335,8 +335,8 @@ export interface IIntent {
   locale: string;
   delegationStrategy?: "ALWAYS" | "SKILL_RESPONSE";
   confirmationRequired: boolean;
-  transferParameterName?: string;
-  transferValue?: string;
+  parameterName?: string;
+  parameterValue?: string;
 }
 
 export interface IEvent {

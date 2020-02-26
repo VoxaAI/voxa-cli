@@ -49,7 +49,7 @@ configurations.forEach(interactionFile => {
     });
 
     describe("Interaction Model", () => {
-      it("should add 4 intents", () => {
+      it("should add 5 intents", () => {
         const intents = _(interaction.interactionModel.languageModel.intents)
           .map("name")
           .value();
@@ -59,7 +59,8 @@ configurations.forEach(interactionFile => {
           "NumberIntent",
           "AMAZON.FallbackIntent",
           "TravelIntent",
-          "BearIntent"
+          "BearIntent",
+          "HUMANINTENT"
         ]);
       });
 

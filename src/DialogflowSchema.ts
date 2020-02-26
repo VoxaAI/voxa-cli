@@ -266,7 +266,7 @@ export class DialogflowSchema extends Schema {
     locale = this.getLocale(locale);
     this.builtIntents = intentsByPlatformAndEnvironments.map((rawIntent: IIntent) => {
       let { name, events } = rawIntent;
-      const { transferParameterName, transferValue } = rawIntent;
+      const { parameterName, parameterValue } = rawIntent;
       const { webhookForSlotFilling, slotsDefinition, responses, webhookUsed } = rawIntent;
       name = name.replace("AMAZON.", "");
       const fallbackIntent = name === "FallbackIntent";
@@ -287,11 +287,11 @@ export class DialogflowSchema extends Schema {
         }))
         .value();
 
-      if (transferParameterName && transferValue) {
+      if (parameterName && parameterValue) {
         parameters.push({
           dataType: "",
-          name: transferParameterName,
-          value: transferValue,
+          name: parameterName,
+          value: parameterValue,
           isList: false,
           required: false
         });
