@@ -177,6 +177,27 @@ configurations.forEach(interactionFile => {
           }
         });
       });
+
+      describe("HUMANINTENT", () => {
+        let humanIntent: any;
+        before(() => {
+          humanIntent = interaction.interactionModel.languageModel.intents[5];
+        });
+
+        it("should not have slots", () => {
+          const slots = _(humanIntent.slots)
+            .map()
+            .value();
+          expect(slots).to.be.empty;
+        });
+
+        it("should not have samples", () => {
+          const samples = _(humanIntent.samples)
+            .map()
+            .value();
+          expect(samples).to.be.empty;
+        });
+      });
     });
   });
 });
