@@ -185,17 +185,11 @@ configurations.forEach(interactionFile => {
         });
 
         it("should not have slots", () => {
-          const slots = _(humanIntent.slots)
-            .map()
-            .value();
-          expect(slots).to.be.empty;
+          expect(_.get(humanIntent, "slots")).to.be.empty;
         });
 
         it("should not have samples", () => {
-          const samples = _(humanIntent.samples)
-            .map()
-            .value();
-          expect(samples).to.be.empty;
+          expect(_.get(humanIntent, "samples")).to.be.empty;
         });
       });
     });

@@ -386,7 +386,7 @@ export interface IView {
 
 export interface IDownload {
   name: string;
-  data: {}[];
+  data: Array<{}>;
   locale: string;
 }
 
