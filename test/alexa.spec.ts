@@ -60,7 +60,7 @@ configurations.forEach(interactionFile => {
           "AMAZON.FallbackIntent",
           "TravelIntent",
           "BearIntent",
-          "HUMANINTENT"
+          "HumanIntent"
         ]);
       });
 
@@ -178,7 +178,7 @@ configurations.forEach(interactionFile => {
         });
       });
 
-      describe("HUMANINTENT", () => {
+      describe("HumanIntent", () => {
         let humanIntent: any;
         before(() => {
           humanIntent = interaction.interactionModel.languageModel.intents[5];

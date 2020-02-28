@@ -154,7 +154,7 @@ configurations.forEach(interactionFile => {
       });
     });
 
-    describe("HUMANINTENT", () => {
+    describe("HumanIntent", () => {
       let intent: any;
 
       before(async () => {
@@ -177,9 +177,9 @@ configurations.forEach(interactionFile => {
         });
       });
 
-      it("should set action as HUMANINTENT", () => {
+      it("should set action as HumanIntent", () => {
         expect(intent.responses[0].parameters).to.have.lengthOf(1);
-        expect(intent.responses[0].action).to.be.eql("HUMANINTENT");
+        expect(intent.responses[0].action).to.be.eql("HumanIntent");
       });
     });
   });
