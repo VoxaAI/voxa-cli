@@ -158,7 +158,7 @@ export function slotProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES: strin
           }
           return acc;
         },
-        [] as Array<{}>
+        [] as {}[]
       )
       .flattenDeep()
       .filter("value")
@@ -396,7 +396,7 @@ function filterSheets(voxaSheets: IVoxaSheet[], sheetTypes: string[]): IVoxaShee
 function reduceIntent(propName: string) {
   return (acc: any[], row: any) => {
     row.data = _.chain(row.data)
-      .reduce((accData: Array<{}>, item: any) => {
+      .reduce((accData: {}[], item: any) => {
         _.map(item, (value, key) => {
           const obj: any = { intent: key };
           obj[propName] = value;
