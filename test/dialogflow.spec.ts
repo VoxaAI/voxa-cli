@@ -161,7 +161,7 @@ configurations.forEach(interactionFile => {
         const intentPath = path.join(
           path.dirname(interactionFile.interactionFileName),
           interactionFile.speechPath,
-          "dialogflow/production/intents/HUMANINTENT.json"
+          "dialogflow/production/intents/HumanIntent.json"
         );
         intent = JSON.parse((await fs.readFile(intentPath)).toString());
       });
