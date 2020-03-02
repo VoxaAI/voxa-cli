@@ -49,7 +49,7 @@ configurations.forEach(interactionFile => {
     });
 
     describe("Interaction Model", () => {
-      it("should add 4 intents", () => {
+      it("should add 5 intents", () => {
         const intents = _(interaction.interactionModel.languageModel.intents)
           .map("name")
           .value();
@@ -59,7 +59,8 @@ configurations.forEach(interactionFile => {
           "NumberIntent",
           "AMAZON.FallbackIntent",
           "TravelIntent",
-          "BearIntent"
+          "BearIntent",
+          "HumanIntent"
         ]);
       });
 
@@ -174,6 +175,21 @@ configurations.forEach(interactionFile => {
               expect(prompts).to.be.undefined;
             });
           }
+        });
+      });
+
+      describe("HumanIntent", () => {
+        let humanIntent: any;
+        before(() => {
+          humanIntent = interaction.interactionModel.languageModel.intents[5];
+        });
+
+        it("should not have slots", () => {
+          expect(_.get(humanIntent, "slots")).to.be.empty;
+        });
+
+        it("should not have samples", () => {
+          expect(_.get(humanIntent, "samples")).to.be.empty;
         });
       });
     });

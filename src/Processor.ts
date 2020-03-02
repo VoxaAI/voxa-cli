@@ -158,7 +158,7 @@ export function slotProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES: strin
           }
           return acc;
         },
-        [] as Array<{}>
+        [] as {}[]
       )
       .flattenDeep()
       .filter("value")
@@ -214,7 +214,9 @@ export function intentUtterProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES
             "delegationStrategy",
             "confirmationRequired",
             "slotConfirmationRequired",
-            "slotElicitationRequired"
+            "slotElicitationRequired",
+            "parameterName",
+            "parameterValue"
           ]);
           previousIntent = _.isEmpty(info.Intent) ? previousIntent : info.Intent;
           info.Intent = previousIntent;
@@ -235,12 +237,15 @@ export function intentUtterProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES
 
             const webhookForSlotFilling = (_.get(head, "webhookForSlotFilling", false) ||
               _.get(head, "useWebhookForSlotFilling", false)) as boolean;
-            const webhookUsed = _.get(head, "webhookUsed", true) as boolean;
+            const webhookUsed = !!_.get(head, "webhookUsed", true) as boolean;
             const canFulfillIntent = _.get(head, "canFulfillIntent", false) as boolean;
             const startIntent = _.get(head, "startIntent", false) as boolean;
             const endIntent = _.get(head, "endIntent", false) as boolean;
-            const confirmationRequired = _.get(head, "confirmationRequired", false) as boolean;
+            const confirmationRequired = !!_.get(head, "confirmationRequired", false) as boolean;
             const delegationStrategy = _.get(head, "delegationStrategy");
+
+            const parameterName = _.get(head, "parameterName");
+            const parameterValue = _.get(head, "parameterValue");
 
             const samples = getIntentValueList(
               voxaSheetsUtter,
@@ -270,9 +275,9 @@ export function intentUtterProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES
                   name: slot.slotName,
                   type: slot.slotType,
                   platform: slot.platformSlot,
-                  required: slot.slotRequired || false,
-                  requiresConfirmation: slot.slotConfirmationRequired || false,
-                  requiresElicitation: slot.slotElicitationRequired || false,
+                  required: !!slot.slotRequired || false,
+                  requiresConfirmation: !!slot.slotConfirmationRequired || false,
+                  requiresElicitation: !!slot.slotElicitationRequired || false,
                   samples: getIntentValueList(
                     voxaSheetsUtter,
                     voxaSheetIntent.spreadsheetId,
@@ -316,7 +321,9 @@ export function intentUtterProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES
               locale,
               signInRequired,
               confirmationRequired,
-              delegationStrategy
+              delegationStrategy,
+              parameterName,
+              parameterValue
             };
 
             acc.push(intent);
@@ -389,7 +396,7 @@ function filterSheets(voxaSheets: IVoxaSheet[], sheetTypes: string[]): IVoxaShee
 function reduceIntent(propName: string) {
   return (acc: any[], row: any) => {
     row.data = _.chain(row.data)
-      .reduce((accData: Array<{}>, item: any) => {
+      .reduce((accData: {}[], item: any) => {
         _.map(item, (value, key) => {
           const obj: any = { intent: key };
           obj[propName] = value;
