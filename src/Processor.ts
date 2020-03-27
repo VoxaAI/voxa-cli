@@ -112,8 +112,9 @@ export function viewsProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES: stri
         const shouldBeArray = [".text", ".say", ".reprompt", ".tell", ".ask"].find(suffix =>
           path.includes(suffix)
         );
+        const isGA = [".ga"].find(option => _.endsWith(pathLowerCase, option));
         const isASuggestionChip = [".dialogflowsuggestions", ".facebooksuggestionchips"].find(
-          option => pathLowerCase.includes(option)
+          option => _.endsWith(pathLowerCase, option)
         );
 
         if (shouldBeArray && _.isString(value) && !_.isEmpty(value)) {
@@ -124,6 +125,28 @@ export function viewsProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES: stri
 
         if (!_.isEmpty(value) && isASuggestionChip) {
           value = value.split("\n").map((v: string) => v.trim());
+        }
+
+        if (!_.isEmpty(value) && isGA) {
+          value = value.split("\n").reduce(
+            (accGA: { ec: string; ea: string; el: string }, next: string, index: number) => {
+              if (index === 0) {
+                accGA.ec = next;
+                accGA.ea = next;
+              }
+
+              if (index === 1) {
+                accGA.ea = next;
+              }
+
+              if (index === 2) {
+                accGA.el = next;
+              }
+
+              return accGA;
+            },
+            {} as any
+          );
         }
 
         _.set(acc, path, value);
@@ -389,7 +412,7 @@ export function publishingProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES:
   );
 }
 
-function filterSheets(voxaSheets: IVoxaSheet[], sheetTypes: string[]): IVoxaSheet[] {
+export function filterSheets(voxaSheets: IVoxaSheet[], sheetTypes: string[]): IVoxaSheet[] {
   return _.filter(voxaSheets, voxaSheet => _.includes(sheetTypes, getSheetType(voxaSheet)));
 }
 

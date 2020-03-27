@@ -23,8 +23,9 @@ import fs from "fs-extra";
 import _ from "lodash";
 import xlsx from "node-xlsx";
 import path from "path";
-import { IVoxaSheet } from "../VoxaSheet";
+import { IVoxaSheet, SheetTypes } from "../VoxaSheet";
 import { findSheetType, rowFormatted } from "./utils";
+import { filterSheets } from "../Processor";
 
 function findLocalFiles(spreadsheet: string): string[] {
   const fsStats = fs.lstatSync(spreadsheet);
@@ -54,6 +55,8 @@ function readFileCreateWorkbook(f: string) {
 }
 
 function refactorExcelData(sheet: IVoxaSheet) {
+  const reestrictFormat = _.isEmpty(filterSheets([sheet], [SheetTypes.UTTERANCE]));
+
   sheet.data = (_.chain(sheet).get("data") as any)
     .map((next: any, index: number, arr: any) => {
       if (index === 0) {
@@ -67,7 +70,11 @@ function refactorExcelData(sheet: IVoxaSheet) {
       }
       return next;
     })
-    .reduce(rowFormatted, [] as any[])
+    .reduce(
+      (acc: any[], next: any, iindex: number, arr: any[]) =>
+        rowFormatted(acc, next, iindex, arr, reestrictFormat),
+      [] as any[]
+    )
     .drop()
     .value();
   return sheet;

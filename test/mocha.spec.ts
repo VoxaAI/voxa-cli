@@ -7,7 +7,7 @@ import { configurationToExecute } from "./utils";
 export let configurations: any[] = configurationToExecute();
 
 before(async function before() {
-  this.timeout(20000);
+  this.timeout(50000);
 
   // make sure we delete the old assets
   await fs.remove(path.join(__dirname, "out"));
