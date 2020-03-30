@@ -60,7 +60,8 @@ configurations.forEach(interactionFile => {
           "AMAZON.FallbackIntent",
           "TravelIntent",
           "BearIntent",
-          "HumanIntent"
+          "HumanIntent",
+          "AMAZON.YesIntent"
         ]);
       });
 

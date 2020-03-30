@@ -23,8 +23,9 @@ import bluebird from "bluebird";
 import { auth, JWT } from "google-auth-library";
 import { google, sheets_v4 } from "googleapis";
 import _ from "lodash";
-import { IVoxaSheet } from "../VoxaSheet";
+import { IVoxaSheet, SheetTypes } from "../VoxaSheet";
 import { findSheetType, rowFormatted } from "./utils";
+import { filterSheets } from "../Processor";
 global.Promise = bluebird;
 
 const sheets = google.sheets("v4");
@@ -78,8 +79,14 @@ async function spreadsheetToVoxaSheet(
   }
 
   return spreadsheetResp.map((sheet: IVoxaSheet, index: number) => {
+    const reestrictFormat = _.isEmpty(filterSheets([sheet], [SheetTypes.UTTERANCE]));
+
     const data = (_.chain(sheetPromises[index]).get("data.values", []) as any)
-      .reduce(rowFormatted, [])
+      .reduce(
+        (acc: any[], next: any, iindex: number, arr: any[]) =>
+          rowFormatted(acc, next, iindex, arr, reestrictFormat),
+        [] as any[]
+      )
       .drop()
       .value();
 
