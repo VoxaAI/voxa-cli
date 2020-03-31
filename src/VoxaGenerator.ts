@@ -154,7 +154,11 @@ export default class VoxaGenerator {
   }
 
   private async copyGitIgnoreFile() {
-    return this.generateHandlebarTemplateFile(".gitignore")
+    await this.copyFileOrFolder("gitignore.txt");
+    return fs.rename(
+      path.join(process.cwd(), this.data.folderName, "gitignore.txt"),
+      path.join(process.cwd(), this.data.folderName, ".gitignore")
+    );
   }
 
   private copyInteractionFile() {
@@ -226,7 +230,7 @@ export default class VoxaGenerator {
       "package.json",
       "src",
       "interaction.json",
-      ".gitignore",
+      "gitignore.txt",
       `server.${this.data.ext}`,
       "web"
     ];
