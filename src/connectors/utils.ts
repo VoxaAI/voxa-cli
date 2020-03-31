@@ -37,10 +37,16 @@ export function findSheetType(spreadsheet: IVoxaSheet): IVoxaSheet | undefined {
   return undefined;
 }
 
-export function rowFormatted(acc: any[], next: any, iindex: number, arr: any[]) {
+export function rowFormatted(
+  acc: any[],
+  next: any,
+  iindex: number,
+  arr: any[],
+  reestrictFormat: boolean
+) {
   const item = (_.chain(arr).head() as any)
     .zip(next)
-    .map((zipObj: any) => [zipObj[0], valueFormatted(zipObj[1])])
+    .map((zipObj: any) => [zipObj[0], valueFormatted(zipObj[1], reestrictFormat)])
     .fromPairs()
     .value();
 
@@ -48,14 +54,14 @@ export function rowFormatted(acc: any[], next: any, iindex: number, arr: any[]) 
   return acc;
 }
 
-function valueFormatted(val: any) {
+function valueFormatted(val: any, reestrictFormat: boolean) {
   const valTemp = _.toLower(val);
 
-  if (_.includes(["true", "yes"], valTemp)) {
+  if (reestrictFormat && _.includes(["true", "yes"], valTemp)) {
     val = true;
   }
 
-  if (_.includes(["false", "no"], valTemp)) {
+  if (reestrictFormat && _.includes(["false", "no"], valTemp)) {
     val = false;
   }
 

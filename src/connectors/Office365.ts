@@ -137,7 +137,7 @@ async function downloadExcelFiles(
   return buildFromLocalExcel({ ...options, spreadsheets }, spreadsheetKey);
 }
 
-async function outputExcelFiles(options: any, metadataPromises: Array<AxiosPromise<any>>) {
+async function outputExcelFiles(options: any, metadataPromises: AxiosPromise<any>[]) {
   const files: any = await Promise.all(metadataPromises);
   await Promise.all(
     _.chain(files)

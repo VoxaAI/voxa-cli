@@ -112,8 +112,9 @@ export function viewsProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES: stri
         const shouldBeArray = [".text", ".say", ".reprompt", ".tell", ".ask"].find(suffix =>
           path.includes(suffix)
         );
+        const isGA = [".ga"].find(option => _.endsWith(pathLowerCase, option));
         const isASuggestionChip = [".dialogflowsuggestions", ".facebooksuggestionchips"].find(
-          option => pathLowerCase.includes(option)
+          option => _.endsWith(pathLowerCase, option)
         );
 
         if (shouldBeArray && _.isString(value) && !_.isEmpty(value)) {
@@ -124,6 +125,28 @@ export function viewsProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES: stri
 
         if (!_.isEmpty(value) && isASuggestionChip) {
           value = value.split("\n").map((v: string) => v.trim());
+        }
+
+        if (!_.isEmpty(value) && isGA) {
+          value = value.split("\n").reduce(
+            (accGA: { ec: string; ea: string; el: string }, next: string, index: number) => {
+              if (index === 0) {
+                accGA.ec = next;
+                accGA.ea = next;
+              }
+
+              if (index === 1) {
+                accGA.ea = next;
+              }
+
+              if (index === 2) {
+                accGA.el = next;
+              }
+
+              return accGA;
+            },
+            {} as any
+          );
         }
 
         _.set(acc, path, value);
@@ -158,7 +181,7 @@ export function slotProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES: strin
           }
           return acc;
         },
-        [] as Array<{}>
+        [] as {}[]
       )
       .flattenDeep()
       .filter("value")
@@ -214,7 +237,9 @@ export function intentUtterProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES
             "delegationStrategy",
             "confirmationRequired",
             "slotConfirmationRequired",
-            "slotElicitationRequired"
+            "slotElicitationRequired",
+            "parameterName",
+            "parameterValue"
           ]);
           previousIntent = _.isEmpty(info.Intent) ? previousIntent : info.Intent;
           info.Intent = previousIntent;
@@ -235,12 +260,15 @@ export function intentUtterProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES
 
             const webhookForSlotFilling = (_.get(head, "webhookForSlotFilling", false) ||
               _.get(head, "useWebhookForSlotFilling", false)) as boolean;
-            const webhookUsed = _.get(head, "webhookUsed", true) as boolean;
+            const webhookUsed = !!_.get(head, "webhookUsed", true) as boolean;
             const canFulfillIntent = _.get(head, "canFulfillIntent", false) as boolean;
             const startIntent = _.get(head, "startIntent", false) as boolean;
             const endIntent = _.get(head, "endIntent", false) as boolean;
-            const confirmationRequired = _.get(head, "confirmationRequired", false) as boolean;
+            const confirmationRequired = !!_.get(head, "confirmationRequired", false) as boolean;
             const delegationStrategy = _.get(head, "delegationStrategy");
+
+            const parameterName = _.get(head, "parameterName");
+            const parameterValue = _.get(head, "parameterValue");
 
             const samples = getIntentValueList(
               voxaSheetsUtter,
@@ -270,9 +298,9 @@ export function intentUtterProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES
                   name: slot.slotName,
                   type: slot.slotType,
                   platform: slot.platformSlot,
-                  required: slot.slotRequired || false,
-                  requiresConfirmation: slot.slotConfirmationRequired || false,
-                  requiresElicitation: slot.slotElicitationRequired || false,
+                  required: !!slot.slotRequired || false,
+                  requiresConfirmation: !!slot.slotConfirmationRequired || false,
+                  requiresElicitation: !!slot.slotElicitationRequired || false,
                   samples: getIntentValueList(
                     voxaSheetsUtter,
                     voxaSheetIntent.spreadsheetId,
@@ -316,7 +344,9 @@ export function intentUtterProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES
               locale,
               signInRequired,
               confirmationRequired,
-              delegationStrategy
+              delegationStrategy,
+              parameterName,
+              parameterValue
             };
 
             acc.push(intent);
@@ -382,14 +412,14 @@ export function publishingProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES:
   );
 }
 
-function filterSheets(voxaSheets: IVoxaSheet[], sheetTypes: string[]): IVoxaSheet[] {
+export function filterSheets(voxaSheets: IVoxaSheet[], sheetTypes: string[]): IVoxaSheet[] {
   return _.filter(voxaSheets, voxaSheet => _.includes(sheetTypes, getSheetType(voxaSheet)));
 }
 
 function reduceIntent(propName: string) {
   return (acc: any[], row: any) => {
     row.data = _.chain(row.data)
-      .reduce((accData: Array<{}>, item: any) => {
+      .reduce((accData: {}[], item: any) => {
         _.map(item, (value, key) => {
           const obj: any = { intent: key };
           obj[propName] = value;
