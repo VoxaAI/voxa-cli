@@ -68,6 +68,12 @@ describe("Javascript project generator", () => {
       expect(pathExists).to.be.true;
     });
 
+    it("should have a .gitignore file", async () => {
+      const filePath = getFilePath("my-skill", ".gitignore");
+      const pathExists = await fs.pathExists(filePath);
+      expect(pathExists).to.be.true;
+    });
+
     it("should have a README file with the name of the skill", async () => {
       const filePath = getFilePath("my-skill", "README.md");
       const pathExists = await fs.pathExists(filePath);
