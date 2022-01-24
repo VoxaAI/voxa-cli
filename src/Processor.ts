@@ -147,6 +147,10 @@ export function viewsProcessor(voxaSheets: IVoxaSheet[], AVAILABLE_LOCALES: stri
             },
             {} as any
           );
+
+          const temp = _.get(acc, path, []) as string[];
+          temp.push(value);
+          value = temp;
         }
 
         _.set(acc, path, value);

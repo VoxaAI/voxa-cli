@@ -210,7 +210,7 @@ export const buildInteraction = async (interactionOptions: IInteractionOptions, 
     )
   );
 
-  const fileContentsProcess = schemas
+  const fileContentsProcess = _.chain(schemas)
     .reduce(
       (acc, schema, index) => {
         if (index === 0) {
@@ -229,9 +229,11 @@ export const buildInteraction = async (interactionOptions: IInteractionOptions, 
       },
       [] as IFileContent[]
     )
+    .uniqBy("path")
     .map((file: IFileContent) =>
       fs.outputFile(file.path, JSON.stringify(file.content, null, 2), { flag: "w" })
-    );
+    )
+    .value();
 
   await Promise.all(fileContentsProcess);
   await downloadDirs(

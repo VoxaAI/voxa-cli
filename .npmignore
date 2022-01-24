@@ -12,3 +12,4 @@ test
 .voxa/
 !templates/**/interaction.json
 !templates/**/views.json
+.envrc
