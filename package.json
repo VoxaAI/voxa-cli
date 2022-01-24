@@ -1,6 +1,6 @@
 {
   "name": "voxa-cli",
-  "version": "2.3.1",
+  "version": "3.0.2",
   "description": "The Voxa CLI tools",
   "bin": {
     "voxa": "./bin/voxa.js"
@@ -21,7 +21,7 @@
     "lint": "tslint --config tslint.json --project tsconfig.json --exclude \"**/*.json\" --exclude \"templates/*\"",
     "tslint-check": "tslint-config-prettier-check ./tslint.json",
     "lint-fix": "tslint --fix --config tslint.json --project tsconfig.json --exclude \"**/*.json\" --exclude \"templates/*\"",
-    "tsc": "rm -rf lib && tsc",
+    "tsc": "npm run clean && tsc",
     "create": "npm run tsc && node bin/voxa.js create",
     "snyk-protect": "snyk protect",
     "prepublish": "npm run snyk-protect"
